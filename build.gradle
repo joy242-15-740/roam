@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+}
+
+group = 'com.roam'
+version = '1.0.0'
+sourceCompatibility = '21'
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    version = '21'
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+dependencies {
+    // We'll add more dependencies later (H2, Hibernate, CalendarFX, RichTextFX)
+}
+
+application {
+    mainClass = 'com.roam.RoamApplication'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}

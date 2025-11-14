@@ -1,0 +1,30 @@
+/* Root Variables */
+.root {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 14px;
+    -fx-background-color: #FFFFFF;
+}
+
+/* Main Text */
+.label, .text {
+    -fx-text-fill: #000000;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #4285f4;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'Poppins Medium';
+    -fx-font-size: 14px;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #3275e4;
+}
+
+.button:pressed {
+    -fx-background-color: #2565d4;
+}
