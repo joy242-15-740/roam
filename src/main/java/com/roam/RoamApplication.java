@@ -3,7 +3,7 @@ package com.roam;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.Objects;
@@ -12,24 +12,23 @@ public class RoamApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Load custom font
-        loadFonts();
+        // Load custom fonts
+        Font regularFont = loadFonts();
+        Font boldFont = Font.font("Poppins Bold", 14);
 
-        // Create root container
-        StackPane root = new StackPane();
-        root.setStyle("-fx-background-color: #FFFFFF;");
+        // Create main layout with fonts
+        MainLayout mainLayout = new MainLayout(regularFont, boldFont);
 
-        // Create scene with comfortable default size
-        Scene scene = new Scene(root, 100, 100);
+        // Create scene
+        Scene scene = new Scene(mainLayout, 200, 200);
 
         // Load CSS
         String css = Objects.requireNonNull(
-                getClass().getResource("/styles/application.css")
-        ).toExternalForm();
+                getClass().getResource("/styles/application.css")).toExternalForm();
         scene.getStylesheets().add(css);
 
         // Set window properties
-        primaryStage.setTitle("Roam - Personal Knowledge Management");
+        primaryStage.setTitle(" "); // Set empty title for minimalistic look
         primaryStage.setScene(scene);
 
         // Set minimum window size
@@ -40,9 +39,7 @@ public class RoamApplication extends Application {
         try {
             Image icon = new Image(
                     Objects.requireNonNull(
-                            getClass().getResourceAsStream("/icons/roam-icon.png")
-                    )
-            );
+                            getClass().getResourceAsStream("/icons/roam-icon.png")));
             primaryStage.getIcons().add(icon);
         } catch (Exception e) {
             System.err.println("Failed to load application icon: " + e.getMessage());
@@ -52,24 +49,22 @@ public class RoamApplication extends Application {
         primaryStage.show();
     }
 
-    private void loadFonts() {
+    private Font loadFonts() {
+        Font regularFont = null;
         try {
-            javafx.scene.text.Font.loadFont(
-                    getClass().getResourceAsStream("/fonts/Poppins-Regular.ttf"), 14
-            );
-            javafx.scene.text.Font.loadFont(
-                    getClass().getResourceAsStream("/fonts/Poppins-Medium.ttf"), 14
-            );
-            javafx.scene.text.Font.loadFont(
-                    getClass().getResourceAsStream("/fonts/Poppins-SemiBold.ttf"), 14
-            );
-            javafx.scene.text.Font.loadFont(
-                    getClass().getResourceAsStream("/fonts/Poppins-Bold.ttf"), 14
-            );
-            System.out.println("Fonts loaded successfully");
+            regularFont = Font.loadFont(
+                    getClass().getResourceAsStream("/fonts/Poppins-Regular.ttf"), 14);
+            Font.loadFont(
+                    getClass().getResourceAsStream("/fonts/Poppins-Medium.ttf"), 14);
+            Font.loadFont(
+                    getClass().getResourceAsStream("/fonts/Poppins-SemiBold.ttf"), 14);
+            Font.loadFont(
+                    getClass().getResourceAsStream("/fonts/Poppins-Bold.ttf"), 14);
+            System.out.println("✓ Fonts loaded successfully");
         } catch (Exception e) {
-            System.err.println("Failed to load fonts: " + e.getMessage());
+            System.err.println("✗ Failed to load fonts: " + e.getMessage());
         }
+        return regularFont;
     }
 
     public static void main(String[] args) {
