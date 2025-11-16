@@ -1,5 +1,6 @@
 package com.roam;
 
+import com.roam.model.Operation;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -32,6 +33,9 @@ public class MainLayout extends BorderPane {
 
     // Content area
     private StackPane contentArea;
+
+    // Current navigation state
+    private Operation currentOperation;
 
     public MainLayout(Font regularFont, Font boldFont) {
         this.regularFont = regularFont;
@@ -297,6 +301,9 @@ public class MainLayout extends BorderPane {
         // Clear content area
         contentArea.getChildren().clear();
 
+        // Clear current operation when switching main views
+        currentOperation = null;
+
         // Activate selected button and show corresponding view
         switch (viewName) {
             case "operations":
@@ -321,7 +328,37 @@ public class MainLayout extends BorderPane {
     private void showOperationsView() {
         com.roam.controller.OperationsController controller = new com.roam.controller.OperationsController();
         com.roam.view.OperationsView operationsView = new com.roam.view.OperationsView(controller);
+
+        // Set click handler to navigate to operation detail
+        operationsView.setOnOperationClick(this::showOperationDetail);
+
         contentArea.getChildren().add(operationsView);
+    }
+
+    public void showOperationDetail(Operation operation) {
+        currentOperation = operation;
+
+        // Keep operations button active
+        updateButtonState(operationsBtn, true);
+        updateButtonState(calendarBtn, false);
+        updateButtonState(tasksBtn, false);
+        updateButtonState(wikiBtn, false);
+
+        // Clear and show detail view
+        contentArea.getChildren().clear();
+        contentArea.setPadding(new Insets(0)); // Remove padding for detail view
+
+        com.roam.view.OperationDetailView detailView = new com.roam.view.OperationDetailView(
+                operation,
+                this::navigateBackToOperations);
+
+        contentArea.getChildren().add(detailView);
+    }
+
+    private void navigateBackToOperations() {
+        currentOperation = null;
+        contentArea.setPadding(new Insets(30)); // Restore padding
+        switchView("operations");
     }
 
     private void showCalendarView() {

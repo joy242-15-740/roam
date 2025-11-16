@@ -19,6 +19,7 @@ public class OperationTableView extends TableView<Operation> {
 
     private Consumer<Operation> onEdit;
     private Consumer<Operation> onDelete;
+    private Consumer<Operation> onOperationClick;
 
     public OperationTableView() {
         initialize();
@@ -42,13 +43,18 @@ public class OperationTableView extends TableView<Operation> {
         // Row height
         setFixedCellSize(50);
 
-        // Double-click to edit
+        // Single-click to navigate, double-click to edit
         setRowFactory(tv -> {
             TableRow<Operation> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && !row.isEmpty()) {
                     if (onEdit != null) {
                         onEdit.accept(row.getItem());
+                    }
+                } else if (event.getClickCount() == 1 && !row.isEmpty()) {
+                    // Single click - navigate to detail
+                    if (onOperationClick != null) {
+                        onOperationClick.accept(row.getItem());
                     }
                 }
             });
@@ -265,5 +271,9 @@ public class OperationTableView extends TableView<Operation> {
 
     public void setOnDelete(Consumer<Operation> handler) {
         this.onDelete = handler;
+    }
+
+    public void setOnOperationClick(Consumer<Operation> handler) {
+        this.onOperationClick = handler;
     }
 }

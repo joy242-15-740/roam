@@ -1,0 +1,469 @@
+package com.roam.view.components;
+
+import com.roam.model.Note;
+import javafx.animation.PauseTransition;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.web.WebView;
+import javafx.util.Duration;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+
+public class NotesEditor extends BorderPane {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+
+    private final ListView<Note> notesList;
+    private final TextField titleField;
+    private final TextArea sourceEditor;
+    private final WebView previewView;
+    private final ToggleGroup viewToggle;
+    private final Button saveButton;
+    private final Label statusLabel;
+    private final StackPane editorContainer;
+
+    private Note currentNote;
+    private Consumer<Note> onSave;
+    private Consumer<Note> onDelete;
+    private Runnable onNewNote;
+    private BiConsumer<Note, String> onTitleChanged;
+
+    private PauseTransition autoSaveTimer;
+    private boolean hasUnsavedChanges = false;
+
+    private final Parser markdownParser;
+    private final HtmlRenderer htmlRenderer;
+
+    public NotesEditor() {
+        // Initialize markdown parser
+        markdownParser = Parser.builder().build();
+        htmlRenderer = HtmlRenderer.builder().build();
+
+        // Create components
+        notesList = createNotesList();
+        titleField = createTitleField();
+        sourceEditor = createSourceEditor();
+        previewView = createPreviewView();
+        viewToggle = new ToggleGroup();
+        saveButton = createSaveButton();
+        statusLabel = createStatusLabel();
+        editorContainer = new StackPane();
+
+        // Setup layout
+        VBox leftSidebar = createSidebar();
+        VBox centerEditor = createEditor();
+
+        setLeft(leftSidebar);
+        setCenter(centerEditor);
+
+        // Setup auto-save
+        setupAutoSave();
+
+        // Show empty state initially
+        showEmptyState();
+    }
+
+    private ListView<Note> createNotesList() {
+        ListView<Note> list = new ListView<>();
+        list.setCellFactory(lv -> new NoteListCell());
+        list.getSelectionModel().selectedItemProperty().addListener((obs, old, newNote) -> {
+            if (newNote != null && newNote != currentNote) {
+                loadNote(newNote);
+            }
+        });
+        return list;
+    }
+
+    private VBox createSidebar() {
+        VBox sidebar = new VBox(15);
+        sidebar.setPrefWidth(280);
+        sidebar.setMinWidth(280);
+        sidebar.setMaxWidth(280);
+        sidebar.setPadding(new Insets(15));
+        sidebar.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;");
+
+        // Header
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        Label title = new Label("Notes");
+        title.setFont(Font.font("Poppins Bold", 18));
+        title.setStyle("-fx-text-fill: #000000;");
+        HBox.setHgrow(title, Priority.ALWAYS);
+
+        Button newNoteBtn = new Button("+ New Note");
+        newNoteBtn.setFont(Font.font("Poppins Regular", 12));
+        newNoteBtn.setStyle(
+                "-fx-background-color: #4285f4; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-padding: 6 12 6 12; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand;");
+        newNoteBtn.setOnAction(e -> {
+            if (onNewNote != null) {
+                onNewNote.run();
+            }
+        });
+
+        header.getChildren().addAll(title, newNoteBtn);
+
+        VBox.setVgrow(notesList, Priority.ALWAYS);
+
+        sidebar.getChildren().addAll(header, notesList);
+        return sidebar;
+    }
+
+    private TextField createTitleField() {
+        TextField field = new TextField();
+        field.setPromptText("Note title");
+        field.setFont(Font.font("Poppins Medium", 16));
+        field.setStyle(
+                "-fx-background-color: transparent; " +
+                        "-fx-border-width: 0; " +
+                        "-fx-text-fill: #000000;");
+        field.textProperty().addListener((obs, old, newVal) -> {
+            hasUnsavedChanges = true;
+            statusLabel.setText("Unsaved changes");
+            statusLabel.setStyle("-fx-text-fill: #F9A825;");
+            if (currentNote != null && onTitleChanged != null) {
+                onTitleChanged.accept(currentNote, newVal);
+            }
+            restartAutoSave();
+        });
+        return field;
+    }
+
+    private TextArea createSourceEditor() {
+        TextArea editor = new TextArea();
+        editor.setPromptText("Write your notes in Markdown...");
+        editor.setWrapText(true);
+        editor.setFont(Font.font("Consolas", 14));
+        editor.setStyle("-fx-background-color: #FFFFFF; -fx-control-inner-background: #FFFFFF;");
+        editor.textProperty().addListener((obs, old, newVal) -> {
+            hasUnsavedChanges = true;
+            statusLabel.setText("Unsaved changes");
+            statusLabel.setStyle("-fx-text-fill: #F9A825;");
+            restartAutoSave();
+        });
+        return editor;
+    }
+
+    private WebView createPreviewView() {
+        WebView view = new WebView();
+        view.setContextMenuEnabled(false);
+        return view;
+    }
+
+    private Button createSaveButton() {
+        Button btn = new Button("💾 Save");
+        btn.setFont(Font.font("Poppins Regular", 14));
+        btn.setStyle(
+                "-fx-background-color: #4285f4; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-padding: 8 16 8 16; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand;");
+        btn.setDisable(true);
+        btn.setOnAction(e -> saveCurrentNote());
+        return btn;
+    }
+
+    private Label createStatusLabel() {
+        Label label = new Label("");
+        label.setFont(Font.font("Poppins Regular", 12));
+        label.setStyle("-fx-text-fill: #9E9E9E;");
+        return label;
+    }
+
+    private VBox createEditor() {
+        VBox editor = new VBox();
+        editor.setStyle("-fx-background-color: #FFFFFF;");
+
+        // Toolbar
+        HBox toolbar = createToolbar();
+
+        // Editor container (will hold either source or preview)
+        editorContainer.setPadding(new Insets(20));
+        VBox.setVgrow(editorContainer, Priority.ALWAYS);
+
+        editor.getChildren().addAll(toolbar, editorContainer);
+        return editor;
+    }
+
+    private HBox createToolbar() {
+        HBox toolbar = new HBox(10);
+        toolbar.setPrefHeight(50);
+        toolbar.setPadding(new Insets(10));
+        toolbar.setAlignment(Pos.CENTER_LEFT);
+        toolbar.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;");
+
+        HBox.setHgrow(titleField, Priority.ALWAYS);
+
+        // View toggle buttons
+        ToggleButton sourceBtn = new ToggleButton("Source");
+        ToggleButton previewBtn = new ToggleButton("Preview");
+
+        sourceBtn.setToggleGroup(viewToggle);
+        previewBtn.setToggleGroup(viewToggle);
+
+        sourceBtn.setSelected(true);
+
+        String inactiveStyle = "-fx-background-color: transparent; " +
+                "-fx-text-fill: #616161; " +
+                "-fx-border-color: #E0E0E0; " +
+                "-fx-border-width: 1; " +
+                "-fx-padding: 8 16 8 16; " +
+                "-fx-font-family: 'Poppins Regular'; " +
+                "-fx-font-size: 14px; " +
+                "-fx-cursor: hand;";
+
+        String activeStyle = "-fx-background-color: #FFFFFF; " +
+                "-fx-text-fill: #4285f4; " +
+                "-fx-border-color: #4285f4; " +
+                "-fx-border-width: 1; " +
+                "-fx-padding: 8 16 8 16; " +
+                "-fx-font-family: 'Poppins Medium'; " +
+                "-fx-font-size: 14px; " +
+                "-fx-cursor: hand;";
+
+        sourceBtn.setStyle(activeStyle);
+        previewBtn.setStyle(inactiveStyle);
+
+        sourceBtn.setOnAction(e -> {
+            sourceBtn.setStyle(activeStyle);
+            previewBtn.setStyle(inactiveStyle);
+            showSourceEditor();
+        });
+
+        previewBtn.setOnAction(e -> {
+            previewBtn.setStyle(activeStyle);
+            sourceBtn.setStyle(inactiveStyle);
+            showPreview();
+        });
+
+        // Round corners
+        sourceBtn.setStyle(
+                sourceBtn.getStyle() + "-fx-background-radius: 6 0 0 6; -fx-border-radius: 6 0 0 6;");
+        previewBtn.setStyle(
+                previewBtn.getStyle() + "-fx-background-radius: 0 6 6 0; -fx-border-radius: 0 6 6 0;");
+
+        HBox toggleContainer = new HBox(0, sourceBtn, previewBtn);
+
+        Button deleteBtn = new Button("🗑");
+        deleteBtn.setFont(Font.font(16));
+        deleteBtn.setStyle(
+                "-fx-background-color: transparent; " +
+                        "-fx-text-fill: #616161; " +
+                        "-fx-padding: 8; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand;");
+        deleteBtn.setOnMouseEntered(e -> deleteBtn.setStyle(
+                "-fx-background-color: #FFEBEE; " +
+                        "-fx-text-fill: #C62828; " +
+                        "-fx-padding: 8; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand;"));
+        deleteBtn.setOnMouseExited(e -> deleteBtn.setStyle(
+                "-fx-background-color: transparent; " +
+                        "-fx-text-fill: #616161; " +
+                        "-fx-padding: 8; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand;"));
+        deleteBtn.setOnAction(e -> deleteCurrentNote());
+
+        toolbar.getChildren().addAll(titleField, toggleContainer, statusLabel, saveButton, deleteBtn);
+        return toolbar;
+    }
+
+    private void showSourceEditor() {
+        editorContainer.getChildren().clear();
+        editorContainer.getChildren().add(sourceEditor);
+    }
+
+    private void showPreview() {
+        editorContainer.getChildren().clear();
+        updatePreview();
+        editorContainer.getChildren().add(previewView);
+    }
+
+    private void updatePreview() {
+        String markdown = sourceEditor.getText();
+        String html = convertMarkdownToHtml(markdown);
+        previewView.getEngine().loadContent(html);
+    }
+
+    private String convertMarkdownToHtml(String markdown) {
+        if (markdown == null || markdown.isEmpty()) {
+            return "<html><body style='font-family: Poppins, sans-serif; padding: 20px;'><p style='color: #9E9E9E;'>No content</p></body></html>";
+        }
+
+        org.commonmark.node.Node document = markdownParser.parse(markdown);
+        String htmlContent = htmlRenderer.render(document);
+
+        return String.format(
+                "<html><head><style>" +
+                        "body { font-family: 'Poppins', sans-serif; font-size: 14px; line-height: 1.6; padding: 20px; }"
+                        +
+                        "h1 { font-size: 32px; font-weight: bold; }" +
+                        "h2 { font-size: 24px; font-weight: bold; }" +
+                        "h3 { font-size: 20px; font-weight: bold; }" +
+                        "code { background-color: #F5F5F5; padding: 2px 6px; border-radius: 4px; font-family: Consolas, monospace; }"
+                        +
+                        "pre { background-color: #F5F5F5; padding: 15px; border-radius: 6px; overflow-x: auto; }" +
+                        "pre code { background-color: transparent; padding: 0; }" +
+                        "a { color: #4285f4; text-decoration: underline; }" +
+                        "blockquote { border-left: 4px solid #E0E0E0; padding-left: 15px; color: #616161; }" +
+                        "</style></head><body>%s</body></html>",
+                htmlContent);
+    }
+
+    private void showEmptyState() {
+        VBox emptyState = new VBox(20);
+        emptyState.setAlignment(Pos.CENTER);
+
+        Label icon = new Label("📝");
+        icon.setStyle("-fx-font-size: 72px;");
+
+        Label message = new Label("Select a note or create a new one");
+        message.setFont(Font.font("Poppins Regular", 18));
+        message.setStyle("-fx-text-fill: #9E9E9E;");
+
+        emptyState.getChildren().addAll(icon, message);
+
+        editorContainer.getChildren().clear();
+        editorContainer.getChildren().add(emptyState);
+    }
+
+    private void setupAutoSave() {
+        autoSaveTimer = new PauseTransition(Duration.seconds(2));
+        autoSaveTimer.setOnFinished(e -> saveCurrentNote());
+    }
+
+    private void restartAutoSave() {
+        autoSaveTimer.stop();
+        autoSaveTimer.playFromStart();
+        saveButton.setDisable(false);
+    }
+
+    private void saveCurrentNote() {
+        if (currentNote != null && hasUnsavedChanges) {
+            currentNote.setTitle(titleField.getText().trim());
+            currentNote.setContent(sourceEditor.getText());
+
+            if (onSave != null) {
+                statusLabel.setText("Saving...");
+                statusLabel.setStyle("-fx-text-fill: #4285f4;");
+
+                onSave.accept(currentNote);
+
+                hasUnsavedChanges = false;
+                saveButton.setDisable(true);
+
+                statusLabel.setText("✓ Saved");
+                statusLabel.setStyle("-fx-text-fill: #388E3C;");
+
+                // Refresh notes list
+                notesList.refresh();
+            }
+        }
+    }
+
+    private void deleteCurrentNote() {
+        if (currentNote != null && onDelete != null) {
+            onDelete.accept(currentNote);
+            currentNote = null;
+            showEmptyState();
+        }
+    }
+
+    private void loadNote(Note note) {
+        // Save current note if has changes
+        if (hasUnsavedChanges && currentNote != null) {
+            saveCurrentNote();
+        }
+
+        currentNote = note;
+        titleField.setText(note.getTitle());
+        sourceEditor.setText(note.getContent() != null ? note.getContent() : "");
+
+        hasUnsavedChanges = false;
+        saveButton.setDisable(true);
+        statusLabel.setText("");
+
+        showSourceEditor();
+        ((ToggleButton) viewToggle.getToggles().get(0)).setSelected(true);
+    }
+
+    public void loadNotes(List<Note> notes) {
+        notesList.getItems().setAll(notes);
+
+        if (notes.isEmpty()) {
+            showEmptyState();
+            currentNote = null;
+        }
+    }
+
+    public void selectNote(Note note) {
+        notesList.getSelectionModel().select(note);
+    }
+
+    public void setOnSave(Consumer<Note> handler) {
+        this.onSave = handler;
+    }
+
+    public void setOnDelete(Consumer<Note> handler) {
+        this.onDelete = handler;
+    }
+
+    public void setOnNewNote(Runnable handler) {
+        this.onNewNote = handler;
+    }
+
+    public void setOnTitleChanged(BiConsumer<Note, String> handler) {
+        this.onTitleChanged = handler;
+    }
+
+    // Custom cell for notes list
+    private static class NoteListCell extends ListCell<Note> {
+        @Override
+        protected void updateItem(Note note, boolean empty) {
+            super.updateItem(note, empty);
+
+            if (empty || note == null) {
+                setGraphic(null);
+            } else {
+                VBox cell = new VBox(5);
+                cell.setPadding(new Insets(10));
+
+                Label title = new Label(note.getTitle());
+                title.setFont(Font.font("Poppins Medium", 14));
+                title.setStyle("-fx-text-fill: #000000;");
+                title.setMaxWidth(Double.MAX_VALUE);
+
+                String preview = note.getContent() != null && !note.getContent().isEmpty()
+                        ? note.getContent().substring(0, Math.min(60, note.getContent().length()))
+                        : "No content";
+                Label content = new Label(preview);
+                content.setFont(Font.font("Poppins Regular", 12));
+                content.setStyle("-fx-text-fill: #9E9E9E;");
+                content.setWrapText(true);
+                content.setMaxWidth(Double.MAX_VALUE);
+
+                Label date = new Label("Updated: " + DATE_FORMATTER.format(note.getUpdatedAt()));
+                date.setFont(Font.font("Poppins Regular", 11));
+                date.setStyle("-fx-text-fill: #BDBDBD;");
+
+                cell.getChildren().addAll(title, content, date);
+                setGraphic(cell);
+            }
+        }
+    }
+}

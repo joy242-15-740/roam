@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class OperationsView extends VBox {
 
@@ -19,6 +20,8 @@ public class OperationsView extends VBox {
     private final StackPane contentArea;
     private final VBox emptyState;
 
+    private Consumer<Operation> onOperationClick;
+
     public OperationsView(OperationsController controller) {
         this.controller = controller;
         this.tableView = new OperationTableView();
@@ -26,6 +29,11 @@ public class OperationsView extends VBox {
         this.emptyState = createEmptyState();
 
         initialize();
+    }
+
+    public void setOnOperationClick(Consumer<Operation> handler) {
+        this.onOperationClick = handler;
+        tableView.setOnOperationClick(handler);
     }
 
     private void initialize() {

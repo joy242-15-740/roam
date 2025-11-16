@@ -10,14 +10,16 @@
         
         <!-- Entity classes -->
         <class>com.roam.model.Operation</class>
+        <class>com.roam.model.Task</class>
+        <class>com.roam.model.Note</class>
         
         <properties>
             <!-- H2 Database Configuration -->
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name="jakarta.persistence.jdbc.url" 
                       value="jdbc:h2:file:~/roam/roamdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
-            <property name="jakarta.persistence.jdbc.user" value="admin"/>
-            <property name="jakarta.persistence.jdbc.password" value="MirFaiyazSir123"/>
+            <property name="jakarta.persistence.jdbc.user" value="sa"/>
+            <property name="jakarta.persistence.jdbc.password" value=""/>
             
             <!-- Hibernate Configuration -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
