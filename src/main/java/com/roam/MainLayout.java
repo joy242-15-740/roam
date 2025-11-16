@@ -319,8 +319,9 @@ public class MainLayout extends BorderPane {
     }
 
     private void showOperationsView() {
-        Label placeholder = createPlaceholder("Coming Soon");
-        contentArea.getChildren().add(placeholder);
+        com.roam.controller.OperationsController controller = new com.roam.controller.OperationsController();
+        com.roam.view.OperationsView operationsView = new com.roam.view.OperationsView(controller);
+        contentArea.getChildren().add(operationsView);
     }
 
     private void showCalendarView() {

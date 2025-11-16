@@ -1,7 +1,10 @@
 package com.roam;
 
+import com.roam.service.DatabaseService;
+import com.roam.util.HibernateUtil;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -12,41 +15,72 @@ public class RoamApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Load custom fonts
-        Font regularFont = loadFonts();
-        Font boldFont = Font.font("Poppins Bold", 14);
-
-        // Create main layout with fonts
-        MainLayout mainLayout = new MainLayout(regularFont, boldFont);
-
-        // Create scene
-        Scene scene = new Scene(mainLayout, 200, 200);
-
-        // Load CSS
-        String css = Objects.requireNonNull(
-                getClass().getResource("/styles/application.css")).toExternalForm();
-        scene.getStylesheets().add(css);
-
-        // Set window properties
-        primaryStage.setTitle(" "); // Set empty title for minimalistic look
-        primaryStage.setScene(scene);
-
-        // Set minimum window size
-        primaryStage.setMinWidth(1024);
-        primaryStage.setMinHeight(600);
-
-        // Set application icon
         try {
-            Image icon = new Image(
-                    Objects.requireNonNull(
-                            getClass().getResourceAsStream("/icons/roam-icon.png")));
-            primaryStage.getIcons().add(icon);
-        } catch (Exception e) {
-            System.err.println("Failed to load application icon: " + e.getMessage());
-        }
+            // Initialize database FIRST
+            System.out.println("=".repeat(50));
+            System.out.println("🚀 Starting Roam Application");
+            System.out.println("=".repeat(50));
 
-        // Show window
-        primaryStage.show();
+            DatabaseService.initializeDatabase();
+
+            System.out.println("=".repeat(50));
+
+            // Load custom fonts
+            Font regularFont = loadFonts();
+            Font boldFont = Font.font("Poppins Bold", 14);
+
+            // Create main layout with fonts
+            MainLayout mainLayout = new MainLayout(regularFont, boldFont);
+
+            // Create scene
+            Scene scene = new Scene(mainLayout, 200, 200);
+
+            // Load CSS
+            String css = Objects.requireNonNull(
+                    getClass().getResource("/styles/application.css")).toExternalForm();
+            scene.getStylesheets().add(css);
+
+            // Set window properties
+            primaryStage.setTitle("Roam");
+            primaryStage.setScene(scene);
+
+            // Set minimum window size
+            primaryStage.setMinWidth(1024);
+            primaryStage.setMinHeight(600);
+
+            // Set application icon
+            try {
+                Image icon = new Image(
+                        Objects.requireNonNull(
+                                getClass().getResourceAsStream("/icons/roam-icon.png")));
+                primaryStage.getIcons().add(icon);
+            } catch (Exception e) {
+                System.err.println("Failed to load application icon: " + e.getMessage());
+            }
+
+            // Show window
+            primaryStage.show();
+
+            System.out.println("✓ Application started successfully");
+
+        } catch (Exception e) {
+            System.err.println("✗ Failed to start application: " + e.getMessage());
+            e.printStackTrace();
+            showErrorDialog("Database Error",
+                    "Failed to initialize database. The application will now close.",
+                    e.getMessage());
+            System.exit(1);
+        }
+    }
+
+    @Override
+    public void stop() {
+        // Shutdown Hibernate on application exit
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("🛑 Shutting down Roam Application");
+        System.out.println("=".repeat(50));
+        HibernateUtil.shutdown();
+        System.out.println("✓ Application shutdown complete");
     }
 
     private Font loadFonts() {
@@ -65,6 +99,14 @@ public class RoamApplication extends Application {
             System.err.println("✗ Failed to load fonts: " + e.getMessage());
         }
         return regularFont;
+    }
+
+    private void showErrorDialog(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     public static void main(String[] args) {

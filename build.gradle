@@ -18,7 +18,15 @@ javafx {
 }
 
 dependencies {
-    // We'll add more dependencies later (H2, Hibernate, CalendarFX, RichTextFX)
+    // Hibernate & JPA
+    implementation 'org.hibernate.orm:hibernate-core:6.4.1.Final'
+    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+    
+    // H2 Database
+    implementation 'com.h2database:h2:2.2.224'
+    
+    // Logging (required by Hibernate)
+    implementation 'org.slf4j:slf4j-simple:2.0.9'
 }
 
 application {

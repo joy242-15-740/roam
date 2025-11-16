@@ -1,0 +1,146 @@
+package com.roam.view;
+
+import com.roam.controller.OperationsController;
+import com.roam.model.Operation;
+import com.roam.view.components.OperationTableView;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+
+import java.util.List;
+
+public class OperationsView extends VBox {
+
+    private final OperationsController controller;
+    private final OperationTableView tableView;
+    private final StackPane contentArea;
+    private final VBox emptyState;
+
+    public OperationsView(OperationsController controller) {
+        this.controller = controller;
+        this.tableView = new OperationTableView();
+        this.contentArea = new StackPane();
+        this.emptyState = createEmptyState();
+
+        initialize();
+    }
+
+    private void initialize() {
+        // Configure container
+        setStyle("-fx-background-color: #FFFFFF;");
+        setSpacing(0);
+
+        // Create header
+        HBox header = createHeader();
+
+        // Configure content area
+        contentArea.setPadding(new Insets(20));
+        VBox.setVgrow(contentArea, Priority.ALWAYS);
+
+        // Configure table
+        controller.setTableView(tableView);
+        controller.setOnDataChanged(this::updateContent);
+
+        tableView.setOnEdit(controller::editOperation);
+        tableView.setOnDelete(controller::deleteOperation);
+
+        // Add components
+        getChildren().addAll(header, contentArea);
+
+        // Initial load
+        loadData();
+    }
+
+    private HBox createHeader() {
+        HBox header = new HBox();
+        header.setPrefHeight(60);
+        header.setPadding(new Insets(20));
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setStyle("-fx-background-color: #FFFFFF;");
+
+        // Title
+        Label title = new Label("Operations");
+        title.setFont(Font.font("Poppins Bold", 28));
+        title.setStyle("-fx-text-fill: #000000;");
+
+        // Spacer
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // New Operation button
+        Button newBtn = createNewOperationButton();
+
+        header.getChildren().addAll(title, spacer, newBtn);
+        return header;
+    }
+
+    private Button createNewOperationButton() {
+        Button btn = new Button("+ New Operation");
+        btn.setFont(Font.font("Poppins Regular", 14));
+        btn.setMinWidth(150);
+        btn.setPrefHeight(40);
+        btn.setPadding(new Insets(10, 20, 10, 20));
+        btn.setStyle(
+                "-fx-background-color: #4285f4; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-background-radius: 8; " +
+                        "-fx-cursor: hand;");
+
+        btn.setOnMouseEntered(e -> btn.setStyle(
+                "-fx-background-color: #3367d6; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-background-radius: 8; " +
+                        "-fx-cursor: hand;"));
+
+        btn.setOnMouseExited(e -> btn.setStyle(
+                "-fx-background-color: #4285f4; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-background-radius: 8; " +
+                        "-fx-cursor: hand;"));
+
+        btn.setOnAction(e -> controller.createOperation());
+
+        return btn;
+    }
+
+    private VBox createEmptyState() {
+        VBox container = new VBox(20);
+        container.setAlignment(Pos.CENTER);
+
+        // Icon
+        Label icon = new Label("📋");
+        icon.setStyle("-fx-font-size: 72px;");
+
+        // Title
+        Label title = new Label("No Operations Yet");
+        title.setFont(Font.font("Poppins Bold", 24));
+        title.setStyle("-fx-text-fill: #616161;");
+
+        // Description
+        Label description = new Label("Click '+ New Operation' above to create your first operation");
+        description.setFont(Font.font("Poppins Regular", 16));
+        description.setStyle("-fx-text-fill: #9E9E9E;");
+
+        container.getChildren().addAll(icon, title, description);
+        return container;
+    }
+
+    private void loadData() {
+        controller.refreshTable();
+    }
+
+    private void updateContent() {
+        List<Operation> operations = controller.loadOperations();
+
+        contentArea.getChildren().clear();
+
+        if (operations.isEmpty()) {
+            contentArea.getChildren().add(emptyState);
+        } else {
+            contentArea.getChildren().add(tableView);
+        }
+    }
+}

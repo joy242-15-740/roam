@@ -28,3 +28,117 @@
 .button:pressed {
     -fx-background-color: #2565d4;
 }
+
+/* TableView - Modern Card Style */
+.table-view {
+    -fx-background-color: #FFFFFF;
+    background-color: #FFFFFF;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    padding: 0;
+    
+    /* Subtle outer border only */
+    -fx-border-color: #E0E0E0;
+    border-color: #E0E0E0;
+    -fx-border-width: 1;
+    border-width: 1px;
+    -fx-border-radius: 0;
+    border-radius: 0;
+    -fx-background-radius: 0;
+    
+    /* Remove internal cell borders */
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Remove default corner and placeholder styling */
+.table-view .corner {
+    -fx-background-color: #F5F5F5;
+    background-color: #F5F5F5;
+}
+
+.table-view .placeholder {
+    -fx-background-color: transparent;
+    background-color: transparent;
+}
+
+/* Header background */
+.table-view .column-header-background {
+    -fx-background-color: #F5F5F5;
+    background-color: #F5F5F5;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: #F5F5F5;
+    background-color: #F5F5F5;
+}
+
+/* Header cells */
+.table-view .column-header {
+    -fx-background-color: #F5F5F5;
+    background-color: #F5F5F5;
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-font-family: 'Poppins SemiBold';
+    font-family: 'Poppins SemiBold';
+    -fx-text-fill: #424242;
+    -fx-font-size: 13px;
+    font-size: 13px;
+    -fx-padding: 12 16 12 16;
+    padding: 12px 16px 12px 16px;
+}
+
+/* Table rows */
+.table-row-cell {
+    -fx-background-color: #FFFFFF;
+    background-color: #FFFFFF;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #FAFAFA;
+    background-color: #FAFAFA;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #F0F4FF;
+    background-color: #F0F4FF;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #E3F2FD;
+    background-color: #E3F2FD;
+}
+
+.table-row-cell:selected:hover {
+    -fx-background-color: #BBDEFB;
+    background-color: #BBDEFB;
+}
+
+/* Table cells */
+.table-cell {
+    -fx-background-color: transparent;
+    background-color: transparent;
+    -fx-border-color: transparent;
+    border-color: transparent;
+    -fx-text-fill: #212121;
+    -fx-padding: 12 16 12 16;
+    padding: 12px 16px 12px 16px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-cell:selected {
+    -fx-text-fill: #212121;
+}
+
+/* Remove vertical/horizontal lines between cells */
+.table-view .column-header-background .nested-column-header .column-header {
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
