@@ -362,8 +362,9 @@ public class MainLayout extends BorderPane {
     }
 
     private void showCalendarView() {
-        Label placeholder = createPlaceholder("Coming Soon");
-        contentArea.getChildren().add(placeholder);
+        com.roam.controller.CalendarController controller = new com.roam.controller.CalendarController();
+        com.roam.view.CalendarView calendarView = new com.roam.view.CalendarView(controller);
+        contentArea.getChildren().add(calendarView);
     }
 
     private void showTasksView() {

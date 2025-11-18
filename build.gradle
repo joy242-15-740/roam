@@ -34,6 +34,9 @@ dependencies {
     // CommonMark for Markdown Parsing
     implementation 'org.commonmark:commonmark:0.21.0'
     
+    // Biweekly for iCalendar RRULE
+    implementation 'net.sf.biweekly:biweekly:0.6.8'
+    
     // Logging (required by Hibernate)
     implementation 'org.slf4j:slf4j-simple:2.0.9'
 }

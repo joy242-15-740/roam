@@ -45,6 +45,8 @@
 - **🔒 Privacy-First** - Your data stays on your machine, no cloud required
 - **🆓 Open Source** - Free forever, community-driven development
 
+
+
 ---
 
 ## ✨ Planned Features
@@ -446,7 +448,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ```
 MIT License
 
-Copyright (c) 2024 Roam Contributors
+Copyright (c) 2025 Roam Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
