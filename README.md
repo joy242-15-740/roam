@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<!-- Add your logo here -->
+<!--- Add your logo here --->
 <img src="https://raw.githubusercontent.com/joy242-15-740/roam/refs/heads/main/src/main/resources/icons/roam-icon.png" alt="Roam Logo" width="120" height="120">
 
 ### Personal Knowledge Management, Redefined
