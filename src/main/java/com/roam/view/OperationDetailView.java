@@ -1,5 +1,6 @@
 package com.roam.view;
 
+import com.roam.controller.CalendarController;
 import com.roam.controller.OperationDetailController;
 import com.roam.model.Note;
 import com.roam.model.Operation;
@@ -7,22 +8,25 @@ import com.roam.view.components.*;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 
 public class OperationDetailView extends BorderPane {
 
     private final OperationDetailController controller;
+    private final CalendarController calendarController;
     private final Runnable onNavigateBack;
 
     private OperationInfoCard infoCard;
     private KanbanBoard kanbanBoard;
+    private CalendarView calendarView;
     private NotesEditor notesEditor;
     private StackPane tasksCalendarContainer;
+    private ScrollPane mainScrollPane;
 
     private boolean showingKanban = true;
 
     public OperationDetailView(Operation operation, Runnable onNavigateBack) {
         this.controller = new OperationDetailController(operation);
+        this.calendarController = new CalendarController();
         this.onNavigateBack = onNavigateBack;
 
         initialize();
@@ -40,7 +44,16 @@ public class OperationDetailView extends BorderPane {
 
         // Create center content
         VBox centerContent = createCenterContent();
-        setCenter(centerContent);
+
+        // Wrap in ScrollPane for better UX
+        mainScrollPane = new ScrollPane(centerContent);
+        mainScrollPane.setFitToWidth(true);
+        mainScrollPane.setFitToHeight(true);
+        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        mainScrollPane.setStyle("-fx-background-color: #FFFFFF; -fx-background: #FFFFFF;");
+
+        setCenter(mainScrollPane);
     }
 
     private VBox createCenterContent() {
@@ -179,12 +192,14 @@ public class OperationDetailView extends BorderPane {
 
     private void showCalendar() {
         showingKanban = false;
-        // Calendar view placeholder
-        Label placeholder = new Label("📅 Calendar View\n\nComing in next update");
-        placeholder.setFont(Font.font("Poppins Regular", 18));
-        placeholder.setStyle("-fx-text-fill: #9E9E9E;");
+
+        // Create or update calendar view
+        if (calendarView == null) {
+            calendarView = new CalendarView(calendarController);
+        }
+
         tasksCalendarContainer.getChildren().clear();
-        tasksCalendarContainer.getChildren().add(placeholder);
+        tasksCalendarContainer.getChildren().add(calendarView);
     }
 
     private BorderPane createNotesView() {

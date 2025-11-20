@@ -1,6 +1,7 @@
 package com.roam.repository;
 
 import com.roam.model.Note;
+import com.roam.model.Tag;
 import com.roam.util.HibernateUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -94,6 +95,100 @@ public class NoteRepository {
     public void delete(Note note) {
         if (note != null && note.getId() != null) {
             delete(note.getId());
+        }
+    }
+
+    /**
+     * Find all notes
+     */
+    public List<Note> findAll() {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            TypedQuery<Note> query = em.createQuery(
+                    "SELECT n FROM Note n ORDER BY n.updatedAt DESC",
+                    Note.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Find all favorite notes
+     */
+    public List<Note> findFavorites() {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            TypedQuery<Note> query = em.createQuery(
+                    "SELECT n FROM Note n WHERE n.isFavorite = true ORDER BY n.updatedAt DESC",
+                    Note.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Find recent notes
+     */
+    public List<Note> findRecent(int limit) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            TypedQuery<Note> query = em.createQuery(
+                    "SELECT n FROM Note n ORDER BY n.updatedAt DESC",
+                    Note.class);
+            query.setMaxResults(limit);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Find notes by tag
+     */
+    public List<Note> findByTag(Tag tag) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            TypedQuery<Note> query = em.createQuery(
+                    "SELECT n FROM Note n JOIN n.tags t WHERE t.id = :tagId ORDER BY n.updatedAt DESC",
+                    Note.class);
+            query.setParameter("tagId", tag.getId());
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Search notes by query (title and content)
+     */
+    public List<Note> searchFullText(String query) {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            TypedQuery<Note> q = em.createQuery(
+                    "SELECT n FROM Note n WHERE LOWER(n.title) LIKE LOWER(:query) OR LOWER(n.content) LIKE LOWER(:query) ORDER BY n.updatedAt DESC",
+                    Note.class);
+            q.setParameter("query", "%" + query + "%");
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    /**
+     * Get total word count across all notes
+     */
+    public long getTotalWordCount() {
+        EntityManager em = HibernateUtil.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery(
+                    "SELECT SUM(n.wordCount) FROM Note n",
+                    Long.class);
+            Long result = query.getSingleResult();
+            return result != null ? result : 0L;
+        } finally {
+            em.close();
         }
     }
 }

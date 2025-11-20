@@ -12,6 +12,8 @@
         <class>com.roam.model.Operation</class>
         <class>com.roam.model.Task</class>
         <class>com.roam.model.Note</class>
+        <class>com.roam.model.Tag</class>
+        <class>com.roam.model.NoteTemplate</class>
         <class>com.roam.model.CalendarEvent</class>
         <class>com.roam.model.CalendarSource</class>
         

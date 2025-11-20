@@ -374,8 +374,10 @@ public class MainLayout extends BorderPane {
     }
 
     private void showWikiView() {
-        Label placeholder = createPlaceholder("Coming Soon");
-        contentArea.getChildren().add(placeholder);
+        com.roam.controller.WikiController controller = new com.roam.controller.WikiController();
+        com.roam.view.WikiView wikiView = new com.roam.view.WikiView(controller, regularFont, boldFont);
+        contentArea.setPadding(new Insets(0)); // Remove padding for wiki view
+        contentArea.getChildren().add(wikiView);
     }
 
     private Label createPlaceholder(String text) {

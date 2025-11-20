@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
@@ -18,6 +19,7 @@ public class OperationsView extends VBox {
     private final OperationsController controller;
     private final OperationTableView tableView;
     private final StackPane contentArea;
+    private final ScrollPane scrollPane;
     private final VBox emptyState;
 
     private Consumer<Operation> onOperationClick;
@@ -26,6 +28,7 @@ public class OperationsView extends VBox {
         this.controller = controller;
         this.tableView = new OperationTableView();
         this.contentArea = new StackPane();
+        this.scrollPane = new ScrollPane();
         this.emptyState = createEmptyState();
 
         initialize();
@@ -44,9 +47,20 @@ public class OperationsView extends VBox {
         // Create header
         HBox header = createHeader();
 
+        // Configure scroll pane
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setStyle("-fx-background-color: #FFFFFF; -fx-background: #FFFFFF;");
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
+
         // Configure content area
         contentArea.setPadding(new Insets(20));
-        VBox.setVgrow(contentArea, Priority.ALWAYS);
+        contentArea.setStyle("-fx-background-color: #FFFFFF;");
+
+        // Set content area in scroll pane
+        scrollPane.setContent(contentArea);
 
         // Configure table
         controller.setTableView(tableView);
@@ -56,7 +70,7 @@ public class OperationsView extends VBox {
         tableView.setOnDelete(controller::deleteOperation);
 
         // Add components
-        getChildren().addAll(header, contentArea);
+        getChildren().addAll(header, scrollPane);
 
         // Initial load
         loadData();
@@ -147,7 +161,12 @@ public class OperationsView extends VBox {
 
         if (operations.isEmpty()) {
             contentArea.getChildren().add(emptyState);
+            // Center empty state in available space
+            StackPane.setAlignment(emptyState, Pos.CENTER);
         } else {
+            // Configure table for scrollable content
+            tableView.setMaxHeight(Double.MAX_VALUE);
+            VBox.setVgrow(tableView, Priority.ALWAYS);
             contentArea.getChildren().add(tableView);
         }
     }

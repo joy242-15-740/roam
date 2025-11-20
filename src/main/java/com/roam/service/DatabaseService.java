@@ -20,6 +20,10 @@ public class DatabaseService {
             if (testConnection()) {
                 System.out.println("✓ Database initialized successfully");
                 System.out.println("📍 Database location: " + getDatabasePath());
+
+                // Initialize default templates
+                DataInitializer initializer = new DataInitializer();
+                initializer.initializeDefaultTemplates();
             } else {
                 System.err.println("✗ Database connection test failed");
             }
