@@ -1,9 +1,11 @@
 package com.roam;
 
 import com.roam.model.Operation;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -58,11 +60,10 @@ public class MainLayout extends BorderPane {
 
     private VBox createSidebar() {
         VBox sidebar = new VBox(15);
+        sidebar.getStyleClass().add("sidebar");
         sidebar.setPrefWidth(SIDEBAR_WIDTH_EXPANDED);
         sidebar.setMinWidth(SIDEBAR_WIDTH_EXPANDED);
         sidebar.setMaxWidth(SIDEBAR_WIDTH_EXPANDED);
-        sidebar.setPadding(new Insets(20));
-        sidebar.setStyle("-fx-background-color: #F5F5F5;");
 
         // Header container with title and toggle button
         HBox header = new HBox(10);
@@ -77,25 +78,8 @@ public class MainLayout extends BorderPane {
 
         // Toggle button
         toggleButton = new Button("☰");
+        toggleButton.getStyleClass().add("icon-button");
         toggleButton.setPrefSize(30, 30);
-        toggleButton.setStyle(
-                "-fx-background-color: transparent;" +
-                        "-fx-text-fill: #000000;" +
-                        "-fx-font-size: 18px;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-background-radius: 5;");
-        toggleButton.setOnMouseEntered(e -> toggleButton.setStyle(
-                "-fx-background-color: #FFFFFF;" +
-                        "-fx-text-fill: #000000;" +
-                        "-fx-font-size: 18px;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-background-radius: 5;"));
-        toggleButton.setOnMouseExited(e -> toggleButton.setStyle(
-                "-fx-background-color: transparent;" +
-                        "-fx-text-fill: #000000;" +
-                        "-fx-font-size: 18px;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-background-radius: 5;"));
         toggleButton.setOnAction(e -> toggleSidebar());
 
         header.getChildren().addAll(titleLabel, toggleButton);
@@ -209,9 +193,9 @@ public class MainLayout extends BorderPane {
 
     private Button createNavButton(String text, boolean active) {
         Button button = new Button(text);
+        button.getStyleClass().add("nav-button");
         button.setPrefWidth(200);
         button.setPrefHeight(45);
-        button.setPadding(new Insets(10, 15, 10, 15));
         button.setAlignment(Pos.CENTER_LEFT);
 
         // Apply initial state
@@ -222,53 +206,13 @@ public class MainLayout extends BorderPane {
 
     private void updateButtonState(Button button, boolean active) {
         if (active) {
-            // Active state: blue background, white text, no hover
-            button.setStyle(
-                    "-fx-background-color: #4285f4;" +
-                            "-fx-text-fill: #FFFFFF;" +
-                            "-fx-background-radius: 8;" +
-                            "-fx-font-family: 'Poppins Regular';" +
-                            "-fx-font-size: 14px;" +
-                            "-fx-alignment: CENTER-LEFT;" +
-                            "-fx-cursor: hand;");
-            // Remove hover effect for active button
-            button.setOnMouseEntered(null);
-            button.setOnMouseExited(null);
+            button.getStyleClass().remove("nav-button");
+            button.getStyleClass().add("nav-button");
+            button.getStyleClass().add("nav-button:selected");
+            button.setStyle("-fx-background-color: #4285f4; -fx-text-fill: #FFFFFF;");
         } else {
-            // Inactive state: transparent background, black text
-            button.setStyle(
-                    "-fx-background-color: transparent;" +
-                            "-fx-text-fill: #000000;" +
-                            "-fx-background-radius: 8;" +
-                            "-fx-font-family: 'Poppins Regular';" +
-                            "-fx-font-size: 14px;" +
-                            "-fx-alignment: CENTER-LEFT;" +
-                            "-fx-cursor: hand;");
-            // Add hover effect for inactive buttons
-            button.setOnMouseEntered(e -> {
-                if (!isButtonActive(button)) {
-                    button.setStyle(
-                            "-fx-background-color: #FFFFFF;" +
-                                    "-fx-text-fill: #000000;" +
-                                    "-fx-background-radius: 8;" +
-                                    "-fx-font-family: 'Poppins Regular';" +
-                                    "-fx-font-size: 14px;" +
-                                    "-fx-alignment: CENTER-LEFT;" +
-                                    "-fx-cursor: hand;");
-                }
-            });
-            button.setOnMouseExited(e -> {
-                if (!isButtonActive(button)) {
-                    button.setStyle(
-                            "-fx-background-color: transparent;" +
-                                    "-fx-text-fill: #000000;" +
-                                    "-fx-background-radius: 8;" +
-                                    "-fx-font-family: 'Poppins Regular';" +
-                                    "-fx-font-size: 14px;" +
-                                    "-fx-alignment: CENTER-LEFT;" +
-                                    "-fx-cursor: hand;");
-                }
-            });
+            button.getStyleClass().removeAll("nav-button:selected");
+            button.setStyle("");
         }
     }
 
@@ -298,31 +242,55 @@ public class MainLayout extends BorderPane {
         updateButtonState(tasksBtn, false);
         updateButtonState(wikiBtn, false);
 
-        // Clear content area
-        contentArea.getChildren().clear();
-
         // Clear current operation when switching main views
         currentOperation = null;
 
         // Activate selected button and show corresponding view
+        Node newView = null;
         switch (viewName) {
             case "operations":
                 updateButtonState(operationsBtn, true);
-                showOperationsView();
+                com.roam.controller.OperationsController opsController = new com.roam.controller.OperationsController();
+                com.roam.view.OperationsView operationsView = new com.roam.view.OperationsView(opsController);
+                operationsView.setOnOperationClick(this::showOperationDetail);
+                newView = operationsView;
                 break;
             case "calendar":
                 updateButtonState(calendarBtn, true);
-                showCalendarView();
+                com.roam.controller.CalendarController calController = new com.roam.controller.CalendarController();
+                newView = new com.roam.view.CalendarView(calController);
                 break;
             case "tasks":
                 updateButtonState(tasksBtn, true);
-                showTasksView();
+                com.roam.controller.TasksController tasksController = new com.roam.controller.TasksController();
+                newView = new com.roam.view.TasksView(tasksController);
                 break;
             case "wiki":
                 updateButtonState(wikiBtn, true);
-                showWikiView();
+                com.roam.controller.WikiController wikiController = new com.roam.controller.WikiController();
+                newView = new com.roam.view.WikiView(wikiController, regularFont, boldFont);
+                contentArea.setPadding(new Insets(0)); // Remove padding for wiki view
                 break;
         }
+
+        if (newView != null) {
+            showViewWithTransition(newView);
+        }
+    }
+
+    private void showViewWithTransition(Node view) {
+        // Clear content area
+        contentArea.getChildren().clear();
+
+        // Set initial opacity to 0 for fade in effect
+        view.setOpacity(0);
+        contentArea.getChildren().add(view);
+
+        // Create and play fade transition
+        FadeTransition ft = new FadeTransition(Duration.millis(300), view);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+        ft.play();
     }
 
     private void showOperationsView() {
@@ -332,7 +300,7 @@ public class MainLayout extends BorderPane {
         // Set click handler to navigate to operation detail
         operationsView.setOnOperationClick(this::showOperationDetail);
 
-        contentArea.getChildren().add(operationsView);
+        showViewWithTransition(operationsView);
     }
 
     public void showOperationDetail(Operation operation) {
@@ -345,14 +313,13 @@ public class MainLayout extends BorderPane {
         updateButtonState(wikiBtn, false);
 
         // Clear and show detail view
-        contentArea.getChildren().clear();
         contentArea.setPadding(new Insets(0)); // Remove padding for detail view
 
         com.roam.view.OperationDetailView detailView = new com.roam.view.OperationDetailView(
                 operation,
                 this::navigateBackToOperations);
 
-        contentArea.getChildren().add(detailView);
+        showViewWithTransition(detailView);
     }
 
     private void navigateBackToOperations() {
@@ -364,20 +331,20 @@ public class MainLayout extends BorderPane {
     private void showCalendarView() {
         com.roam.controller.CalendarController controller = new com.roam.controller.CalendarController();
         com.roam.view.CalendarView calendarView = new com.roam.view.CalendarView(controller);
-        contentArea.getChildren().add(calendarView);
+        showViewWithTransition(calendarView);
     }
 
     private void showTasksView() {
         com.roam.controller.TasksController controller = new com.roam.controller.TasksController();
         com.roam.view.TasksView tasksView = new com.roam.view.TasksView(controller);
-        contentArea.getChildren().add(tasksView);
+        showViewWithTransition(tasksView);
     }
 
     private void showWikiView() {
         com.roam.controller.WikiController controller = new com.roam.controller.WikiController();
         com.roam.view.WikiView wikiView = new com.roam.view.WikiView(controller, regularFont, boldFont);
         contentArea.setPadding(new Insets(0)); // Remove padding for wiki view
-        contentArea.getChildren().add(wikiView);
+        showViewWithTransition(wikiView);
     }
 
     private Label createPlaceholder(String text) {
