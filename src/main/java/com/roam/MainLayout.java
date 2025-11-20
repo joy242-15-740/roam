@@ -368,8 +368,9 @@ public class MainLayout extends BorderPane {
     }
 
     private void showTasksView() {
-        Label placeholder = createPlaceholder("Coming Soon");
-        contentArea.getChildren().add(placeholder);
+        com.roam.controller.TasksController controller = new com.roam.controller.TasksController();
+        com.roam.view.TasksView tasksView = new com.roam.view.TasksView(controller);
+        contentArea.getChildren().add(tasksView);
     }
 
     private void showWikiView() {

@@ -1,5 +1,6 @@
 package com.roam.view.components;
 
+import com.roam.model.Operation;
 import com.roam.model.Priority;
 import com.roam.model.Task;
 import com.roam.model.TaskStatus;
@@ -10,6 +11,7 @@ import javafx.scene.text.Font;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public class TaskDialog extends Dialog<Task> {
 
@@ -17,17 +19,26 @@ public class TaskDialog extends Dialog<Task> {
     private final TextArea descriptionField;
     private final ComboBox<TaskStatus> statusCombo;
     private final ComboBox<Priority> priorityCombo;
+    private final ComboBox<Operation> operationCombo;
     private final DatePicker dueDatePicker;
     private final Label errorLabel;
 
     private final Task task;
     private final boolean isEditMode;
     private final Runnable onDelete;
+    private final List<Operation> operations;
 
+    // Constructor for operation-specific tasks (existing behavior)
     public TaskDialog(Task task, Runnable onDelete) {
+        this(task, onDelete, null);
+    }
+
+    // Constructor for global task creation with operation selector
+    public TaskDialog(Task task, Runnable onDelete, List<Operation> operations) {
         this.task = task;
         this.isEditMode = task != null && task.getId() != null;
         this.onDelete = onDelete;
+        this.operations = operations;
 
         setTitle(isEditMode ? "Edit Task" : "Create New Task");
         setResizable(false);
@@ -37,6 +48,7 @@ public class TaskDialog extends Dialog<Task> {
         descriptionField = createTextArea("Enter task description (optional)", 1000);
         statusCombo = createStatusComboBox();
         priorityCombo = createPriorityComboBox();
+        operationCombo = operations != null ? createOperationComboBox(operations) : null;
         dueDatePicker = createDatePicker();
         errorLabel = createErrorLabel();
 
@@ -75,15 +87,25 @@ public class TaskDialog extends Dialog<Task> {
 
         // Validation
         Button submitBtn = (Button) getDialogPane().lookupButton(submitButton);
-        // In edit mode, enable button if title is already filled
+        // In edit mode or when no operation selector, enable button if title is filled
         submitBtn.setDisable(!isEditMode && (titleField.getText() == null || titleField.getText().trim().isEmpty()));
 
         titleField.textProperty().addListener((obs, old, newVal) -> {
-            submitBtn.setDisable(newVal == null || newVal.trim().isEmpty());
+            boolean titleEmpty = newVal == null || newVal.trim().isEmpty();
+            boolean operationEmpty = operationCombo != null && operationCombo.getValue() == null;
+            submitBtn.setDisable(titleEmpty || operationEmpty);
             if (newVal != null && !newVal.trim().isEmpty()) {
                 errorLabel.setVisible(false);
             }
         });
+
+        if (operationCombo != null) {
+            operationCombo.valueProperty().addListener((obs, old, newVal) -> {
+                boolean titleEmpty = titleField.getText() == null || titleField.getText().trim().isEmpty();
+                boolean operationEmpty = newVal == null;
+                submitBtn.setDisable(titleEmpty || operationEmpty);
+            });
+        }
 
         // Convert result
         setResultConverter(dialogButton -> {
@@ -155,6 +177,19 @@ public class TaskDialog extends Dialog<Task> {
         return combo;
     }
 
+    private ComboBox<Operation> createOperationComboBox(List<Operation> ops) {
+        ComboBox<Operation> combo = new ComboBox<>();
+        combo.getItems().addAll(ops);
+        combo.setPromptText("Select operation");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+
+        combo.setButtonCell(new OperationListCell());
+        combo.setCellFactory(lv -> new OperationListCell());
+
+        return combo;
+    }
+
     private DatePicker createDatePicker() {
         DatePicker picker = new DatePicker();
         picker.setPromptText("Select due date");
@@ -178,7 +213,14 @@ public class TaskDialog extends Dialog<Task> {
         layout.getChildren().addAll(
                 createFieldGroup("Title *", titleField),
                 errorLabel,
-                createFieldGroup("Description", descriptionField),
+                createFieldGroup("Description", descriptionField));
+
+        // Add operation selector if available
+        if (operationCombo != null) {
+            layout.getChildren().add(createFieldGroup("Operation *", operationCombo));
+        }
+
+        layout.getChildren().addAll(
                 createFieldGroup("Status *", statusCombo),
                 createFieldGroup("Priority *", priorityCombo),
                 createFieldGroup("Due Date", dueDatePicker));
@@ -203,6 +245,12 @@ public class TaskDialog extends Dialog<Task> {
             descriptionField.setText(task.getDescription());
             statusCombo.setValue(task.getStatus());
             priorityCombo.setValue(task.getPriority());
+            if (operationCombo != null && task.getOperationId() != null) {
+                operationCombo.getItems().stream()
+                        .filter(op -> op.getId().equals(task.getOperationId()))
+                        .findFirst()
+                        .ifPresent(operationCombo::setValue);
+            }
             if (task.getDueDate() != null) {
                 dueDatePicker.setValue(task.getDueDate().toLocalDate());
             }
@@ -222,6 +270,11 @@ public class TaskDialog extends Dialog<Task> {
         t.setDescription(descriptionField.getText().trim());
         t.setStatus(statusCombo.getValue());
         t.setPriority(priorityCombo.getValue());
+
+        // Set operation ID if operation selector is present
+        if (operationCombo != null && operationCombo.getValue() != null) {
+            t.setOperationId(operationCombo.getValue().getId());
+        }
 
         if (dueDatePicker.getValue() != null) {
             // Combine date with end of day time
@@ -284,6 +337,18 @@ public class TaskDialog extends Dialog<Task> {
                     case MEDIUM -> setText("Medium");
                     case LOW -> setText("Low");
                 }
+            }
+        }
+    }
+
+    private static class OperationListCell extends ListCell<Operation> {
+        @Override
+        protected void updateItem(Operation item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+            } else {
+                setText(item.getName());
             }
         }
     }
