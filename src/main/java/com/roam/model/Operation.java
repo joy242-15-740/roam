@@ -38,6 +38,9 @@ public class Operation {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(length = 50)
+    private String region;
+
     // Constructors
     public Operation() {
     }
@@ -133,6 +136,14 @@ public class Operation {
         this.updatedAt = updatedAt;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
     @Override
     public String toString() {
         return "Operation{" +
@@ -141,6 +152,7 @@ public class Operation {
                 ", status=" + status +
                 ", priority=" + priority +
                 ", dueDate=" + dueDate +
+                ", region='" + region + '\'' +
                 '}';
     }
 }

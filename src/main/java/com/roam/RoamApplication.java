@@ -1,7 +1,9 @@
 package com.roam;
 
 import com.roam.service.DatabaseService;
+import com.roam.service.SecurityContext;
 import com.roam.util.HibernateUtil;
+import com.roam.view.LockScreen;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -32,17 +34,31 @@ public class RoamApplication extends Application {
             // Create main layout with fonts
             MainLayout mainLayout = new MainLayout(regularFont, boldFont);
 
-            // Create scene
-            Scene scene = new Scene(mainLayout, 200, 200);
-
             // Load CSS
             String css = Objects.requireNonNull(
                     getClass().getResource("/styles/application.css")).toExternalForm();
-            scene.getStylesheets().add(css);
+
+            // Check security
+            if (SecurityContext.getInstance().isLockEnabled()) {
+                LockScreen lockScreen = new LockScreen(() -> {
+                    Scene scene = new Scene(mainLayout, 1024, 600);
+                    scene.getStylesheets().add(css);
+                    primaryStage.setScene(scene);
+                    primaryStage.centerOnScreen();
+                });
+
+                Scene lockScene = new Scene(lockScreen, 1024, 600);
+                lockScene.getStylesheets().add(css);
+                primaryStage.setScene(lockScene);
+            } else {
+                // Create scene
+                Scene scene = new Scene(mainLayout, 1024, 600);
+                scene.getStylesheets().add(css);
+                primaryStage.setScene(scene);
+            }
 
             // Set window properties
             primaryStage.setTitle("Roam");
-            primaryStage.setScene(scene);
 
             // Set minimum window size
             primaryStage.setMinWidth(1024);

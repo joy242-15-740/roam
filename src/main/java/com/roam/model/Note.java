@@ -44,6 +44,18 @@ public class Note {
     @Column(name = "linked_note_ids", columnDefinition = "TEXT")
     private String linkedNoteIds;
 
+    @Column(length = 50)
+    private String region;
+
+    @Column(name = "task_id")
+    private Long taskId;
+
+    @Column(name = "calendar_event_id")
+    private Long calendarEventId;
+
+    @Column(name = "banner_url", length = 512)
+    private String bannerUrl;
+
     // Constructors
     public Note() {
         this.title = "Untitled Note";
@@ -186,6 +198,38 @@ public class Note {
 
     public void setLinkedNoteIds(String linkedNoteIds) {
         this.linkedNoteIds = linkedNoteIds;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
+
+    public Long getCalendarEventId() {
+        return calendarEventId;
+    }
+
+    public void setCalendarEventId(Long calendarEventId) {
+        this.calendarEventId = calendarEventId;
+    }
+
+    public String getBannerUrl() {
+        return bannerUrl;
+    }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
     }
 
     @Override

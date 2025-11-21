@@ -62,6 +62,12 @@ public class CalendarEvent {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(length = 50)
+    private String region;
+
+    @Column(name = "note_id")
+    private Long noteId;
+
     // Constructors
     public CalendarEvent() {
         this.isAllDay = false;
@@ -231,6 +237,22 @@ public class CalendarEvent {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public Long getNoteId() {
+        return noteId;
+    }
+
+    public void setNoteId(Long noteId) {
+        this.noteId = noteId;
     }
 
     @Override

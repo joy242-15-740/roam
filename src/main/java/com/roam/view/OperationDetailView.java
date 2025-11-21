@@ -48,7 +48,7 @@ public class OperationDetailView extends BorderPane {
         // Wrap in ScrollPane for better UX
         mainScrollPane = new ScrollPane(centerContent);
         mainScrollPane.setFitToWidth(true);
-        mainScrollPane.setFitToHeight(true);
+        mainScrollPane.setFitToHeight(false);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         mainScrollPane.setStyle("-fx-background-color: #FFFFFF; -fx-background: #FFFFFF;");
@@ -75,6 +75,7 @@ public class OperationDetailView extends BorderPane {
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
         tabPane.setStyle("-fx-font-family: 'Poppins Regular';");
+        tabPane.setMinHeight(800);
 
         // Tab 1: Tasks & Calendar
         Tab tasksTab = new Tab("✓📅 Tasks & Calendar");

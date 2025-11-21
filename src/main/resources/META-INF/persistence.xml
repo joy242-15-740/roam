@@ -16,6 +16,8 @@
         <class>com.roam.model.NoteTemplate</class>
         <class>com.roam.model.CalendarEvent</class>
         <class>com.roam.model.CalendarSource</class>
+        <class>com.roam.model.JournalEntry</class>
+        <class>com.roam.model.JournalTemplate</class>
         
         <properties>
             <!-- H2 Database Configuration -->

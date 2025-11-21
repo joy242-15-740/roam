@@ -22,6 +22,8 @@ public class MainLayout extends BorderPane {
     private Button calendarBtn;
     private Button tasksBtn;
     private Button wikiBtn;
+    private Button journalBtn;
+    private Button settingsBtn;
 
     // Sidebar components
     private VBox sidebar;
@@ -85,16 +87,20 @@ public class MainLayout extends BorderPane {
         header.getChildren().addAll(titleLabel, toggleButton);
 
         // Navigation buttons
-        operationsBtn = createNavButton("Operations", true);
-        calendarBtn = createNavButton("Calendar", false);
-        tasksBtn = createNavButton("Tasks", false);
-        wikiBtn = createNavButton("Wiki", false);
+        operationsBtn = createNavButton("📋 Operations", true);
+        calendarBtn = createNavButton("📅 Calendar", false);
+        tasksBtn = createNavButton("✓ Tasks", false);
+        wikiBtn = createNavButton("📝 Wiki", false);
+        journalBtn = createNavButton("📓 Journal", false);
+        settingsBtn = createNavButton("⚙ Settings", false);
 
         // Set button actions
         operationsBtn.setOnAction(e -> switchView("operations"));
         calendarBtn.setOnAction(e -> switchView("calendar"));
         tasksBtn.setOnAction(e -> switchView("tasks"));
         wikiBtn.setOnAction(e -> switchView("wiki"));
+        journalBtn.setOnAction(e -> switchView("journal"));
+        settingsBtn.setOnAction(e -> switchView("settings"));
 
         // Spacer to push content to top
         Region spacer = new Region();
@@ -106,6 +112,8 @@ public class MainLayout extends BorderPane {
                 calendarBtn,
                 tasksBtn,
                 wikiBtn,
+                journalBtn,
+                settingsBtn,
                 spacer);
 
         return sidebar;
@@ -135,22 +143,28 @@ public class MainLayout extends BorderPane {
         titleLabel.setManaged(false);
 
         // Update button text to show only icons
-        operationsBtn.setText(" ");
-        calendarBtn.setText(" ");
-        tasksBtn.setText(" ");
-        wikiBtn.setText(" ");
+        operationsBtn.setText("📋");
+        calendarBtn.setText("📅");
+        tasksBtn.setText("✓");
+        wikiBtn.setText("📝");
+        journalBtn.setText("📓");
+        settingsBtn.setText("⚙");
 
         // Center align buttons
         operationsBtn.setAlignment(Pos.CENTER);
         calendarBtn.setAlignment(Pos.CENTER);
         tasksBtn.setAlignment(Pos.CENTER);
         wikiBtn.setAlignment(Pos.CENTER);
+        journalBtn.setAlignment(Pos.CENTER);
+        settingsBtn.setAlignment(Pos.CENTER);
 
         // Adjust button widths
         operationsBtn.setPrefWidth(50);
         calendarBtn.setPrefWidth(50);
         tasksBtn.setPrefWidth(50);
         wikiBtn.setPrefWidth(50);
+        journalBtn.setPrefWidth(50);
+        settingsBtn.setPrefWidth(50);
 
         // Update toggle button icon
         toggleButton.setText("☰");
@@ -170,22 +184,28 @@ public class MainLayout extends BorderPane {
         titleLabel.setManaged(true);
 
         // Restore full button text
-        operationsBtn.setText("Operations");
-        calendarBtn.setText("Calendar");
-        tasksBtn.setText("Tasks");
-        wikiBtn.setText("Wiki");
+        operationsBtn.setText("📋 Operations");
+        calendarBtn.setText("📅 Calendar");
+        tasksBtn.setText("✓ Tasks");
+        wikiBtn.setText("📝 Wiki");
+        journalBtn.setText("📓 Journal");
+        settingsBtn.setText("⚙ Settings");
 
         // Left align buttons
         operationsBtn.setAlignment(Pos.CENTER_LEFT);
         calendarBtn.setAlignment(Pos.CENTER_LEFT);
         tasksBtn.setAlignment(Pos.CENTER_LEFT);
         wikiBtn.setAlignment(Pos.CENTER_LEFT);
+        journalBtn.setAlignment(Pos.CENTER_LEFT);
+        settingsBtn.setAlignment(Pos.CENTER_LEFT);
 
         // Restore button widths
         operationsBtn.setPrefWidth(200);
         calendarBtn.setPrefWidth(200);
         tasksBtn.setPrefWidth(200);
         wikiBtn.setPrefWidth(200);
+        journalBtn.setPrefWidth(200);
+        settingsBtn.setPrefWidth(200);
 
         // Update toggle button icon
         toggleButton.setText("☰");
@@ -209,10 +229,10 @@ public class MainLayout extends BorderPane {
             button.getStyleClass().remove("nav-button");
             button.getStyleClass().add("nav-button");
             button.getStyleClass().add("nav-button:selected");
-            button.setStyle("-fx-background-color: #4285f4; -fx-text-fill: #FFFFFF;");
+            button.setStyle("-fx-background-color: #4285f4; -fx-text-fill: #FFFFFF; -fx-font-family: 'Poppins Bold';");
         } else {
             button.getStyleClass().removeAll("nav-button:selected");
-            button.setStyle("");
+            button.setStyle("-fx-font-family: 'Poppins';");
         }
     }
 
@@ -241,6 +261,8 @@ public class MainLayout extends BorderPane {
         updateButtonState(calendarBtn, false);
         updateButtonState(tasksBtn, false);
         updateButtonState(wikiBtn, false);
+        updateButtonState(journalBtn, false);
+        updateButtonState(settingsBtn, false);
 
         // Clear current operation when switching main views
         currentOperation = null;
@@ -270,6 +292,15 @@ public class MainLayout extends BorderPane {
                 com.roam.controller.WikiController wikiController = new com.roam.controller.WikiController();
                 newView = new com.roam.view.WikiView(wikiController, regularFont, boldFont);
                 contentArea.setPadding(new Insets(0)); // Remove padding for wiki view
+                break;
+            case "journal":
+                updateButtonState(journalBtn, true);
+                newView = new com.roam.view.JournalView();
+                contentArea.setPadding(new Insets(0));
+                break;
+            case "settings":
+                updateButtonState(settingsBtn, true);
+                newView = new com.roam.view.SettingsView();
                 break;
         }
 

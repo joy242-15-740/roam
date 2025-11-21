@@ -32,12 +32,25 @@
     -roam-blue: #4285f4;
     -roam-blue-hover: #3367d6;
     -roam-blue-pressed: #2565d4;
+    -roam-blue-light: #E3F2FD;
     -roam-gray-bg: #F5F5F5;
     -roam-gray-light: #FAFAFA;
     -roam-border: #E0E0E0;
     -roam-text-primary: #212121;
-    -roam-text-secondary: #757575;
+    -roam-text-secondary: #616161;
     -roam-text-hint: #9E9E9E;
+    
+    /* Status Colors - WCAG Compliant */
+    -roam-red: #D32F2F;
+    -roam-red-bg: #FFEBEE;
+    -roam-orange: #F57C00;
+    -roam-orange-bg: #FFF3E0;
+    -roam-green: #388E3C;
+    -roam-green-bg: #E8F5E9;
+    -roam-blue-tag: #1976D2;
+    -roam-blue-tag-bg: #E3F2FD;
+    
+    /* Elevation Shadows - Removed invalid multi-shadow definitions */
     
     /* Metrics */
     -roam-radius: 12px;
@@ -60,28 +73,34 @@
     -fx-padding: 20;
     -fx-spacing: 15;
     -fx-pref-width: 240;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 2, 0);
 }
 
 /* 2. Navigation Buttons */
 .nav-button {
     -fx-background-color: transparent;
-    -fx-text-fill: -roam-text-primary;
+    -fx-text-fill: -roam-text-secondary;
     -fx-alignment: CENTER_LEFT;
     -fx-font-size: 14px;
-    -fx-padding: 12 20;
+    -fx-font-family: 'Poppins';
+    -fx-padding: 12 20 12 16;
     -fx-background-radius: -roam-radius-small;
     -fx-cursor: hand;
-    -fx-font-family: 'Poppins';
 }
 
 .nav-button:hover {
     -fx-background-color: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
 }
 
 .nav-button:selected {
     -fx-background-color: -roam-blue;
     -fx-text-fill: #FFFFFF;
+    -fx-font-family: 'Poppins Bold';
+    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.4), 8, 0, 0, 2);
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-insets: 0;
 }
 
 /* 3. Action Buttons (The "+" buttons) */
@@ -93,15 +112,20 @@
     -fx-padding: 10 20;
     -fx-background-radius: -roam-radius-small;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 8, 0, 0, 2);
 }
 
 .action-button:hover {
     -fx-background-color: -roam-blue-hover;
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.5), 12, 0, 0, 4);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }
 
 .action-button:pressed {
     -fx-background-color: -roam-blue-pressed;
+    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 6, 0, 0, 1);
+    -fx-translate-y: 1;
 }
 
 /* 4. Cards (Used in Kanban, Operations List) */
@@ -112,12 +136,13 @@
     -fx-border-radius: -roam-radius;
     -fx-border-width: 1px;
     -fx-padding: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
     -fx-cursor: hand;
 }
 
 .roam-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0, 0, 6);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 8);
+    -fx-translate-y: -2;
 }
 
 /* 5. Standard Buttons */
@@ -243,6 +268,9 @@
     border-radius: -roam-radius;
     -fx-background-radius: -roam-radius;
     
+    /* Material elevation */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
+    
     /* Remove internal cell borders */
     -fx-table-cell-border-color: transparent;
 }
@@ -280,13 +308,13 @@
 }
 
 .table-view .column-header .label {
-    -fx-font-family: 'Poppins SemiBold';
-    font-family: 'Poppins SemiBold';
-    -fx-text-fill: -roam-text-secondary;
+    -fx-font-family: 'Poppins Bold';
+    font-family: 'Poppins Bold';
+    -fx-text-fill: -roam-text-primary;
     -fx-font-size: 13px;
     font-size: 13px;
-    -fx-padding: 12 16 12 16;
-    padding: 12px 16px 12px 16px;
+    -fx-padding: 14 16 14 16;
+    padding: 14px 16px 14px 16px;
 }
 
 /* Table rows */
@@ -325,8 +353,8 @@
     -fx-border-color: transparent;
     border-color: transparent;
     -fx-text-fill: -roam-text-primary;
-    -fx-padding: 12 16 12 16;
-    padding: 12px 16px 12px 16px;
+    -fx-padding: 16 16 16 16;
+    padding: 16px 16px 16px 16px;
     -fx-alignment: CENTER_LEFT;
 }
 
@@ -413,6 +441,88 @@
     -fx-font-family: 'Poppins';
     -fx-font-size: 16px;
     -fx-text-fill: -roam-text-hint;
+}
+
+/* ============================================
+   STATUS & PRIORITY BADGES (WCAG Compliant)
+   ============================================ */
+
+/* Priority Badges */
+.priority-high {
+    -fx-background-color: -roam-red-bg;
+    -fx-text-fill: -roam-red;
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.priority-medium {
+    -fx-background-color: -roam-orange-bg;
+    -fx-text-fill: -roam-orange;
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.priority-low {
+    -fx-background-color: -roam-green-bg;
+    -fx-text-fill: -roam-green;
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+/* Status Badges */
+.status-ongoing {
+    -fx-background-color: -roam-blue-tag-bg;
+    -fx-text-fill: -roam-blue-tag;
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.status-in-progress {
+    -fx-background-color: -roam-orange-bg;
+    -fx-text-fill: -roam-orange;
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.status-end {
+    -fx-background-color: -roam-green-bg;
+    -fx-text-fill: -roam-green;
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+/* ============================================
+   ICON BUTTON STYLING
+   ============================================ */
+
+.icon-button-small {
+    -fx-background-color: transparent;
+    -fx-text-fill: -roam-text-hint;
+    -fx-font-size: 16px;
+    -fx-padding: 4;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+.icon-button-small:hover {
+    -fx-background-color: -roam-gray-light;
+    -fx-text-fill: -roam-text-primary;
+}
+
+.icon-button-small:pressed {
+    -fx-background-color: -roam-gray-bg;
 }
 .table-view {
     -fx-background-color: #FFFFFF;

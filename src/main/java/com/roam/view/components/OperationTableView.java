@@ -32,13 +32,12 @@ public class OperationTableView extends TableView<Operation> {
 
         // Create columns
         TableColumn<Operation, String> nameCol = createNameColumn();
-        TableColumn<Operation, String> purposeCol = createPurposeColumn();
         TableColumn<Operation, OperationStatus> statusCol = createStatusColumn();
         TableColumn<Operation, Priority> priorityCol = createPriorityColumn();
         TableColumn<Operation, LocalDate> dueDateCol = createDueDateColumn();
         TableColumn<Operation, Void> actionsCol = createActionsColumn();
 
-        getColumns().addAll(nameCol, purposeCol, statusCol, priorityCol, dueDateCol, actionsCol);
+        getColumns().addAll(nameCol, statusCol, priorityCol, dueDateCol, actionsCol);
 
         // Row height
         setFixedCellSize(50);
@@ -70,28 +69,6 @@ public class OperationTableView extends TableView<Operation> {
         col.setCellValueFactory(new PropertyValueFactory<>("name"));
         col.setPrefWidth(200);
         col.setStyle("-fx-alignment: CENTER-LEFT;");
-        return col;
-    }
-
-    private TableColumn<Operation, String> createPurposeColumn() {
-        TableColumn<Operation, String> col = new TableColumn<>("Purpose");
-        col.setCellValueFactory(new PropertyValueFactory<>("purpose"));
-        col.setPrefWidth(250);
-        col.setCellFactory(tc -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null || item.isEmpty()) {
-                    setText(null);
-                    setStyle("");
-                } else {
-                    // Truncate at 50 characters
-                    String display = item.length() > 50 ? item.substring(0, 50) + "..." : item;
-                    setText(display);
-                    setStyle("-fx-alignment: CENTER-LEFT;");
-                }
-            }
-        });
         return col;
     }
 
@@ -160,30 +137,16 @@ public class OperationTableView extends TableView<Operation> {
         col.setPrefWidth(80);
         col.setSortable(false);
         col.setCellFactory(tc -> new TableCell<>() {
-            private final Button editBtn = createActionButton("✎", "Edit operation");
-            private final Button deleteBtn = createActionButton("🗑", "Delete operation");
-            private final HBox container = new HBox(5, editBtn, deleteBtn);
+            private final Button menuBtn = createKebabMenuButton();
+            private final HBox container = new HBox(menuBtn);
 
             {
                 container.setAlignment(Pos.CENTER);
 
-                editBtn.setOnAction(e -> {
+                menuBtn.setOnAction(e -> {
                     Operation op = getTableView().getItems().get(getIndex());
-                    if (onEdit != null)
-                        onEdit.accept(op);
+                    showContextMenu(op, menuBtn);
                 });
-
-                deleteBtn.setOnAction(e -> {
-                    Operation op = getTableView().getItems().get(getIndex());
-                    if (onDelete != null)
-                        onDelete.accept(op);
-                });
-
-                // Delete button special hover
-                deleteBtn.setOnMouseEntered(e -> deleteBtn
-                        .setStyle("-fx-background-color: #FFEBEE; -fx-cursor: hand; -fx-background-radius: 4;"));
-                deleteBtn.setOnMouseExited(e -> deleteBtn
-                        .setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-background-radius: 4;"));
             }
 
             @Override
@@ -195,44 +158,51 @@ public class OperationTableView extends TableView<Operation> {
         return col;
     }
 
-    private Button createActionButton(String icon, String tooltip) {
-        Button btn = new Button(icon);
-        btn.setPrefSize(24, 24);
-        btn.setStyle(
-                "-fx-background-color: transparent; " +
-                        "-fx-font-size: 16px; " +
-                        "-fx-cursor: hand; " +
-                        "-fx-background-radius: 4;");
-        btn.setTooltip(new Tooltip(tooltip));
-
-        btn.setOnMouseEntered(e -> btn.setStyle(
-                "-fx-background-color: #F5F5F5; -fx-font-size: 16px; -fx-cursor: hand; -fx-background-radius: 4;"));
-        btn.setOnMouseExited(e -> btn.setStyle(
-                "-fx-background-color: transparent; -fx-font-size: 16px; -fx-cursor: hand; -fx-background-radius: 4;"));
-
+    private Button createKebabMenuButton() {
+        Button btn = new Button("⋮");
+        btn.getStyleClass().add("icon-button-small");
+        btn.setPrefSize(28, 28);
+        btn.setTooltip(new Tooltip("More actions"));
         return btn;
+    }
+
+    private void showContextMenu(Operation operation, Button sourceButton) {
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem editItem = new MenuItem("✎ Edit");
+        editItem.setOnAction(e -> {
+            if (onEdit != null)
+                onEdit.accept(operation);
+        });
+
+        MenuItem deleteItem = new MenuItem("🗑 Delete");
+        deleteItem.setStyle("-fx-text-fill: #D32F2F;");
+        deleteItem.setOnAction(e -> {
+            if (onDelete != null)
+                onDelete.accept(operation);
+        });
+
+        contextMenu.getItems().addAll(editItem, new SeparatorMenuItem(), deleteItem);
+        contextMenu.show(sourceButton, javafx.geometry.Side.BOTTOM, 0, 0);
     }
 
     private Label createStatusBadge(OperationStatus status) {
         Label badge = new Label();
-        badge.setFont(Font.font("Poppins Regular", 12));
-        badge.setStyle("-fx-padding: 4 12 4 12; -fx-background-radius: 12;");
+        badge.setFont(Font.font("Poppins SemiBold", 11));
+        badge.setStyle("-fx-padding: 5 12 5 12; -fx-background-radius: 4;");
 
         switch (status) {
             case ONGOING -> {
                 badge.setText("Ongoing");
-                badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #E3F2FD; -fx-text-fill: #1976D2;");
+                badge.getStyleClass().add("status-ongoing");
             }
             case IN_PROGRESS -> {
                 badge.setText("In Progress");
-                badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #FFF3E0; -fx-text-fill: #F57C00;");
+                badge.getStyleClass().add("status-in-progress");
             }
             case END -> {
                 badge.setText("Completed");
-                badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #E8F5E9; -fx-text-fill: #388E3C;");
+                badge.getStyleClass().add("status-end");
             }
         }
 
@@ -241,24 +211,21 @@ public class OperationTableView extends TableView<Operation> {
 
     private Label createPriorityBadge(Priority priority) {
         Label badge = new Label();
-        badge.setFont(Font.font("Poppins Regular", 12));
-        badge.setStyle("-fx-padding: 4 12 4 12; -fx-background-radius: 12;");
+        badge.setFont(Font.font("Poppins Bold", 11));
+        badge.setStyle("-fx-padding: 5 12 5 12; -fx-background-radius: 4;");
 
         switch (priority) {
             case HIGH -> {
                 badge.setText("High");
-                badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #FFEBEE; -fx-text-fill: #C62828;");
+                badge.getStyleClass().add("priority-high");
             }
             case MEDIUM -> {
                 badge.setText("Medium");
-                badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #FFF8E1; -fx-text-fill: #F9A825;");
+                badge.getStyleClass().add("priority-medium");
             }
             case LOW -> {
                 badge.setText("Low");
-                badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #F5F5F5; -fx-text-fill: #616161;");
+                badge.getStyleClass().add("priority-low");
             }
         }
 

@@ -43,6 +43,15 @@ public class Task {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(length = 50)
+    private String region;
+
+    @Column(name = "calendar_event_id")
+    private Long calendarEventId;
+
+    @Column(name = "note_id")
+    private Long noteId;
+
     // Constructors
     public Task() {
         this.status = TaskStatus.TODO;
@@ -157,6 +166,30 @@ public class Task {
         this.updatedAt = updatedAt;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public Long getCalendarEventId() {
+        return calendarEventId;
+    }
+
+    public void setCalendarEventId(Long calendarEventId) {
+        this.calendarEventId = calendarEventId;
+    }
+
+    public Long getNoteId() {
+        return noteId;
+    }
+
+    public void setNoteId(Long noteId) {
+        this.noteId = noteId;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -165,6 +198,10 @@ public class Task {
                 ", status=" + status +
                 ", priority=" + priority +
                 ", dueDate=" + dueDate +
+                ", assignee='" + assignee + '\'' +
+                ", region='" + region + '\'' +
+                ", calendarEventId=" + calendarEventId +
+                ", noteId=" + noteId +
                 '}';
     }
 }
