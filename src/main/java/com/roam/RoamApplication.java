@@ -2,6 +2,7 @@ package com.roam;
 
 import com.roam.service.DatabaseService;
 import com.roam.service.SecurityContext;
+import com.roam.service.SettingsService;
 import com.roam.util.HibernateUtil;
 import com.roam.view.LockScreen;
 import javafx.application.Application;
@@ -38,22 +39,36 @@ public class RoamApplication extends Application {
             String css = Objects.requireNonNull(
                     getClass().getResource("/styles/application.css")).toExternalForm();
 
+            // Load settings
+            SettingsService settingsService = SettingsService.getInstance();
+            String theme = settingsService.getSettings().getTheme();
+            boolean isDark = "Dark".equalsIgnoreCase(theme);
+
             // Check security
             if (SecurityContext.getInstance().isLockEnabled()) {
                 LockScreen lockScreen = new LockScreen(() -> {
                     Scene scene = new Scene(mainLayout, 1024, 600);
                     scene.getStylesheets().add(css);
+                    if (isDark) {
+                        scene.getRoot().getStyleClass().add("dark");
+                    }
                     primaryStage.setScene(scene);
                     primaryStage.centerOnScreen();
                 });
 
                 Scene lockScene = new Scene(lockScreen, 1024, 600);
                 lockScene.getStylesheets().add(css);
+                if (isDark) {
+                    lockScene.getRoot().getStyleClass().add("dark");
+                }
                 primaryStage.setScene(lockScene);
             } else {
                 // Create scene
                 Scene scene = new Scene(mainLayout, 1024, 600);
                 scene.getStylesheets().add(css);
+                if (isDark) {
+                    scene.getRoot().getStyleClass().add("dark");
+                }
                 primaryStage.setScene(scene);
             }
 

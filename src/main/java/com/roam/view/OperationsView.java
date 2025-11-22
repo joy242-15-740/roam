@@ -41,7 +41,7 @@ public class OperationsView extends VBox {
 
     private void initialize() {
         // Configure container
-        setStyle("-fx-background-color: #FFFFFF;");
+        setStyle("-fx-background-color: -roam-bg-primary;");
         setSpacing(0);
 
         // Create header
@@ -50,14 +50,14 @@ public class OperationsView extends VBox {
         // Configure scroll pane
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        scrollPane.setStyle("-fx-background-color: #FFFFFF; -fx-background: #FFFFFF;");
+        scrollPane.setStyle("-fx-background-color: -roam-bg-primary; -fx-background: -roam-bg-primary;");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         // Configure content area
         contentArea.setPadding(new Insets(20));
-        contentArea.setStyle("-fx-background-color: #FFFFFF;");
+        contentArea.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Set content area in scroll pane
         scrollPane.setContent(contentArea);
@@ -81,12 +81,12 @@ public class OperationsView extends VBox {
         header.setPrefHeight(60);
         header.setPadding(new Insets(20));
         header.setAlignment(Pos.CENTER_LEFT);
-        header.setStyle("-fx-background-color: #FFFFFF;");
+        header.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Title
         Label title = new Label("Operations");
         title.setFont(Font.font("Poppins Bold", 28));
-        title.setStyle("-fx-text-fill: #000000;");
+        title.setStyle("-fx-text-fill: -roam-text-primary;");
 
         // Spacer
         Region spacer = new Region();
@@ -106,19 +106,19 @@ public class OperationsView extends VBox {
         btn.setPrefHeight(40);
         btn.setPadding(new Insets(10, 20, 10, 20));
         btn.setStyle(
-                "-fx-background-color: #4285f4; " +
+                "-fx-background-color: -roam-blue; " +
                         "-fx-text-fill: #FFFFFF; " +
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;");
 
         btn.setOnMouseEntered(e -> btn.setStyle(
-                "-fx-background-color: #3367d6; " +
+                "-fx-background-color: -roam-blue-hover; " +
                         "-fx-text-fill: #FFFFFF; " +
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;"));
 
         btn.setOnMouseExited(e -> btn.setStyle(
-                "-fx-background-color: #4285f4; " +
+                "-fx-background-color: -roam-blue; " +
                         "-fx-text-fill: #FFFFFF; " +
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;"));
@@ -139,12 +139,12 @@ public class OperationsView extends VBox {
         // Title
         Label title = new Label("No Operations Yet");
         title.setFont(Font.font("Poppins Bold", 24));
-        title.setStyle("-fx-text-fill: #616161;");
+        title.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         // Description
         Label description = new Label("Click '+ New Operation' above to create your first operation");
         description.setFont(Font.font("Poppins Regular", 16));
-        description.setStyle("-fx-text-fill: #9E9E9E;");
+        description.setStyle("-fx-text-fill: -roam-text-hint;");
 
         container.getChildren().addAll(icon, title, description);
         return container;

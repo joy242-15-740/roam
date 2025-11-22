@@ -23,6 +23,7 @@ public class MainLayout extends BorderPane {
     private Button tasksBtn;
     private Button wikiBtn;
     private Button journalBtn;
+    private Button statisticsBtn;
     private Button settingsBtn;
 
     // Sidebar components
@@ -92,6 +93,7 @@ public class MainLayout extends BorderPane {
         tasksBtn = createNavButton("✓ Tasks", false);
         wikiBtn = createNavButton("📝 Wiki", false);
         journalBtn = createNavButton("📓 Journal", false);
+        statisticsBtn = createNavButton("📊 Statistics", false);
         settingsBtn = createNavButton("⚙ Settings", false);
 
         // Set button actions
@@ -100,6 +102,7 @@ public class MainLayout extends BorderPane {
         tasksBtn.setOnAction(e -> switchView("tasks"));
         wikiBtn.setOnAction(e -> switchView("wiki"));
         journalBtn.setOnAction(e -> switchView("journal"));
+        statisticsBtn.setOnAction(e -> switchView("statistics"));
         settingsBtn.setOnAction(e -> switchView("settings"));
 
         // Spacer to push content to top
@@ -113,6 +116,7 @@ public class MainLayout extends BorderPane {
                 tasksBtn,
                 wikiBtn,
                 journalBtn,
+                statisticsBtn,
                 settingsBtn,
                 spacer);
 
@@ -148,6 +152,7 @@ public class MainLayout extends BorderPane {
         tasksBtn.setText("✓");
         wikiBtn.setText("📝");
         journalBtn.setText("📓");
+        statisticsBtn.setText("📊");
         settingsBtn.setText("⚙");
 
         // Center align buttons
@@ -156,6 +161,7 @@ public class MainLayout extends BorderPane {
         tasksBtn.setAlignment(Pos.CENTER);
         wikiBtn.setAlignment(Pos.CENTER);
         journalBtn.setAlignment(Pos.CENTER);
+        statisticsBtn.setAlignment(Pos.CENTER);
         settingsBtn.setAlignment(Pos.CENTER);
 
         // Adjust button widths
@@ -164,6 +170,7 @@ public class MainLayout extends BorderPane {
         tasksBtn.setPrefWidth(50);
         wikiBtn.setPrefWidth(50);
         journalBtn.setPrefWidth(50);
+        statisticsBtn.setPrefWidth(50);
         settingsBtn.setPrefWidth(50);
 
         // Update toggle button icon
@@ -189,6 +196,7 @@ public class MainLayout extends BorderPane {
         tasksBtn.setText("✓ Tasks");
         wikiBtn.setText("📝 Wiki");
         journalBtn.setText("📓 Journal");
+        statisticsBtn.setText("📊 Statistics");
         settingsBtn.setText("⚙ Settings");
 
         // Left align buttons
@@ -197,6 +205,7 @@ public class MainLayout extends BorderPane {
         tasksBtn.setAlignment(Pos.CENTER_LEFT);
         wikiBtn.setAlignment(Pos.CENTER_LEFT);
         journalBtn.setAlignment(Pos.CENTER_LEFT);
+        statisticsBtn.setAlignment(Pos.CENTER_LEFT);
         settingsBtn.setAlignment(Pos.CENTER_LEFT);
 
         // Restore button widths
@@ -205,6 +214,7 @@ public class MainLayout extends BorderPane {
         tasksBtn.setPrefWidth(200);
         wikiBtn.setPrefWidth(200);
         journalBtn.setPrefWidth(200);
+        statisticsBtn.setPrefWidth(200);
         settingsBtn.setPrefWidth(200);
 
         // Update toggle button icon
@@ -242,7 +252,7 @@ public class MainLayout extends BorderPane {
 
     private StackPane createContentArea() {
         StackPane content = new StackPane();
-        content.setStyle("-fx-background-color: #FFFFFF;");
+        content.setStyle("-fx-background-color: -roam-bg-primary;");
         content.setPadding(new Insets(30));
         content.setAlignment(Pos.CENTER);
 
@@ -262,6 +272,7 @@ public class MainLayout extends BorderPane {
         updateButtonState(tasksBtn, false);
         updateButtonState(wikiBtn, false);
         updateButtonState(journalBtn, false);
+        updateButtonState(statisticsBtn, false);
         updateButtonState(settingsBtn, false);
 
         // Clear current operation when switching main views
@@ -297,6 +308,12 @@ public class MainLayout extends BorderPane {
                 updateButtonState(journalBtn, true);
                 newView = new com.roam.view.JournalView();
                 contentArea.setPadding(new Insets(0));
+                break;
+            case "statistics":
+                updateButtonState(statisticsBtn, true);
+                com.roam.controller.WikiController statsController = new com.roam.controller.WikiController();
+                newView = new com.roam.view.StatisticsView(statsController);
+                contentArea.setPadding(new Insets(30));
                 break;
             case "settings":
                 updateButtonState(settingsBtn, true);

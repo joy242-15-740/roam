@@ -147,7 +147,7 @@ public class TaskRepository {
     /**
      * Find all tasks across all operations
      */
-    public List<Task> findAllTasks() {
+    public List<Task> findAll() {
         EntityManager em = HibernateUtil.getEntityManager();
         try {
             TypedQuery<Task> query = em.createQuery(
@@ -163,7 +163,7 @@ public class TaskRepository {
      * Find tasks with filters applied
      */
     public List<Task> findWithFilters(TaskFilter filter) {
-        List<Task> allTasks = findAllTasks();
+        List<Task> allTasks = findAll();
 
         // Apply filters in Java (simplified - in production use JPQL WHERE clauses)
         return allTasks.stream()

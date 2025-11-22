@@ -33,7 +33,7 @@ public class OperationDetailView extends BorderPane {
     }
 
     private void initialize() {
-        setStyle("-fx-background-color: #FFFFFF;");
+        setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Set data change listener
         controller.setOnDataChanged(this::refreshData);
@@ -51,7 +51,7 @@ public class OperationDetailView extends BorderPane {
         mainScrollPane.setFitToHeight(false);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        mainScrollPane.setStyle("-fx-background-color: #FFFFFF; -fx-background: #FFFFFF;");
+        mainScrollPane.setStyle("-fx-background-color: -roam-bg-primary; -fx-background: -roam-bg-primary;");
 
         setCenter(mainScrollPane);
     }
@@ -120,7 +120,7 @@ public class OperationDetailView extends BorderPane {
         HBox bar = new HBox(0);
         bar.setPadding(new Insets(15));
         bar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        bar.setStyle("-fx-background-color: #F5F5F5;");
+        bar.setStyle("-fx-background-color: -roam-gray-bg;");
 
         ToggleGroup group = new ToggleGroup();
 
@@ -140,7 +140,7 @@ public class OperationDetailView extends BorderPane {
                 "-fx-font-family: 'Poppins Regular'; " +
                 "-fx-font-size: 14px; " +
                 "-fx-cursor: hand; " +
-                "-fx-border-color: #E0E0E0; " +
+                "-fx-border-color: -roam-border; " +
                 "-fx-border-width: 1;";
 
         kanbanBtn.setStyle(baseStyle + "-fx-background-radius: 6 0 0 6; -fx-border-radius: 6 0 0 6;");
@@ -170,10 +170,10 @@ public class OperationDetailView extends BorderPane {
     private void updateToggleButtonStyle(ToggleButton button, boolean selected) {
         String baseStyle = "-fx-padding: 10 20 10 20; " +
                 "-fx-cursor: hand; " +
-                "-fx-border-color: " + (selected ? "#4285f4" : "#E0E0E0") + "; " +
+                "-fx-border-color: " + (selected ? "-roam-blue" : "-roam-border") + "; " +
                 "-fx-border-width: 1; " +
-                "-fx-background-color: " + (selected ? "#FFFFFF" : "transparent") + "; " +
-                "-fx-text-fill: " + (selected ? "#4285f4" : "#616161") + "; " +
+                "-fx-background-color: " + (selected ? "-roam-bg-primary" : "transparent") + "; " +
+                "-fx-text-fill: " + (selected ? "-roam-blue" : "-roam-text-secondary") + "; " +
                 "-fx-font-family: 'Poppins " + (selected ? "Medium" : "Regular") + "'; " +
                 "-fx-font-size: 14px;";
 
@@ -228,7 +228,7 @@ public class OperationDetailView extends BorderPane {
     }
 
     private void editOperation(Operation operation) {
-        OperationDialog dialog = new OperationDialog(operation);
+        OperationDialog dialog = new OperationDialog(operation, controller.getAllRegions());
         dialog.showAndWait().ifPresent(updatedOp -> {
             controller.updateOperation(updatedOp);
             infoCard.refresh(updatedOp);

@@ -1,7 +1,10 @@
 package com.roam.view.components;
 
+import com.roam.model.CalendarEvent;
+import com.roam.model.Note;
 import com.roam.model.Operation;
 import com.roam.model.Priority;
+import com.roam.model.Region;
 import com.roam.model.Task;
 import com.roam.model.TaskStatus;
 import javafx.geometry.Insets;
@@ -20,6 +23,9 @@ public class TaskDialog extends Dialog<Task> {
     private final ComboBox<TaskStatus> statusCombo;
     private final ComboBox<Priority> priorityCombo;
     private final ComboBox<Operation> operationCombo;
+    private final ComboBox<Region> regionCombo;
+    private final ComboBox<CalendarEvent> eventCombo;
+    private final ComboBox<Note> noteCombo;
     private final DatePicker dueDatePicker;
     private final Label errorLabel;
 
@@ -30,11 +36,12 @@ public class TaskDialog extends Dialog<Task> {
 
     // Constructor for operation-specific tasks (existing behavior)
     public TaskDialog(Task task, Runnable onDelete) {
-        this(task, onDelete, null);
+        this(task, onDelete, null, null, null, null);
     }
 
     // Constructor for global task creation with operation selector
-    public TaskDialog(Task task, Runnable onDelete, List<Operation> operations) {
+    public TaskDialog(Task task, Runnable onDelete, List<Operation> operations, List<Region> regions,
+            List<CalendarEvent> events, List<Note> notes) {
         this.task = task;
         this.isEditMode = task != null && task.getId() != null;
         this.onDelete = onDelete;
@@ -49,6 +56,9 @@ public class TaskDialog extends Dialog<Task> {
         statusCombo = createStatusComboBox();
         priorityCombo = createPriorityComboBox();
         operationCombo = operations != null ? createOperationComboBox(operations) : null;
+        regionCombo = regions != null ? createRegionComboBox(regions) : null;
+        eventCombo = events != null ? createEventComboBox(events) : null;
+        noteCombo = notes != null ? createNoteComboBox(notes) : null;
         dueDatePicker = createDatePicker();
         errorLabel = createErrorLabel();
 
@@ -190,6 +200,39 @@ public class TaskDialog extends Dialog<Task> {
         return combo;
     }
 
+    private ComboBox<Region> createRegionComboBox(List<Region> regions) {
+        ComboBox<Region> combo = new ComboBox<>();
+        combo.getItems().addAll(regions);
+        combo.setPromptText("Select Region");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setButtonCell(new RegionListCell());
+        combo.setCellFactory(lv -> new RegionListCell());
+        return combo;
+    }
+
+    private ComboBox<CalendarEvent> createEventComboBox(List<CalendarEvent> events) {
+        ComboBox<CalendarEvent> combo = new ComboBox<>();
+        combo.getItems().addAll(events);
+        combo.setPromptText("Link to Event");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setButtonCell(new CalendarEventListCell());
+        combo.setCellFactory(lv -> new CalendarEventListCell());
+        return combo;
+    }
+
+    private ComboBox<Note> createNoteComboBox(List<Note> notes) {
+        ComboBox<Note> combo = new ComboBox<>();
+        combo.getItems().addAll(notes);
+        combo.setPromptText("Link to Note");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setButtonCell(new NoteListCell());
+        combo.setCellFactory(lv -> new NoteListCell());
+        return combo;
+    }
+
     private DatePicker createDatePicker() {
         DatePicker picker = new DatePicker();
         picker.setPromptText("Select due date");
@@ -218,6 +261,18 @@ public class TaskDialog extends Dialog<Task> {
         // Add operation selector if available
         if (operationCombo != null) {
             layout.getChildren().add(createFieldGroup("Operation *", operationCombo));
+        }
+
+        if (regionCombo != null) {
+            layout.getChildren().add(createFieldGroup("Region", regionCombo));
+        }
+
+        if (eventCombo != null) {
+            layout.getChildren().add(createFieldGroup("Event", eventCombo));
+        }
+
+        if (noteCombo != null) {
+            layout.getChildren().add(createFieldGroup("Note", noteCombo));
         }
 
         layout.getChildren().addAll(
@@ -251,6 +306,24 @@ public class TaskDialog extends Dialog<Task> {
                         .findFirst()
                         .ifPresent(operationCombo::setValue);
             }
+            if (regionCombo != null && task.getRegion() != null) {
+                regionCombo.getItems().stream()
+                        .filter(r -> r.getName().equals(task.getRegion()))
+                        .findFirst()
+                        .ifPresent(regionCombo::setValue);
+            }
+            if (eventCombo != null && task.getCalendarEventId() != null) {
+                eventCombo.getItems().stream()
+                        .filter(e -> e.getId().equals(task.getCalendarEventId()))
+                        .findFirst()
+                        .ifPresent(eventCombo::setValue);
+            }
+            if (noteCombo != null && task.getNoteId() != null) {
+                noteCombo.getItems().stream()
+                        .filter(n -> n.getId().equals(task.getNoteId()))
+                        .findFirst()
+                        .ifPresent(noteCombo::setValue);
+            }
             if (task.getDueDate() != null) {
                 dueDatePicker.setValue(task.getDueDate().toLocalDate());
             }
@@ -274,6 +347,24 @@ public class TaskDialog extends Dialog<Task> {
         // Set operation ID if operation selector is present
         if (operationCombo != null && operationCombo.getValue() != null) {
             t.setOperationId(operationCombo.getValue().getId());
+        }
+
+        if (regionCombo != null && regionCombo.getValue() != null) {
+            t.setRegion(regionCombo.getValue().getName());
+        } else {
+            t.setRegion(null);
+        }
+
+        if (eventCombo != null && eventCombo.getValue() != null) {
+            t.setCalendarEventId(eventCombo.getValue().getId());
+        } else {
+            t.setCalendarEventId(null);
+        }
+
+        if (noteCombo != null && noteCombo.getValue() != null) {
+            t.setNoteId(noteCombo.getValue().getId());
+        } else {
+            t.setNoteId(null);
         }
 
         if (dueDatePicker.getValue() != null) {
@@ -349,6 +440,44 @@ public class TaskDialog extends Dialog<Task> {
                 setText(null);
             } else {
                 setText(item.getName());
+            }
+        }
+    }
+
+    private static class RegionListCell extends ListCell<Region> {
+        @Override
+        protected void updateItem(Region item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                setText(item.getName());
+                setStyle("-fx-text-fill: " + item.getColor() + ";");
+            }
+        }
+    }
+
+    private static class CalendarEventListCell extends ListCell<CalendarEvent> {
+        @Override
+        protected void updateItem(CalendarEvent item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+            } else {
+                setText(item.getTitle());
+            }
+        }
+    }
+
+    private static class NoteListCell extends ListCell<Note> {
+        @Override
+        protected void updateItem(Note item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+            } else {
+                setText(item.getTitle());
             }
         }
     }

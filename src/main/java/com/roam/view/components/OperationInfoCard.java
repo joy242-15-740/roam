@@ -28,8 +28,8 @@ public class OperationInfoCard extends VBox {
         setSpacing(15);
         setPadding(new Insets(25));
         setStyle(
-                "-fx-background-color: #FFFFFF; " +
-                        "-fx-border-color: #E0E0E0; " +
+                "-fx-background-color: -roam-bg-primary; " +
+                        "-fx-border-color: -roam-border; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 8; " +
                         "-fx-background-radius: 8;");
@@ -64,27 +64,27 @@ public class OperationInfoCard extends VBox {
         // Operation name
         Label nameLabel = new Label(operation.getName());
         nameLabel.setFont(Font.font("Poppins Bold", 32));
-        nameLabel.setStyle("-fx-text-fill: #000000;");
+        nameLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         HBox.setHgrow(nameLabel, javafx.scene.layout.Priority.ALWAYS);
 
         // Edit button
         Button editBtn = new Button("✎ Edit Info");
         editBtn.setFont(Font.font("Poppins Regular", 14));
         editBtn.setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-text-fill: #000000; " +
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-text-fill: -roam-text-primary; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
         editBtn.setOnMouseEntered(e -> editBtn.setStyle(
-                "-fx-background-color: #E0E0E0; " +
-                        "-fx-text-fill: #000000; " +
+                "-fx-background-color: -roam-border; " +
+                        "-fx-text-fill: -roam-text-primary; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;"));
         editBtn.setOnMouseExited(e -> editBtn.setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-text-fill: #000000; " +
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-text-fill: -roam-text-primary; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;"));
@@ -111,7 +111,7 @@ public class OperationInfoCard extends VBox {
         // Due date
         Label dueDateLabel = new Label();
         dueDateLabel.setFont(Font.font("Poppins Regular", 13));
-        dueDateLabel.setStyle("-fx-text-fill: #616161;");
+        dueDateLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
         if (operation.getDueDate() != null) {
             dueDateLabel.setText("📅 Due: " + DATE_FORMATTER.format(operation.getDueDate()));
         } else {
@@ -127,11 +127,11 @@ public class OperationInfoCard extends VBox {
 
         Label titleLabel = new Label(title);
         titleLabel.setFont(Font.font("Poppins Regular", 12));
-        titleLabel.setStyle("-fx-text-fill: #9E9E9E;");
+        titleLabel.setStyle("-fx-text-fill: -roam-text-hint;");
 
         Label contentLabel = new Label(content);
         contentLabel.setFont(Font.font("Poppins Regular", 14));
-        contentLabel.setStyle("-fx-text-fill: #000000; -fx-line-spacing: 0.6;");
+        contentLabel.setStyle("-fx-text-fill: -roam-text-primary; -fx-line-spacing: 0.6;");
         contentLabel.setWrapText(true);
         contentLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -148,7 +148,7 @@ public class OperationInfoCard extends VBox {
             case ONGOING -> {
                 badge.setText("Ongoing");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #E3F2FD; -fx-text-fill: #1976D2;");
+                        "-fx-background-color: -roam-blue-light; -fx-text-fill: -roam-blue;");
             }
             case IN_PROGRESS -> {
                 badge.setText("In Progress");
@@ -184,7 +184,7 @@ public class OperationInfoCard extends VBox {
             case LOW -> {
                 badge.setText("Low");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #F5F5F5; -fx-text-fill: #616161;");
+                        "-fx-background-color: -roam-gray-bg; -fx-text-fill: -roam-text-secondary;");
             }
         }
 

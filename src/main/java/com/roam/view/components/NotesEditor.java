@@ -88,7 +88,8 @@ public class NotesEditor extends BorderPane {
         sidebar.setMinWidth(280);
         sidebar.setMaxWidth(280);
         sidebar.setPadding(new Insets(15));
-        sidebar.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-width: 0 1 0 0;");
+        sidebar.setStyle(
+                "-fx-background-color: -roam-gray-bg; -fx-border-color: -roam-border; -fx-border-width: 0 1 0 0;");
 
         // Header
         HBox header = new HBox(10);
@@ -96,13 +97,13 @@ public class NotesEditor extends BorderPane {
 
         Label title = new Label("Notes");
         title.setFont(Font.font("Poppins Bold", 18));
-        title.setStyle("-fx-text-fill: #000000;");
+        title.setStyle("-fx-text-fill: -roam-text-primary;");
         HBox.setHgrow(title, Priority.ALWAYS);
 
         Button newNoteBtn = new Button("+ New Note");
         newNoteBtn.setFont(Font.font("Poppins Regular", 12));
         newNoteBtn.setStyle(
-                "-fx-background-color: #4285f4; " +
+                "-fx-background-color: -roam-blue; " +
                         "-fx-text-fill: #FFFFFF; " +
                         "-fx-padding: 6 12 6 12; " +
                         "-fx-background-radius: 6; " +
@@ -128,11 +129,11 @@ public class NotesEditor extends BorderPane {
         field.setStyle(
                 "-fx-background-color: transparent; " +
                         "-fx-border-width: 0; " +
-                        "-fx-text-fill: #000000;");
+                        "-fx-text-fill: -roam-text-primary;");
         field.textProperty().addListener((obs, old, newVal) -> {
             hasUnsavedChanges = true;
             statusLabel.setText("Unsaved changes");
-            statusLabel.setStyle("-fx-text-fill: #F9A825;");
+            statusLabel.setStyle("-fx-text-fill: -roam-orange;");
             if (currentNote != null && onTitleChanged != null) {
                 onTitleChanged.accept(currentNote, newVal);
             }
@@ -146,11 +147,11 @@ public class NotesEditor extends BorderPane {
         editor.setPromptText("Write your notes in Markdown...");
         editor.setWrapText(true);
         editor.setFont(Font.font("Consolas", 14));
-        editor.setStyle("-fx-background-color: #FFFFFF; -fx-control-inner-background: #FFFFFF;");
+        editor.setStyle("-fx-background-color: -roam-bg-primary; -fx-control-inner-background: -roam-bg-primary;");
         editor.textProperty().addListener((obs, old, newVal) -> {
             hasUnsavedChanges = true;
             statusLabel.setText("Unsaved changes");
-            statusLabel.setStyle("-fx-text-fill: #F9A825;");
+            statusLabel.setStyle("-fx-text-fill: -roam-orange;");
             restartAutoSave();
         });
         return editor;
@@ -166,7 +167,7 @@ public class NotesEditor extends BorderPane {
         Button btn = new Button("💾 Save");
         btn.setFont(Font.font("Poppins Regular", 14));
         btn.setStyle(
-                "-fx-background-color: #4285f4; " +
+                "-fx-background-color: -roam-blue; " +
                         "-fx-text-fill: #FFFFFF; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
@@ -179,13 +180,13 @@ public class NotesEditor extends BorderPane {
     private Label createStatusLabel() {
         Label label = new Label("");
         label.setFont(Font.font("Poppins Regular", 12));
-        label.setStyle("-fx-text-fill: #9E9E9E;");
+        label.setStyle("-fx-text-fill: -roam-text-hint;");
         return label;
     }
 
     private VBox createEditor() {
         VBox editor = new VBox();
-        editor.setStyle("-fx-background-color: #FFFFFF;");
+        editor.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Toolbar
         HBox toolbar = createToolbar();
@@ -203,7 +204,8 @@ public class NotesEditor extends BorderPane {
         toolbar.setPrefHeight(50);
         toolbar.setPadding(new Insets(10));
         toolbar.setAlignment(Pos.CENTER_LEFT);
-        toolbar.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;");
+        toolbar.setStyle(
+                "-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 0 0 1 0;");
 
         HBox.setHgrow(titleField, Priority.ALWAYS);
 
@@ -217,17 +219,17 @@ public class NotesEditor extends BorderPane {
         sourceBtn.setSelected(true);
 
         String inactiveStyle = "-fx-background-color: transparent; " +
-                "-fx-text-fill: #616161; " +
-                "-fx-border-color: #E0E0E0; " +
+                "-fx-text-fill: -roam-text-secondary; " +
+                "-fx-border-color: -roam-border; " +
                 "-fx-border-width: 1; " +
                 "-fx-padding: 8 16 8 16; " +
                 "-fx-font-family: 'Poppins Regular'; " +
                 "-fx-font-size: 14px; " +
                 "-fx-cursor: hand;";
 
-        String activeStyle = "-fx-background-color: #FFFFFF; " +
-                "-fx-text-fill: #4285f4; " +
-                "-fx-border-color: #4285f4; " +
+        String activeStyle = "-fx-background-color: -roam-bg-primary; " +
+                "-fx-text-fill: -roam-blue; " +
+                "-fx-border-color: -roam-blue; " +
                 "-fx-border-width: 1; " +
                 "-fx-padding: 8 16 8 16; " +
                 "-fx-font-family: 'Poppins Medium'; " +
@@ -261,19 +263,19 @@ public class NotesEditor extends BorderPane {
         deleteBtn.setFont(Font.font(16));
         deleteBtn.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #616161; " +
+                        "-fx-text-fill: -roam-text-secondary; " +
                         "-fx-padding: 8; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
         deleteBtn.setOnMouseEntered(e -> deleteBtn.setStyle(
-                "-fx-background-color: #FFEBEE; " +
-                        "-fx-text-fill: #C62828; " +
+                "-fx-background-color: -roam-red-bg; " +
+                        "-fx-text-fill: -roam-red; " +
                         "-fx-padding: 8; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;"));
         deleteBtn.setOnMouseExited(e -> deleteBtn.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #616161; " +
+                        "-fx-text-fill: -roam-text-secondary; " +
                         "-fx-padding: 8; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;"));
@@ -302,7 +304,7 @@ public class NotesEditor extends BorderPane {
 
     private String convertMarkdownToHtml(String markdown) {
         if (markdown == null || markdown.isEmpty()) {
-            return "<html><body style='font-family: Poppins, sans-serif; padding: 20px;'><p style='color: #9E9E9E;'>No content</p></body></html>";
+            return "<html><body style='font-family: Poppins, sans-serif; padding: 20px; background-color: #1E1E1E; color: #E0E0E0;'><p style='color: #757575;'>No content</p></body></html>";
         }
 
         org.commonmark.node.Node document = markdownParser.parse(markdown);
@@ -310,17 +312,17 @@ public class NotesEditor extends BorderPane {
 
         return String.format(
                 "<html><head><style>" +
-                        "body { font-family: 'Poppins', sans-serif; font-size: 14px; line-height: 1.6; padding: 20px; }"
+                        "body { font-family: 'Poppins', sans-serif; font-size: 14px; line-height: 1.6; padding: 20px; background-color: #1E1E1E; color: #E0E0E0; }"
                         +
-                        "h1 { font-size: 32px; font-weight: bold; }" +
-                        "h2 { font-size: 24px; font-weight: bold; }" +
-                        "h3 { font-size: 20px; font-weight: bold; }" +
-                        "code { background-color: #F5F5F5; padding: 2px 6px; border-radius: 4px; font-family: Consolas, monospace; }"
+                        "h1 { font-size: 32px; font-weight: bold; color: #FFFFFF; }" +
+                        "h2 { font-size: 24px; font-weight: bold; color: #FFFFFF; }" +
+                        "h3 { font-size: 20px; font-weight: bold; color: #FFFFFF; }" +
+                        "code { background-color: #333333; padding: 2px 6px; border-radius: 4px; font-family: Consolas, monospace; color: #E0E0E0; }"
                         +
-                        "pre { background-color: #F5F5F5; padding: 15px; border-radius: 6px; overflow-x: auto; }" +
+                        "pre { background-color: #333333; padding: 15px; border-radius: 6px; overflow-x: auto; }" +
                         "pre code { background-color: transparent; padding: 0; }" +
-                        "a { color: #4285f4; text-decoration: underline; }" +
-                        "blockquote { border-left: 4px solid #E0E0E0; padding-left: 15px; color: #616161; }" +
+                        "a { color: #64B5F6; text-decoration: underline; }" +
+                        "blockquote { border-left: 4px solid #616161; padding-left: 15px; color: #BDBDBD; }" +
                         "</style></head><body>%s</body></html>",
                 htmlContent);
     }
@@ -334,7 +336,7 @@ public class NotesEditor extends BorderPane {
 
         Label message = new Label("Select a note or create a new one");
         message.setFont(Font.font("Poppins Regular", 18));
-        message.setStyle("-fx-text-fill: #9E9E9E;");
+        message.setStyle("-fx-text-fill: -roam-text-hint;");
 
         emptyState.getChildren().addAll(icon, message);
 
@@ -360,7 +362,7 @@ public class NotesEditor extends BorderPane {
 
             if (onSave != null) {
                 statusLabel.setText("Saving...");
-                statusLabel.setStyle("-fx-text-fill: #4285f4;");
+                statusLabel.setStyle("-fx-text-fill: -roam-blue;");
 
                 onSave.accept(currentNote);
 
@@ -368,7 +370,7 @@ public class NotesEditor extends BorderPane {
                 saveButton.setDisable(true);
 
                 statusLabel.setText("✓ Saved");
-                statusLabel.setStyle("-fx-text-fill: #388E3C;");
+                statusLabel.setStyle("-fx-text-fill: -roam-green;");
 
                 // Refresh notes list
                 notesList.refresh();
@@ -445,7 +447,7 @@ public class NotesEditor extends BorderPane {
 
                 Label title = new Label(note.getTitle());
                 title.setFont(Font.font("Poppins Medium", 14));
-                title.setStyle("-fx-text-fill: #000000;");
+                title.setStyle("-fx-text-fill: -roam-text-primary;");
                 title.setMaxWidth(Double.MAX_VALUE);
 
                 String preview = note.getContent() != null && !note.getContent().isEmpty()
@@ -453,13 +455,13 @@ public class NotesEditor extends BorderPane {
                         : "No content";
                 Label content = new Label(preview);
                 content.setFont(Font.font("Poppins Regular", 12));
-                content.setStyle("-fx-text-fill: #9E9E9E;");
+                content.setStyle("-fx-text-fill: -roam-text-secondary;");
                 content.setWrapText(true);
                 content.setMaxWidth(Double.MAX_VALUE);
 
                 Label date = new Label("Updated: " + DATE_FORMATTER.format(note.getUpdatedAt()));
                 date.setFont(Font.font("Poppins Regular", 11));
-                date.setStyle("-fx-text-fill: #BDBDBD;");
+                date.setStyle("-fx-text-fill: -roam-text-hint;");
 
                 cell.getChildren().addAll(title, content, date);
                 setGraphic(cell);

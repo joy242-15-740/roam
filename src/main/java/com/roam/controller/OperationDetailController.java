@@ -2,10 +2,13 @@ package com.roam.controller;
 
 import com.roam.model.Note;
 import com.roam.model.Operation;
+import com.roam.model.Region;
 import com.roam.model.Task;
 import com.roam.model.TaskStatus;
+import com.roam.repository.CalendarEventRepository;
 import com.roam.repository.NoteRepository;
 import com.roam.repository.OperationRepository;
+import com.roam.repository.RegionRepository;
 import com.roam.repository.TaskRepository;
 import com.roam.util.DialogUtils;
 import com.roam.view.components.TaskDialog;
@@ -17,6 +20,8 @@ public class OperationDetailController {
     private final OperationRepository operationRepository;
     private final TaskRepository taskRepository;
     private final NoteRepository noteRepository;
+    private final RegionRepository regionRepository;
+    private final CalendarEventRepository eventRepository;
 
     private Operation operation;
     private Runnable onDataChanged;
@@ -26,6 +31,8 @@ public class OperationDetailController {
         this.operationRepository = new OperationRepository();
         this.taskRepository = new TaskRepository();
         this.noteRepository = new NoteRepository();
+        this.regionRepository = new RegionRepository();
+        this.eventRepository = new CalendarEventRepository();
     }
 
     public Operation getOperation() {
@@ -94,7 +101,13 @@ public class OperationDetailController {
         task.setOperationId(operation.getId());
         task.setStatus(initialStatus != null ? initialStatus : TaskStatus.TODO);
 
-        TaskDialog dialog = new TaskDialog(task, null);
+        TaskDialog dialog = new TaskDialog(
+                task,
+                null,
+                List.of(operation), // Only current operation
+                regionRepository.findAll(),
+                eventRepository.findAll(),
+                noteRepository.findAll());
         dialog.showAndWait().ifPresent(newTask -> {
             try {
                 newTask.setOperationId(operation.getId());
@@ -120,7 +133,13 @@ public class OperationDetailController {
         if (task == null)
             return;
 
-        TaskDialog dialog = new TaskDialog(task, () -> deleteTask(task));
+        TaskDialog dialog = new TaskDialog(
+                task,
+                () -> deleteTask(task),
+                List.of(operation),
+                regionRepository.findAll(),
+                eventRepository.findAll(),
+                noteRepository.findAll());
         dialog.showAndWait().ifPresent(updatedTask -> {
             try {
                 taskRepository.save(updatedTask);
@@ -276,5 +295,12 @@ public class OperationDetailController {
                         e.getMessage());
             }
         }
+    }
+
+    /**
+     * Get all regions
+     */
+    public List<Region> getAllRegions() {
+        return regionRepository.findAll();
     }
 }

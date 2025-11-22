@@ -2,8 +2,6 @@ package com.roam.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "notes")
@@ -30,10 +28,6 @@ public class Note {
 
     @Column(name = "is_favorite", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean isFavorite = false;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "note_tags", joinColumns = @JoinColumn(name = "note_id"), inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tag> tags = new HashSet<>();
 
     @Column(name = "template_id")
     private Long templateId;
@@ -62,7 +56,6 @@ public class Note {
         this.content = "";
         this.isFavorite = false;
         this.wordCount = 0;
-        this.tags = new HashSet<>();
     }
 
     public Note(String title, Long operationId) {
@@ -71,7 +64,6 @@ public class Note {
         this.content = "";
         this.isFavorite = false;
         this.wordCount = 0;
-        this.tags = new HashSet<>();
     }
 
     // Lifecycle callbacks
@@ -97,18 +89,6 @@ public class Note {
         String[] words = content.trim().split("\\s+");
         this.wordCount = words.length;
         return this.wordCount;
-    }
-
-    public boolean addTag(Tag tag) {
-        return tags.add(tag);
-    }
-
-    public boolean removeTag(Tag tag) {
-        return tags.remove(tag);
-    }
-
-    public boolean hasTag(Tag tag) {
-        return tags.contains(tag);
     }
 
     // Getters and Setters
@@ -166,14 +146,6 @@ public class Note {
 
     public void setIsFavorite(Boolean isFavorite) {
         this.isFavorite = isFavorite;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
     }
 
     public Long getTemplateId() {

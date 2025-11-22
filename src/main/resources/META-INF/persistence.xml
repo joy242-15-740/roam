@@ -18,14 +18,15 @@
         <class>com.roam.model.CalendarSource</class>
         <class>com.roam.model.JournalEntry</class>
         <class>com.roam.model.JournalTemplate</class>
+        <class>com.roam.model.Region</class>
         
         <properties>
             <!-- H2 Database Configuration -->
             <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
             <property name="jakarta.persistence.jdbc.url" 
-                      value="jdbc:h2:file:~/roam/roamdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
-            <property name="jakarta.persistence.jdbc.user" value="sa"/>
-            <property name="jakarta.persistence.jdbc.password" value=""/>
+                      value="jdbc:h2:file:~/roam/roamdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE USER IF NOT EXISTS admin PASSWORD 'hulululu' ADMIN\;SET SCHEMA PUBLIC"/>
+            <property name="jakarta.persistence.jdbc.user" value="admin"/>
+            <property name="jakarta.persistence.jdbc.password" value="hulululu"/>
             
             <!-- Hibernate Configuration -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

@@ -3,12 +3,14 @@ package com.roam.view.components;
 import com.roam.model.Operation;
 import com.roam.model.OperationStatus;
 import com.roam.model.Priority;
+import com.roam.model.Region;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class OperationDialog extends Dialog<Operation> {
 
@@ -17,13 +19,14 @@ public class OperationDialog extends Dialog<Operation> {
     private final DatePicker dueDatePicker;
     private final ComboBox<OperationStatus> statusCombo;
     private final ComboBox<Priority> priorityCombo;
+    private final ComboBox<Region> regionCombo;
     private final TextArea outcomeField;
     private final Label errorLabel;
 
     private final Operation operation;
     private final boolean isEditMode;
 
-    public OperationDialog(Operation operation) {
+    public OperationDialog(Operation operation, List<Region> regions) {
         this.operation = operation;
         this.isEditMode = operation != null;
 
@@ -37,6 +40,7 @@ public class OperationDialog extends Dialog<Operation> {
         dueDatePicker = createDatePicker();
         statusCombo = createStatusComboBox();
         priorityCombo = createPriorityComboBox();
+        regionCombo = createRegionComboBox(regions);
         outcomeField = createTextArea("Enter operation outcome (optional)", 1000);
         errorLabel = createErrorLabel();
 
@@ -90,7 +94,8 @@ public class OperationDialog extends Dialog<Operation> {
         field.setPromptText(prompt);
         field.setPrefHeight(40);
         field.setFont(Font.font("Poppins Regular", 14));
-        field.setStyle("-fx-border-color: #E0E0E0; -fx-border-radius: 4; -fx-background-radius: 4;");
+        field.setStyle(
+                "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-background-color: -roam-bg-primary;");
 
         // Limit character count
         field.textProperty().addListener((obs, old, newVal) -> {
@@ -108,7 +113,8 @@ public class OperationDialog extends Dialog<Operation> {
         area.setPrefHeight(100);
         area.setWrapText(true);
         area.setFont(Font.font("Poppins Regular", 14));
-        area.setStyle("-fx-border-color: #E0E0E0; -fx-border-radius: 4; -fx-background-radius: 4;");
+        area.setStyle(
+                "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-control-inner-background: -roam-bg-primary;");
 
         // Limit character count
         area.textProperty().addListener((obs, old, newVal) -> {
@@ -156,6 +162,19 @@ public class OperationDialog extends Dialog<Operation> {
         return combo;
     }
 
+    private ComboBox<Region> createRegionComboBox(List<Region> regions) {
+        ComboBox<Region> combo = new ComboBox<>();
+        combo.getItems().addAll(regions);
+        combo.setPromptText("Select Region");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+
+        combo.setButtonCell(new RegionListCell());
+        combo.setCellFactory(lv -> new RegionListCell());
+
+        return combo;
+    }
+
     private Label createErrorLabel() {
         Label label = new Label("Name is required");
         label.setFont(Font.font("Poppins Regular", 12));
@@ -172,6 +191,7 @@ public class OperationDialog extends Dialog<Operation> {
                 createFieldGroup("Name *", nameField),
                 errorLabel,
                 createFieldGroup("Purpose", purposeField),
+                createFieldGroup("Region", regionCombo),
                 createFieldGroup("Due Date", dueDatePicker),
                 createFieldGroup("Status *", statusCombo),
                 createFieldGroup("Priority *", priorityCombo),
@@ -185,7 +205,7 @@ public class OperationDialog extends Dialog<Operation> {
 
         Label label = new Label(labelText);
         label.setFont(Font.font("Poppins Regular", 13));
-        label.setStyle("-fx-text-fill: #616161;");
+        label.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         group.getChildren().addAll(label, field);
         return group;
@@ -199,6 +219,13 @@ public class OperationDialog extends Dialog<Operation> {
             statusCombo.setValue(operation.getStatus());
             priorityCombo.setValue(operation.getPriority());
             outcomeField.setText(operation.getOutcome());
+
+            if (operation.getRegion() != null) {
+                regionCombo.getItems().stream()
+                        .filter(r -> r.getName().equals(operation.getRegion()))
+                        .findFirst()
+                        .ifPresent(regionCombo::setValue);
+            }
         }
     }
 
@@ -220,6 +247,12 @@ public class OperationDialog extends Dialog<Operation> {
         op.setPriority(priorityCombo.getValue());
         op.setOutcome(outcomeField.getText().trim());
 
+        if (regionCombo.getValue() != null) {
+            op.setRegion(regionCombo.getValue().getName());
+        } else {
+            op.setRegion(null);
+        }
+
         return op;
     }
 
@@ -227,8 +260,8 @@ public class OperationDialog extends Dialog<Operation> {
         // Style buttons
         DialogPane pane = getDialogPane();
         pane.lookupButton(ButtonType.CANCEL).setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-text-fill: #000000; " +
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-text-fill: -roam-text-primary; " +
                         "-fx-font-family: 'Poppins Regular'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
@@ -239,8 +272,18 @@ public class OperationDialog extends Dialog<Operation> {
         ButtonType submitType = isEditMode ? new ButtonType("Update", ButtonBar.ButtonData.OK_DONE)
                 : new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
 
+        // Note: The button type lookup might need to be more robust if the order
+        // changes,
+        // but here we rely on the order we added them (submit, cancel).
+        // Actually, we added submit then cancel. So submit is index 0?
+        // Let's check how we added them:
+        // getDialogPane().getButtonTypes().addAll(submitButton, ButtonType.CANCEL);
+        // So submitButton is at index 0.
+        // Wait, the original code used pane.lookupButton(pane.getButtonTypes().get(0)).
+        // I should keep using that logic but update the style.
+
         pane.lookupButton(pane.getButtonTypes().get(0)).setStyle(
-                "-fx-background-color: #4285f4; " +
+                "-fx-background-color: -roam-blue; " +
                         "-fx-text-fill: #FFFFFF; " +
                         "-fx-font-family: 'Poppins Regular'; " +
                         "-fx-font-size: 14px; " +
@@ -280,6 +323,21 @@ public class OperationDialog extends Dialog<Operation> {
                     case MEDIUM -> setText("Medium");
                     case LOW -> setText("Low");
                 }
+            }
+        }
+    }
+
+    // Custom cell for Region ComboBox
+    private static class RegionListCell extends ListCell<Region> {
+        @Override
+        protected void updateItem(Region item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                setText(item.getName());
+                setStyle("-fx-text-fill: " + item.getColor() + ";");
             }
         }
     }

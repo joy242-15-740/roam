@@ -20,16 +20,16 @@ public class Breadcrumb extends HBox {
         setAlignment(Pos.CENTER_LEFT);
         setPrefHeight(50);
         setPadding(new Insets(0, 20, 0, 20));
-        setStyle("-fx-background-color: #FFFFFF;");
+        setStyle("-fx-background-color: -roam-bg-primary;");
 
         // "Operations" link
         Hyperlink operationsLink = new Hyperlink("Operations");
         operationsLink.setFont(Font.font("Poppins Regular", 14));
-        operationsLink.setStyle("-fx-text-fill: #4285f4; -fx-border-width: 0; -fx-underline: false;");
+        operationsLink.setStyle("-fx-text-fill: -roam-blue; -fx-border-width: 0; -fx-underline: false;");
         operationsLink.setOnMouseEntered(
-                e -> operationsLink.setStyle("-fx-text-fill: #4285f4; -fx-border-width: 0; -fx-underline: true;"));
+                e -> operationsLink.setStyle("-fx-text-fill: -roam-blue; -fx-border-width: 0; -fx-underline: true;"));
         operationsLink.setOnMouseExited(
-                e -> operationsLink.setStyle("-fx-text-fill: #4285f4; -fx-border-width: 0; -fx-underline: false;"));
+                e -> operationsLink.setStyle("-fx-text-fill: -roam-blue; -fx-border-width: 0; -fx-underline: false;"));
         operationsLink.setOnAction(e -> {
             if (onNavigateBack != null) {
                 onNavigateBack.run();
@@ -39,7 +39,7 @@ public class Breadcrumb extends HBox {
         // Separator
         Label separator = new Label(">");
         separator.setFont(Font.font("Poppins Regular", 14));
-        separator.setStyle("-fx-text-fill: #9E9E9E;");
+        separator.setStyle("-fx-text-fill: -roam-text-hint;");
 
         // Operation name
         String displayName = operationName.length() > 40
@@ -47,7 +47,7 @@ public class Breadcrumb extends HBox {
                 : operationName;
         Label nameLabel = new Label(displayName);
         nameLabel.setFont(Font.font("Poppins Regular", 14));
-        nameLabel.setStyle("-fx-text-fill: #000000;");
+        nameLabel.setStyle("-fx-text-fill: -roam-text-primary;");
 
         // Spacer
         Region spacer = new Region();
@@ -58,19 +58,19 @@ public class Breadcrumb extends HBox {
         backButton.setFont(Font.font("Poppins Regular", 14));
         backButton.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #616161; " +
+                        "-fx-text-fill: -roam-text-secondary; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
                         "-fx-border-width: 0;");
         backButton.setOnMouseEntered(e -> backButton.setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-text-fill: #000000; " +
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-text-fill: -roam-text-primary; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
                         "-fx-border-width: 0;"));
         backButton.setOnMouseExited(e -> backButton.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #616161; " +
+                        "-fx-text-fill: -roam-text-secondary; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
                         "-fx-border-width: 0;"));

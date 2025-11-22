@@ -7,6 +7,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
 import java.time.LocalDate;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 public class CalendarView extends BorderPane {
 
     public enum ViewType {
-        MONTH, WEEK, DAY
+        AGENDA, MONTH, WEEK, DAY
     }
 
     private final CalendarController controller;
@@ -26,6 +28,7 @@ public class CalendarView extends BorderPane {
     private Label dateLabel;
     private VBox filterPanel;
     private StackPane calendarContainer;
+    private FlowPane legendContainer;
 
     private ViewType currentViewType = ViewType.DAY;
     private YearMonth currentYearMonth;
@@ -45,7 +48,7 @@ public class CalendarView extends BorderPane {
     }
 
     private void initialize() {
-        setStyle("-fx-background-color: #FFFFFF;");
+        setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Create toolbar
         HBox toolbar = createToolbar();
@@ -60,6 +63,16 @@ public class CalendarView extends BorderPane {
 
         setCenter(calendarContainer);
 
+        // Create legend
+        legendContainer = new FlowPane();
+        legendContainer.setHgap(20);
+        legendContainer.setVgap(10);
+        legendContainer.setPadding(new Insets(10, 20, 20, 20));
+        legendContainer.setAlignment(Pos.CENTER);
+        legendContainer.setStyle(
+                "-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 1 0 0 0;");
+        setBottom(legendContainer);
+
         // Load data
         controller.setOnDataChanged(this::refreshCalendar);
         refreshCalendar();
@@ -70,7 +83,8 @@ public class CalendarView extends BorderPane {
         toolbar.setPrefHeight(60);
         toolbar.setPadding(new Insets(15, 20, 15, 20));
         toolbar.setAlignment(Pos.CENTER_LEFT);
-        toolbar.setStyle("-fx-background-color: #FFFFFF; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;");
+        toolbar.setStyle(
+                "-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 0 0 1 0;");
 
         // Today button
         Button todayBtn = createToolbarButton("Today");
@@ -93,7 +107,7 @@ public class CalendarView extends BorderPane {
         // Date label
         dateLabel = new Label(getDateLabelText());
         dateLabel.setFont(Font.font("Poppins Bold", 18));
-        dateLabel.setStyle("-fx-text-fill: #000000;");
+        dateLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         dateLabel.setMinWidth(250);
         dateLabel.setAlignment(Pos.CENTER);
 
@@ -107,7 +121,7 @@ public class CalendarView extends BorderPane {
         // New Event button
         Button newEventBtn = createToolbarButton("+ New Event");
         newEventBtn.setStyle(
-                "-fx-background-color: #4285f4; " +
+                "-fx-background-color: -roam-blue; " +
                         "-fx-text-fill: #FFFFFF; " +
                         "-fx-font-family: 'Poppins Regular'; " +
                         "-fx-font-size: 14px; " +
@@ -134,25 +148,25 @@ public class CalendarView extends BorderPane {
         btn.setMinWidth(80);
         btn.setPrefHeight(36);
         btn.setStyle(
-                "-fx-background-color: #FFFFFF; " +
-                        "-fx-text-fill: #000000; " +
-                        "-fx-border-color: #E0E0E0; " +
+                "-fx-background-color: -roam-bg-primary; " +
+                        "-fx-text-fill: -roam-text-primary; " +
+                        "-fx-border-color: -roam-border; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 6; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
         btn.setOnMouseEntered(e -> btn.setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-text-fill: #000000; " +
-                        "-fx-border-color: #E0E0E0; " +
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-text-fill: -roam-text-primary; " +
+                        "-fx-border-color: -roam-border; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 6; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;"));
         btn.setOnMouseExited(e -> btn.setStyle(
-                "-fx-background-color: #FFFFFF; " +
-                        "-fx-text-fill: #000000; " +
-                        "-fx-border-color: #E0E0E0; " +
+                "-fx-background-color: -roam-bg-primary; " +
+                        "-fx-text-fill: -roam-text-primary; " +
+                        "-fx-border-color: -roam-border; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 6; " +
                         "-fx-background-radius: 6; " +
@@ -166,17 +180,19 @@ public class CalendarView extends BorderPane {
 
         viewToggleGroup = new ToggleGroup();
 
-        ToggleButton monthBtn = createViewToggleButton("Month", ViewType.MONTH, true);
+        ToggleButton agendaBtn = createViewToggleButton("Agenda", ViewType.AGENDA, true);
+        ToggleButton monthBtn = createViewToggleButton("Month", ViewType.MONTH, false);
         ToggleButton weekBtn = createViewToggleButton("Week", ViewType.WEEK, false);
         ToggleButton dayBtn = createViewToggleButton("Day", ViewType.DAY, false);
 
+        agendaBtn.setToggleGroup(viewToggleGroup);
         monthBtn.setToggleGroup(viewToggleGroup);
         weekBtn.setToggleGroup(viewToggleGroup);
         dayBtn.setToggleGroup(viewToggleGroup);
 
         dayBtn.setSelected(true);
 
-        selector.getChildren().addAll(monthBtn, weekBtn, dayBtn);
+        selector.getChildren().addAll(agendaBtn, monthBtn, weekBtn, dayBtn);
         return selector;
     }
 
@@ -186,15 +202,15 @@ public class CalendarView extends BorderPane {
         btn.setMinWidth(70);
         btn.setPrefHeight(36);
 
-        String baseStylePrefix = "-fx-background-color: #FFFFFF; " +
-                "-fx-text-fill: #616161; " +
-                "-fx-border-color: #E0E0E0; " +
+        String baseStylePrefix = "-fx-background-color: -roam-bg-primary; " +
+                "-fx-text-fill: -roam-text-secondary; " +
+                "-fx-border-color: -roam-border; " +
                 "-fx-border-width: 1; " +
                 "-fx-cursor: hand;";
 
-        String selectedStylePrefix = "-fx-background-color: #E3F2FD; " +
-                "-fx-text-fill: #4285f4; " +
-                "-fx-border-color: #4285f4; " +
+        String selectedStylePrefix = "-fx-background-color: -roam-blue-light; " +
+                "-fx-text-fill: -roam-blue; " +
+                "-fx-border-color: -roam-blue; " +
                 "-fx-border-width: 1; " +
                 "-fx-cursor: hand;";
 
@@ -232,6 +248,10 @@ public class CalendarView extends BorderPane {
 
     private void navigatePrevious() {
         switch (currentViewType) {
+            case AGENDA:
+                currentDate = currentDate.minusMonths(1);
+                currentYearMonth = YearMonth.from(currentDate);
+                break;
             case MONTH:
                 currentYearMonth = currentYearMonth.minusMonths(1);
                 currentDate = currentYearMonth.atDay(1);
@@ -250,6 +270,10 @@ public class CalendarView extends BorderPane {
 
     private void navigateNext() {
         switch (currentViewType) {
+            case AGENDA:
+                currentDate = currentDate.plusMonths(1);
+                currentYearMonth = YearMonth.from(currentDate);
+                break;
             case MONTH:
                 currentYearMonth = currentYearMonth.plusMonths(1);
                 currentDate = currentYearMonth.atDay(1);
@@ -268,6 +292,8 @@ public class CalendarView extends BorderPane {
 
     private String getDateLabelText() {
         switch (currentViewType) {
+            case AGENDA:
+                return currentYearMonth.format(MONTH_YEAR_FORMATTER);
             case MONTH:
                 return currentYearMonth.format(MONTH_YEAR_FORMATTER);
             case WEEK:
@@ -291,7 +317,7 @@ public class CalendarView extends BorderPane {
         GridPane grid = new GridPane();
         grid.setHgap(0);
         grid.setVgap(0);
-        grid.setStyle("-fx-background-color: #FFFFFF;");
+        grid.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Create day headers
         String[] dayNames = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
@@ -299,8 +325,8 @@ public class CalendarView extends BorderPane {
             Label dayHeader = new Label(dayNames[col]);
             dayHeader.setFont(Font.font("Poppins Medium", 13));
             dayHeader.setStyle(
-                    "-fx-background-color: #F5F5F5; " +
-                            "-fx-text-fill: #616161; " +
+                    "-fx-background-color: -roam-gray-bg; " +
+                            "-fx-text-fill: -roam-text-secondary; " +
                             "-fx-alignment: center;");
             dayHeader.setMaxWidth(Double.MAX_VALUE);
             dayHeader.setPrefHeight(40);
@@ -335,7 +361,7 @@ public class CalendarView extends BorderPane {
         GridPane grid = new GridPane();
         grid.setHgap(0);
         grid.setVgap(0);
-        grid.setStyle("-fx-background-color: #FFFFFF;");
+        grid.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Calculate week start (Sunday)
         LocalDate weekStart = currentDate.minusDays(currentDate.getDayOfWeek().getValue() % 7);
@@ -344,12 +370,12 @@ public class CalendarView extends BorderPane {
         VBox timeColumn = new VBox(0);
         timeColumn.setMinWidth(60);
         timeColumn.setMaxWidth(60);
-        timeColumn.setStyle("-fx-background-color: #F5F5F5;");
+        timeColumn.setStyle("-fx-background-color: -roam-gray-bg;");
 
         // Empty corner cell
         Label cornerCell = new Label("");
         cornerCell.setPrefHeight(40);
-        cornerCell.setStyle("-fx-background-color: #F5F5F5;");
+        cornerCell.setStyle("-fx-background-color: -roam-gray-bg;");
         timeColumn.getChildren().add(cornerCell);
 
         // Time labels (6 AM to 11 PM)
@@ -360,7 +386,7 @@ public class CalendarView extends BorderPane {
             timeLabel.setPrefHeight(60);
             timeLabel.setAlignment(Pos.TOP_RIGHT);
             timeLabel.setPadding(new Insets(5, 5, 0, 0));
-            timeLabel.setStyle("-fx-background-color: #F5F5F5; -fx-text-fill: #616161;");
+            timeLabel.setStyle("-fx-background-color: -roam-gray-bg; -fx-text-fill: -roam-text-secondary;");
             timeColumn.getChildren().add(timeLabel);
         }
 
@@ -374,11 +400,11 @@ public class CalendarView extends BorderPane {
             VBox dayHeader = new VBox(2);
             dayHeader.setAlignment(Pos.CENTER);
             dayHeader.setPadding(new Insets(5));
-            dayHeader.setStyle("-fx-background-color: #F5F5F5;");
+            dayHeader.setStyle("-fx-background-color: -roam-gray-bg;");
 
             Label dayName = new Label(dayNames[col]);
             dayName.setFont(Font.font("Poppins Medium", 12));
-            dayName.setStyle("-fx-text-fill: #616161;");
+            dayName.setStyle("-fx-text-fill: -roam-text-secondary;");
 
             Label dayNum = new Label(String.valueOf(date.getDayOfMonth()));
             dayNum.setFont(Font.font("Poppins Bold", 16));
@@ -386,9 +412,9 @@ public class CalendarView extends BorderPane {
             boolean isToday = date.equals(LocalDate.now());
             if (isToday) {
                 dayNum.setStyle(
-                        "-fx-text-fill: #FFFFFF; -fx-background-color: #4285f4; -fx-background-radius: 50%; -fx-min-width: 30; -fx-min-height: 30; -fx-alignment: center;");
+                        "-fx-text-fill: #FFFFFF; -fx-background-color: -roam-blue; -fx-background-radius: 50%; -fx-min-width: 30; -fx-min-height: 30; -fx-alignment: center;");
             } else {
-                dayNum.setStyle("-fx-text-fill: #000000;");
+                dayNum.setStyle("-fx-text-fill: -roam-text-primary;");
             }
 
             dayHeader.getChildren().addAll(dayName, dayNum);
@@ -410,13 +436,13 @@ public class CalendarView extends BorderPane {
 
     private VBox createWeekDayColumn(LocalDate date) {
         VBox column = new VBox(0);
-        column.setStyle("-fx-background-color: #FFFFFF;");
+        column.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Create time slots (6 AM to 11 PM)
         for (int hour = 6; hour <= 23; hour++) {
             StackPane timeSlot = new StackPane();
             timeSlot.setPrefHeight(60);
-            timeSlot.setStyle("-fx-background-color: #FFFFFF;");
+            timeSlot.setStyle("-fx-background-color: -roam-bg-primary;");
 
             // Get events for this hour
             VBox eventsBox = new VBox(2);
@@ -442,10 +468,10 @@ public class CalendarView extends BorderPane {
             });
 
             timeSlot.setOnMouseEntered(e -> timeSlot.setStyle(
-                    "-fx-border-color: #F0F0F0; -fx-border-width: 0.5 0 0 0; -fx-background-color: #F9F9F9; -fx-cursor: hand;"));
+                    "-fx-border-color: -roam-border; -fx-border-width: 0.5 0 0 0; -fx-background-color: -roam-gray-light; -fx-cursor: hand;"));
             timeSlot.setOnMouseExited(e -> timeSlot
                     .setStyle(
-                            "-fx-border-color: #F0F0F0; -fx-border-width: 0.5 0 0 0; -fx-background-color: #FFFFFF;"));
+                            "-fx-border-color: -roam-border; -fx-border-width: 0.5 0 0 0; -fx-background-color: -roam-bg-primary;"));
 
             column.getChildren().add(timeSlot);
         }
@@ -478,16 +504,16 @@ public class CalendarView extends BorderPane {
 
     private VBox createDayView() {
         VBox dayView = new VBox(0);
-        dayView.setStyle("-fx-background-color: #FFFFFF;");
+        dayView.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // All-day events section
         VBox allDaySection = new VBox(5);
         allDaySection.setPadding(new Insets(10));
-        allDaySection.setStyle("-fx-background-color: #F5F5F5;");
+        allDaySection.setStyle("-fx-background-color: -roam-gray-bg;");
 
         Label allDayLabel = new Label("All Day");
         allDayLabel.setFont(Font.font("Poppins Medium", 12));
-        allDayLabel.setStyle("-fx-text-fill: #616161;");
+        allDayLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
         allDaySection.getChildren().add(allDayLabel);
 
         List<CalendarEvent> dayEvents = controller.getEventsForDate(currentDate);
@@ -503,7 +529,7 @@ public class CalendarView extends BorderPane {
         } else {
             Label noEvents = new Label("No all-day events");
             noEvents.setFont(Font.font("Poppins Regular", 11));
-            noEvents.setStyle("-fx-text-fill: #9E9E9E;");
+            noEvents.setStyle("-fx-text-fill: -roam-text-hint;");
             allDaySection.getChildren().add(noEvents);
         }
 
@@ -520,7 +546,7 @@ public class CalendarView extends BorderPane {
         VBox timeColumn = new VBox(0);
         timeColumn.setMinWidth(80);
         timeColumn.setMaxWidth(80);
-        timeColumn.setStyle("-fx-background-color: #F5F5F5;");
+        timeColumn.setStyle("-fx-background-color: -roam-gray-bg;");
 
         // Event column
         VBox eventColumn = new VBox(0);
@@ -536,13 +562,13 @@ public class CalendarView extends BorderPane {
             timeLabel.setAlignment(Pos.TOP_RIGHT);
             timeLabel.setPadding(new Insets(5, 10, 0, 0));
             timeLabel.setStyle(
-                    "-fx-background-color: #F5F5F5; -fx-text-fill: #616161;");
+                    "-fx-background-color: -roam-gray-bg; -fx-text-fill: -roam-text-secondary;");
             timeColumn.getChildren().add(timeLabel);
 
             // Time slot
             StackPane timeSlot = new StackPane();
             timeSlot.setPrefHeight(80);
-            timeSlot.setStyle("-fx-background-color: #FFFFFF;");
+            timeSlot.setStyle("-fx-background-color: -roam-bg-primary;");
 
             // Get events for this hour
             VBox eventsBox = new VBox(3);
@@ -567,10 +593,10 @@ public class CalendarView extends BorderPane {
             });
 
             timeSlot.setOnMouseEntered(e -> timeSlot.setStyle(
-                    "-fx-background-color: #F9F9F9; -fx-cursor: hand;"));
+                    "-fx-background-color: -roam-gray-light; -fx-cursor: hand;"));
             timeSlot.setOnMouseExited(e -> timeSlot
                     .setStyle(
-                            "-fx-background-color: #FFFFFF;"));
+                            "-fx-background-color: -roam-bg-primary;"));
 
             eventColumn.getChildren().add(timeSlot);
         }
@@ -618,7 +644,7 @@ public class CalendarView extends BorderPane {
         VBox cell = new VBox(5);
         cell.setPadding(new Insets(5));
         cell.setMinHeight(100);
-        cell.setStyle("-fx-background-color: #FFFFFF;");
+        cell.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Check if today
         boolean isToday = date.equals(LocalDate.now());
@@ -626,13 +652,13 @@ public class CalendarView extends BorderPane {
         boolean isCurrentMonth = YearMonth.from(date).equals(currentYearMonth);
 
         if (isToday) {
-            cell.setStyle("-fx-background-color: #E3F2FD;");
+            cell.setStyle("-fx-background-color: -roam-blue-light;");
         }
 
         // Day number
         Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
         dayLabel.setFont(Font.font("Poppins Regular", 14));
-        dayLabel.setStyle("-fx-text-fill: " + (isCurrentMonth ? "#000000" : "#BDBDBD"));
+        dayLabel.setStyle("-fx-text-fill: " + (isCurrentMonth ? "-roam-text-primary" : "-roam-text-hint"));
         dayLabel.setAlignment(Pos.TOP_RIGHT);
         dayLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -649,7 +675,7 @@ public class CalendarView extends BorderPane {
                 Label moreLabel = new Label("+" + remaining + " more");
                 moreLabel.setFont(Font.font("Poppins Regular", 11));
                 moreLabel.setStyle(
-                        "-fx-text-fill: #4285f4; " +
+                        "-fx-text-fill: -roam-blue; " +
                                 "-fx-cursor: hand; " +
                                 "-fx-underline: true;");
                 cell.getChildren().add(moreLabel);
@@ -668,12 +694,12 @@ public class CalendarView extends BorderPane {
         // Hover effect
         cell.setOnMouseEntered(e -> {
             if (!isToday) {
-                cell.setStyle("-fx-background-color: #F5F5F5; -fx-cursor: hand;");
+                cell.setStyle("-fx-background-color: -roam-gray-bg; -fx-cursor: hand;");
             }
         });
         cell.setOnMouseExited(e -> {
             if (!isToday) {
-                cell.setStyle("-fx-background-color: #FFFFFF;");
+                cell.setStyle("-fx-background-color: -roam-bg-primary;");
             }
         });
 
@@ -712,7 +738,8 @@ public class CalendarView extends BorderPane {
         panel.setMinWidth(280);
         panel.setMaxWidth(280);
         panel.setPadding(new Insets(20));
-        panel.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 0 1;");
+        panel.setStyle(
+                "-fx-background-color: -roam-gray-light; -fx-border-color: -roam-border; -fx-border-width: 0 0 0 1;");
 
         // Calendars section
         Label calendarsLabel = new Label("Calendars");
@@ -757,6 +784,12 @@ public class CalendarView extends BorderPane {
         calendarContainer.getChildren().clear();
 
         switch (currentViewType) {
+            case AGENDA:
+                ScrollPane agendaScroll = new ScrollPane(createAgendaView());
+                agendaScroll.setFitToWidth(true);
+                agendaScroll.setStyle("-fx-background-color: transparent;");
+                calendarContainer.getChildren().add(agendaScroll);
+                break;
             case MONTH:
                 calendarContainer.getChildren().add(createMonthGrid());
                 break;
@@ -769,6 +802,211 @@ public class CalendarView extends BorderPane {
             case DAY:
                 calendarContainer.getChildren().add(createDayView());
                 break;
+        }
+
+        refreshLegend();
+    }
+
+    private VBox createAgendaView() {
+        VBox agendaView = new VBox(0);
+        agendaView.setStyle("-fx-background-color: -roam-bg-primary;");
+
+        // Get events for the month
+        LocalDate startDate = currentYearMonth.atDay(1);
+        LocalDate endDate = currentYearMonth.atEndOfMonth();
+
+        List<CalendarEvent> monthEvents = controller.getAllEvents().stream()
+                .filter(e -> {
+                    LocalDate eventDate = e.getStartDateTime().toLocalDate();
+                    return !eventDate.isBefore(startDate) && !eventDate.isAfter(endDate);
+                })
+                .sorted((e1, e2) -> e1.getStartDateTime().compareTo(e2.getStartDateTime()))
+                .collect(Collectors.toList());
+
+        if (monthEvents.isEmpty()) {
+            VBox emptyBox = new VBox(20);
+            emptyBox.setPadding(new Insets(50));
+            emptyBox.setAlignment(Pos.CENTER);
+
+            Label emptyLabel = new Label("No events scheduled for " + currentYearMonth.format(MONTH_YEAR_FORMATTER));
+            emptyLabel.setFont(Font.font("Poppins Regular", 16));
+            emptyLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+
+            Button createBtn = new Button("+ Create Event");
+            createBtn.setFont(Font.font("Poppins Regular", 14));
+            createBtn.setStyle(
+                    "-fx-background-color: -roam-blue; " +
+                            "-fx-text-fill: #FFFFFF; " +
+                            "-fx-min-width: 150px; " +
+                            "-fx-min-height: 36px; " +
+                            "-fx-background-radius: 6; " +
+                            "-fx-cursor: hand;");
+            createBtn.setOnAction(e -> controller.createEvent(LocalDate.now()));
+
+            emptyBox.getChildren().addAll(emptyLabel, createBtn);
+            agendaView.getChildren().add(emptyBox);
+            return agendaView;
+        }
+
+        // Group events by date
+        LocalDate currentGroupDate = null;
+
+        for (CalendarEvent event : monthEvents) {
+            LocalDate eventDate = event.getStartDateTime().toLocalDate();
+
+            // Add date header if new date
+            if (currentGroupDate == null || !currentGroupDate.equals(eventDate)) {
+                currentGroupDate = eventDate;
+
+                HBox dateHeader = new HBox(15);
+                dateHeader.setPadding(new Insets(20, 20, 10, 20));
+                dateHeader.setAlignment(Pos.CENTER_LEFT);
+                dateHeader.setStyle(
+                        "-fx-background-color: -roam-gray-bg; " +
+                                "-fx-border-color: -roam-border; " +
+                                "-fx-border-width: 1 0 0 0;");
+
+                // Day number
+                Label dayNum = new Label(String.valueOf(eventDate.getDayOfMonth()));
+                dayNum.setFont(Font.font("Poppins Bold", 24));
+
+                boolean isToday = eventDate.equals(LocalDate.now());
+                if (isToday) {
+                    dayNum.setStyle(
+                            "-fx-text-fill: #FFFFFF; " +
+                                    "-fx-background-color: -roam-blue; " +
+                                    "-fx-background-radius: 50%; " +
+                                    "-fx-min-width: 45; " +
+                                    "-fx-min-height: 45; " +
+                                    "-fx-alignment: center;");
+                } else {
+                    dayNum.setStyle("-fx-text-fill: -roam-text-primary;");
+                }
+
+                // Date info
+                VBox dateInfo = new VBox(2);
+                Label dayName = new Label(eventDate.getDayOfWeek().toString().substring(0, 3));
+                dayName.setFont(Font.font("Poppins Medium", 12));
+                dayName.setStyle("-fx-text-fill: -roam-text-secondary;");
+
+                Label monthYear = new Label(
+                        eventDate.format(DateTimeFormatter.ofPattern("MMM yyyy")));
+                monthYear.setFont(Font.font("Poppins Regular", 12));
+                monthYear.setStyle("-fx-text-fill: -roam-text-hint;");
+
+                dateInfo.getChildren().addAll(dayName, monthYear);
+
+                dateHeader.getChildren().addAll(dayNum, dateInfo);
+                agendaView.getChildren().add(dateHeader);
+            }
+
+            // Add event item
+            HBox eventItem = createAgendaEventItem(event);
+            agendaView.getChildren().add(eventItem);
+        }
+
+        return agendaView;
+    }
+
+    private HBox createAgendaEventItem(CalendarEvent event) {
+        HBox item = new HBox(15);
+        item.setPadding(new Insets(15, 20, 15, 20));
+        item.setAlignment(Pos.CENTER_LEFT);
+        item.setStyle("-fx-background-color: -roam-bg-primary; -fx-cursor: hand;");
+
+        // Time
+        VBox timeBox = new VBox(2);
+        timeBox.setMinWidth(80);
+        timeBox.setMaxWidth(80);
+
+        if (event.getIsAllDay()) {
+            Label allDayLabel = new Label("All Day");
+            allDayLabel.setFont(Font.font("Poppins Medium", 12));
+            allDayLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+            timeBox.getChildren().add(allDayLabel);
+        } else {
+            Label startTime = new Label(
+                    event.getStartDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("h:mm a")));
+            startTime.setFont(Font.font("Poppins Medium", 13));
+            startTime.setStyle("-fx-text-fill: -roam-text-primary;");
+
+            Label endTime = new Label(
+                    event.getEndDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("h:mm a")));
+            endTime.setFont(Font.font("Poppins Regular", 11));
+            endTime.setStyle("-fx-text-fill: -roam-text-hint;");
+
+            timeBox.getChildren().addAll(startTime, endTime);
+        }
+
+        // Color bar
+        CalendarSource source = controller.getCalendarSourceById(event.getCalendarSourceId());
+        String color = source != null ? source.getColor() : "#4285f4";
+
+        Region colorBar = new Region();
+        colorBar.setMinWidth(4);
+        colorBar.setMaxWidth(4);
+        colorBar.setPrefHeight(50);
+        colorBar.setStyle("-fx-background-color: " + color + "; -fx-background-radius: 2;");
+
+        // Event details
+        VBox detailsBox = new VBox(4);
+        HBox.setHgrow(detailsBox, Priority.ALWAYS);
+
+        Label titleLabel = new Label(event.getTitle());
+        titleLabel.setFont(Font.font("Poppins Medium", 14));
+        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
+
+        detailsBox.getChildren().add(titleLabel);
+
+        // Location
+        if (event.getLocation() != null && !event.getLocation().isEmpty()) {
+            Label locationLabel = new Label("📍 " + event.getLocation());
+            locationLabel.setFont(Font.font("Poppins Regular", 12));
+            locationLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+            detailsBox.getChildren().add(locationLabel);
+        }
+
+        // Calendar source
+        if (source != null) {
+            Label sourceLabel = new Label(source.getName());
+            sourceLabel.setFont(Font.font("Poppins Regular", 11));
+            sourceLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+            detailsBox.getChildren().add(sourceLabel);
+        }
+
+        item.getChildren().addAll(timeBox, colorBar, detailsBox);
+
+        // Hover effect
+        item.setOnMouseEntered(e -> item.setStyle(
+                "-fx-background-color: -roam-gray-bg; -fx-cursor: hand;"));
+        item.setOnMouseExited(e -> item.setStyle(
+                "-fx-background-color: -roam-bg-primary; -fx-cursor: hand;"));
+
+        // Click to edit
+        item.setOnMouseClicked(e -> controller.editEvent(event));
+
+        return item;
+    }
+
+    private void refreshLegend() {
+        legendContainer.getChildren().clear();
+
+        List<CalendarSource> sources = controller.getCalendarSources();
+        for (CalendarSource source : sources) {
+            if (source.getIsVisible()) {
+                HBox item = new HBox(8);
+                item.setAlignment(Pos.CENTER_LEFT);
+
+                Circle dot = new Circle(5);
+                dot.setFill(Color.web(source.getColor()));
+
+                Label name = new Label(source.getName());
+                name.setFont(Font.font("Poppins Regular", 12));
+                name.setStyle("-fx-text-fill: -roam-text-secondary;");
+
+                item.getChildren().addAll(dot, name);
+                legendContainer.getChildren().add(item);
+            }
         }
     }
 }

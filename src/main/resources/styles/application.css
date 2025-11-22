@@ -56,6 +56,38 @@
     -roam-radius: 12px;
     -roam-radius-small: 8px;
     -roam-radius-tiny: 4px;
+    
+    -roam-bg-primary: #FFFFFF;
+}
+
+.root.dark {
+    -fx-base: #121212;
+    -fx-background-color: #121212;
+    -fx-text-fill: #FFFFFF;
+
+    -roam-bg-primary: #121212;
+    -roam-gray-bg: #1E1E1E;
+    -roam-gray-light: #2D2D2D;
+    -roam-border: #424242;
+    
+    -roam-text-primary: #FFFFFF;
+    -roam-text-secondary: #B0B0B0;
+    -roam-text-hint: #757575;
+    
+    -roam-blue: #8ab4f8;
+    -roam-blue-hover: #aecbfa;
+    -roam-blue-pressed: #d2e3fc;
+    -roam-blue-light: #1e2a38;
+    
+    /* Status Colors */
+    -roam-red: #ef5350;
+    -roam-red-bg: rgba(239, 83, 80, 0.1);
+    -roam-orange: #ffa726;
+    -roam-orange-bg: rgba(255, 167, 38, 0.1);
+    -roam-green: #66bb6a;
+    -roam-green-bg: rgba(102, 187, 106, 0.1);
+    -roam-blue-tag: #42a5f5;
+    -roam-blue-tag-bg: rgba(66, 165, 245, 0.1);
 }
 
 /* Main Text */
@@ -89,7 +121,7 @@
 }
 
 .nav-button:hover {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -roam-bg-primary;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
 }
 
@@ -130,7 +162,7 @@
 
 /* 4. Cards (Used in Kanban, Operations List) */
 .roam-card {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -roam-bg-primary;
     -fx-background-radius: -roam-radius;
     -fx-border-color: -roam-border;
     -fx-border-radius: -roam-radius;
@@ -201,12 +233,13 @@
     -fx-padding: 10 15;
     -fx-font-family: 'Poppins';
     -fx-font-size: 14px;
+    -fx-text-fill: -roam-text-primary;
 }
 
 .text-field:focused, .text-area:focused {
     -fx-border-color: -roam-blue;
     -fx-border-width: 2px;
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -roam-bg-primary;
 }
 
 /* 7. Stats Panel */
@@ -218,7 +251,7 @@
 }
 
 .stat-item {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: -roam-bg-primary;
     -fx-padding: 15;
     -fx-background-radius: -roam-radius-small;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);
@@ -253,8 +286,8 @@
 
 /* TableView - Modern Card Style */
 .table-view {
-    -fx-background-color: #FFFFFF;
-    background-color: #FFFFFF;
+    -fx-background-color: -roam-bg-primary;
+    background-color: -roam-bg-primary;
     -fx-background-insets: 0;
     -fx-padding: 0;
     padding: 0;
@@ -319,8 +352,8 @@
 
 /* Table rows */
 .table-row-cell {
-    -fx-background-color: #FFFFFF;
-    background-color: #FFFFFF;
+    -fx-background-color: -roam-bg-primary;
+    background-color: -roam-bg-primary;
     -fx-background-insets: 0;
     -fx-border-color: transparent;
     border-color: transparent;
@@ -523,116 +556,4 @@
 
 .icon-button-small:pressed {
     -fx-background-color: -roam-gray-bg;
-}
-.table-view {
-    -fx-background-color: #FFFFFF;
-    background-color: #FFFFFF;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    padding: 0;
-    
-    /* Subtle outer border only */
-    -fx-border-color: #E0E0E0;
-    border-color: #E0E0E0;
-    -fx-border-width: 1;
-    border-width: 1px;
-    -fx-border-radius: 0;
-    border-radius: 0;
-    -fx-background-radius: 0;
-    
-    /* Remove internal cell borders */
-    -fx-table-cell-border-color: transparent;
-}
-
-/* Remove default corner and placeholder styling */
-.table-view .corner {
-    -fx-background-color: #F5F5F5;
-    background-color: #F5F5F5;
-}
-
-.table-view .placeholder {
-    -fx-background-color: transparent;
-    background-color: transparent;
-}
-
-/* Header background */
-.table-view .column-header-background {
-    -fx-background-color: #F5F5F5;
-    background-color: #F5F5F5;
-    -fx-background-insets: 0;
-    -fx-background-radius: 0;
-}
-
-.table-view .column-header-background .filler {
-    -fx-background-color: #F5F5F5;
-    background-color: #F5F5F5;
-}
-
-/* Header cells */
-.table-view .column-header {
-    -fx-background-color: #F5F5F5;
-    background-color: #F5F5F5;
-    -fx-border-color: transparent;
-    border-color: transparent;
-}
-
-.table-view .column-header .label {
-    -fx-font-family: 'Poppins SemiBold';
-    font-family: 'Poppins SemiBold';
-    -fx-text-fill: #424242;
-    -fx-font-size: 13px;
-    font-size: 13px;
-    -fx-padding: 12 16 12 16;
-    padding: 12px 16px 12px 16px;
-}
-
-/* Table rows */
-.table-row-cell {
-    -fx-background-color: #FFFFFF;
-    background-color: #FFFFFF;
-    -fx-background-insets: 0;
-    -fx-border-color: transparent;
-    border-color: transparent;
-}
-
-.table-row-cell:odd {
-    -fx-background-color: #FAFAFA;
-    background-color: #FAFAFA;
-}
-
-.table-row-cell:hover {
-    -fx-background-color: #F0F4FF;
-    background-color: #F0F4FF;
-}
-
-.table-row-cell:selected {
-    -fx-background-color: #E3F2FD;
-    background-color: #E3F2FD;
-}
-
-.table-row-cell:selected:hover {
-    -fx-background-color: #BBDEFB;
-    background-color: #BBDEFB;
-}
-
-/* Table cells */
-.table-cell {
-    -fx-background-color: transparent;
-    background-color: transparent;
-    -fx-border-color: transparent;
-    border-color: transparent;
-    -fx-text-fill: #212121;
-    -fx-padding: 12 16 12 16;
-    padding: 12px 16px 12px 16px;
-    -fx-alignment: CENTER_LEFT;
-}
-
-.table-cell:selected {
-    -fx-text-fill: #212121;
-}
-
-/* Remove vertical/horizontal lines between cells */
-.table-view .column-header-background .nested-column-header .column-header {
-    -fx-border-color: transparent;
-    border-color: transparent;
 }

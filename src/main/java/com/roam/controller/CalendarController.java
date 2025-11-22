@@ -18,6 +18,8 @@ public class CalendarController {
     private final CalendarSourceRepository sourceRepository;
     private final OperationRepository operationRepository;
     private final TaskRepository taskRepository;
+    private final RegionRepository regionRepository;
+    private final NoteRepository noteRepository;
 
     private List<CalendarSource> calendarSources;
     private List<CalendarEvent> allEvents;
@@ -29,6 +31,8 @@ public class CalendarController {
         this.sourceRepository = new CalendarSourceRepository();
         this.operationRepository = new OperationRepository();
         this.taskRepository = new TaskRepository();
+        this.regionRepository = new RegionRepository();
+        this.noteRepository = new NoteRepository();
 
         initialize();
     }
@@ -58,21 +62,33 @@ public class CalendarController {
 
     private void createDefaultCalendarSources() {
         List<CalendarSource> existing = sourceRepository.findAll();
+        List<String> existingNames = existing.stream()
+                .map(CalendarSource::getName)
+                .collect(Collectors.toList());
 
-        if (existing.isEmpty()) {
-            System.out.println("Creating default calendar sources...");
+        createSourceIfNotExists(existingNames, "Personal", "#4285f4", CalendarSourceType.PERSONAL, true);
+        createSourceIfNotExists(existingNames, "Work", "#F4B400", CalendarSourceType.WORK, false);
+        createSourceIfNotExists(existingNames, "Operations", "#0F9D58", CalendarSourceType.OPERATIONS, false);
 
-            CalendarSource personal = new CalendarSource("Personal", "#4285f4", CalendarSourceType.PERSONAL);
-            personal.setIsDefault(true);
-            sourceRepository.save(personal);
+        // New Regions
+        createSourceIfNotExists(existingNames, "Lifestyle", "#FF5722", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Knowledge", "#9C27B0", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Skill", "#795548", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Spirituality", "#607D8B", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Relationship", "#E91E63", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Social", "#FF9800", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Career", "#3F51B5", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Finance", "#8BC34A", CalendarSourceType.CUSTOM, false);
+        createSourceIfNotExists(existingNames, "Academic", "#00BCD4", CalendarSourceType.CUSTOM, false);
+    }
 
-            CalendarSource work = new CalendarSource("Work", "#F4B400", CalendarSourceType.WORK);
-            sourceRepository.save(work);
-
-            CalendarSource operations = new CalendarSource("Operations", "#0F9D58", CalendarSourceType.OPERATIONS);
-            sourceRepository.save(operations);
-
-            System.out.println("✓ Default calendars created");
+    private void createSourceIfNotExists(List<String> existingNames, String name, String color, CalendarSourceType type,
+            boolean isDefault) {
+        if (!existingNames.contains(name)) {
+            System.out.println("Creating calendar source: " + name);
+            CalendarSource source = new CalendarSource(name, color, type);
+            source.setIsDefault(isDefault);
+            sourceRepository.save(source);
         }
     }
 
@@ -131,6 +147,15 @@ public class CalendarController {
                 .collect(Collectors.toList());
     }
 
+    public List<CalendarEvent> getAllEvents() {
+        return allEvents.stream()
+                .filter(e -> {
+                    CalendarSource source = getCalendarSourceById(e.getCalendarSourceId());
+                    return source != null && source.getIsVisible();
+                })
+                .collect(Collectors.toList());
+    }
+
     public void createEvent(LocalDate date) {
         try {
             CalendarEvent event = new CalendarEvent();
@@ -145,7 +170,14 @@ public class CalendarController {
 
             List<Operation> operations = operationRepository.findAll();
 
-            EventDialog dialog = new EventDialog(event, calendarSources, operations, null);
+            EventDialog dialog = new EventDialog(
+                    event,
+                    calendarSources,
+                    operations,
+                    regionRepository.findAll(),
+                    taskRepository.findAll(),
+                    noteRepository.findAll(),
+                    null);
             dialog.showAndWait().ifPresent(newEvent -> {
                 try {
                     eventRepository.save(newEvent);
@@ -171,9 +203,13 @@ public class CalendarController {
                     event,
                     calendarSources,
                     operations,
+                    regionRepository.findAll(),
+                    taskRepository.findAll(),
+                    noteRepository.findAll(),
                     () -> deleteEvent(event));
 
             dialog.showAndWait().ifPresent(updatedEvent -> {
+                System.out.println("Saving edited event: " + updatedEvent.getTitle());
                 try {
                     eventRepository.save(updatedEvent);
                     loadAllEvents();

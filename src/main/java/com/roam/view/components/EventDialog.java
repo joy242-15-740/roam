@@ -2,7 +2,10 @@ package com.roam.view.components;
 
 import com.roam.model.CalendarEvent;
 import com.roam.model.CalendarSource;
+import com.roam.model.Note;
 import com.roam.model.Operation;
+import com.roam.model.Region;
+import com.roam.model.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -28,17 +31,29 @@ public class EventDialog extends Dialog<CalendarEvent> {
     private final TextField locationField;
     private final TextArea descriptionArea;
     private final ComboBox<Operation> operationCombo;
+    private final ComboBox<Region> regionCombo;
+    private final ComboBox<Task> taskCombo;
+    private final ComboBox<Note> noteCombo;
     private final Label errorLabel;
 
-    private final CalendarEvent event;
+    private final CalendarEvent originalEvent;
+    private final CalendarEvent workingEvent;
     private final boolean isEditMode;
     private final Runnable onDelete;
 
     public EventDialog(CalendarEvent event, List<CalendarSource> calendarSources,
-            List<Operation> operations, Runnable onDelete) {
-        this.event = event;
+            List<Operation> operations, List<Region> regions, List<Task> tasks, List<Note> notes, Runnable onDelete) {
+        this.originalEvent = event;
         this.isEditMode = event != null && event.getId() != null;
         this.onDelete = onDelete;
+
+        // Use the original event directly for editing, create new for adding
+        if (isEditMode) {
+            this.workingEvent = event;
+            System.out.println("Editing event with ID: " + event.getId());
+        } else {
+            this.workingEvent = new CalendarEvent();
+        }
 
         setTitle(isEditMode ? "Edit Event" : "Create Event");
         setResizable(false);
@@ -56,6 +71,9 @@ public class EventDialog extends Dialog<CalendarEvent> {
         locationField = createTextField("Add location", 255);
         descriptionArea = createTextArea("Add description", 1000);
         operationCombo = createOperationCombo(operations);
+        regionCombo = createRegionCombo(regions);
+        taskCombo = createTaskCombo(tasks);
+        noteCombo = createNoteCombo(notes);
         errorLabel = createErrorLabel();
 
         // Setup all-day checkbox
@@ -120,10 +138,17 @@ public class EventDialog extends Dialog<CalendarEvent> {
             }
         });
 
-        // Convert result
+        // Convert result - this is called when dialog is closed with OK button
         setResultConverter(dialogButton -> {
             if (dialogButton == submitButton) {
-                return validateAndCreateEvent();
+                CalendarEvent result = validateAndCreateEvent();
+                if (result != null) {
+                    System.out.println(
+                            "Event validated successfully. ID: " + result.getId() + ", Title: " + result.getTitle());
+                } else {
+                    System.out.println("Event validation failed");
+                }
+                return result;
             }
             return null;
         });
@@ -136,7 +161,8 @@ public class EventDialog extends Dialog<CalendarEvent> {
         field.setPromptText(prompt);
         field.setPrefHeight(40);
         field.setFont(Font.font("Poppins Regular", 14));
-        field.setStyle("-fx-border-color: #E0E0E0; -fx-border-radius: 4; -fx-background-radius: 4;");
+        field.setStyle(
+                "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-background-color: -roam-bg-primary;");
 
         field.textProperty().addListener((obs, old, newVal) -> {
             if (newVal != null && newVal.length() > maxLength) {
@@ -153,7 +179,8 @@ public class EventDialog extends Dialog<CalendarEvent> {
         area.setPrefHeight(80);
         area.setWrapText(true);
         area.setFont(Font.font("Poppins Regular", 14));
-        area.setStyle("-fx-border-color: #E0E0E0; -fx-border-radius: 4; -fx-background-radius: 4;");
+        area.setStyle(
+                "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-control-inner-background: -roam-bg-primary;");
 
         area.textProperty().addListener((obs, old, newVal) -> {
             if (newVal != null && newVal.length() > maxLength) {
@@ -201,6 +228,39 @@ public class EventDialog extends Dialog<CalendarEvent> {
         return combo;
     }
 
+    private ComboBox<Region> createRegionCombo(List<Region> regions) {
+        ComboBox<Region> combo = new ComboBox<>();
+        combo.getItems().addAll(regions);
+        combo.setPromptText("Select Region");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setButtonCell(new RegionListCell());
+        combo.setCellFactory(lv -> new RegionListCell());
+        return combo;
+    }
+
+    private ComboBox<Task> createTaskCombo(List<Task> tasks) {
+        ComboBox<Task> combo = new ComboBox<>();
+        combo.getItems().addAll(tasks);
+        combo.setPromptText("Link to Task");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setButtonCell(new TaskListCell());
+        combo.setCellFactory(lv -> new TaskListCell());
+        return combo;
+    }
+
+    private ComboBox<Note> createNoteCombo(List<Note> notes) {
+        ComboBox<Note> combo = new ComboBox<>();
+        combo.getItems().addAll(notes);
+        combo.setPromptText("Link to Note");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setButtonCell(new NoteListCell());
+        combo.setCellFactory(lv -> new NoteListCell());
+        return combo;
+    }
+
     private Spinner<Integer> createTimeSpinner(int initial, int min, int max) {
         Spinner<Integer> spinner = new Spinner<>(min, max, initial);
         spinner.setEditable(true);
@@ -230,7 +290,10 @@ public class EventDialog extends Dialog<CalendarEvent> {
                 createFieldGroup("", allDayCheckBox),
                 createFieldGroup("Location", locationField),
                 createFieldGroup("Description", descriptionArea),
-                createFieldGroup("Operation", operationCombo));
+                createFieldGroup("Operation", operationCombo),
+                createFieldGroup("Region", regionCombo),
+                createFieldGroup("Task", taskCombo),
+                createFieldGroup("Note", noteCombo));
 
         return layout;
     }
@@ -241,25 +304,27 @@ public class EventDialog extends Dialog<CalendarEvent> {
         // Start date/time
         Label startLabel = new Label("Start");
         startLabel.setFont(Font.font("Poppins Regular", 13));
-        startLabel.setStyle("-fx-text-fill: #616161;");
+        startLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         HBox startBox = new HBox(10);
         startDatePicker.setPrefWidth(200);
         startDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
         Label startTimeLabel = new Label(":");
         startTimeLabel.setFont(Font.font("Poppins Regular", 14));
+        startTimeLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         startBox.getChildren().addAll(startDatePicker, startHourSpinner, startTimeLabel, startMinuteSpinner);
 
         // End date/time
         Label endLabel = new Label("End");
         endLabel.setFont(Font.font("Poppins Regular", 13));
-        endLabel.setStyle("-fx-text-fill: #616161;");
+        endLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         HBox endBox = new HBox(10);
         endDatePicker.setPrefWidth(200);
         endDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
         Label endTimeLabel = new Label(":");
         endTimeLabel.setFont(Font.font("Poppins Regular", 14));
+        endTimeLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         endBox.getChildren().addAll(endDatePicker, endHourSpinner, endTimeLabel, endMinuteSpinner);
 
         section.getChildren().addAll(startLabel, startBox, endLabel, endBox);
@@ -272,7 +337,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         if (!labelText.isEmpty()) {
             Label label = new Label(labelText);
             label.setFont(Font.font("Poppins Regular", 13));
-            label.setStyle("-fx-text-fill: #616161;");
+            label.setStyle("-fx-text-fill: -roam-text-secondary;");
             group.getChildren().add(label);
         }
 
@@ -281,47 +346,71 @@ public class EventDialog extends Dialog<CalendarEvent> {
     }
 
     private void populateFields() {
-        if (event != null) {
-            titleField.setText(event.getTitle());
+        if (originalEvent != null) {
+            titleField.setText(originalEvent.getTitle());
 
-            if (event.getStartDateTime() != null) {
-                startDatePicker.setValue(event.getStartDateTime().toLocalDate());
-                startHourSpinner.getValueFactory().setValue(event.getStartDateTime().getHour());
-                startMinuteSpinner.getValueFactory().setValue(event.getStartDateTime().getMinute());
+            if (originalEvent.getStartDateTime() != null) {
+                startDatePicker.setValue(originalEvent.getStartDateTime().toLocalDate());
+                startHourSpinner.getValueFactory().setValue(originalEvent.getStartDateTime().getHour());
+                startMinuteSpinner.getValueFactory().setValue(originalEvent.getStartDateTime().getMinute());
             }
 
-            if (event.getEndDateTime() != null) {
-                endDatePicker.setValue(event.getEndDateTime().toLocalDate());
-                endHourSpinner.getValueFactory().setValue(event.getEndDateTime().getHour());
-                endMinuteSpinner.getValueFactory().setValue(event.getEndDateTime().getMinute());
+            if (originalEvent.getEndDateTime() != null) {
+                endDatePicker.setValue(originalEvent.getEndDateTime().toLocalDate());
+                endHourSpinner.getValueFactory().setValue(originalEvent.getEndDateTime().getHour());
+                endMinuteSpinner.getValueFactory().setValue(originalEvent.getEndDateTime().getMinute());
             }
 
-            allDayCheckBox.setSelected(event.getIsAllDay());
+            allDayCheckBox.setSelected(originalEvent.getIsAllDay());
 
-            locationField.setText(event.getLocation());
-            descriptionArea.setText(event.getDescription());
+            locationField.setText(originalEvent.getLocation());
+            descriptionArea.setText(originalEvent.getDescription());
 
             // Set calendar source
             CalendarSource source = calendarCombo.getItems().stream()
-                    .filter(s -> s.getId().equals(event.getCalendarSourceId()))
+                    .filter(s -> s.getId().equals(originalEvent.getCalendarSourceId()))
                     .findFirst()
                     .orElse(null);
             calendarCombo.setValue(source);
 
             // Set operation
-            if (event.getOperationId() != null) {
+            if (originalEvent.getOperationId() != null) {
                 Operation op = operationCombo.getItems().stream()
-                        .filter(o -> o != null && o.getId().equals(event.getOperationId()))
+                        .filter(o -> o != null && o.getId().equals(originalEvent.getOperationId()))
                         .findFirst()
                         .orElse(null);
                 operationCombo.setValue(op);
+            }
+
+            if (originalEvent.getRegion() != null) {
+                regionCombo.getItems().stream()
+                        .filter(r -> r.getName().equals(originalEvent.getRegion()))
+                        .findFirst()
+                        .ifPresent(regionCombo::setValue);
+            }
+
+            if (originalEvent.getTaskId() != null) {
+                taskCombo.getItems().stream()
+                        .filter(t -> t.getId().equals(originalEvent.getTaskId()))
+                        .findFirst()
+                        .ifPresent(taskCombo::setValue);
+            }
+
+            if (originalEvent.getNoteId() != null) {
+                noteCombo.getItems().stream()
+                        .filter(n -> n.getId().equals(originalEvent.getNoteId()))
+                        .findFirst()
+                        .ifPresent(noteCombo::setValue);
             }
         }
     }
 
     private CalendarEvent validateAndCreateEvent() {
+        System.out.println(
+                "Validating event... (Edit mode: " + isEditMode + ", Working event ID: " + workingEvent.getId() + ")");
         String title = titleField.getText().trim();
         if (title.isEmpty()) {
+            errorLabel.setText("Title is required");
             errorLabel.setVisible(true);
             return null;
         }
@@ -333,7 +422,8 @@ public class EventDialog extends Dialog<CalendarEvent> {
             return null;
         }
 
-        CalendarEvent e = isEditMode ? event : new CalendarEvent();
+        // Use working copy
+        CalendarEvent e = this.workingEvent;
 
         e.setTitle(title);
         e.setCalendarSourceId(selectedCalendar.getId());
@@ -344,6 +434,12 @@ public class EventDialog extends Dialog<CalendarEvent> {
         // Set dates
         LocalDate startDate = startDatePicker.getValue();
         LocalDate endDate = endDatePicker.getValue();
+
+        if (startDate == null || endDate == null) {
+            errorLabel.setText("Start and end dates are required");
+            errorLabel.setVisible(true);
+            return null;
+        }
 
         if (allDayCheckBox.isSelected()) {
             e.setStartDateTime(startDate.atStartOfDay());
@@ -358,13 +454,13 @@ public class EventDialog extends Dialog<CalendarEvent> {
 
             e.setStartDateTime(LocalDateTime.of(startDate, startTime));
             e.setEndDateTime(LocalDateTime.of(endDate, endTime));
+        }
 
-            // Validate end is after start
-            if (e.getEndDateTime().isBefore(e.getStartDateTime())) {
-                errorLabel.setText("End time must be after start time");
-                errorLabel.setVisible(true);
-                return null;
-            }
+        // Validate end is after start
+        if (e.getEndDateTime().isBefore(e.getStartDateTime())) {
+            errorLabel.setText("End time must be after start time");
+            errorLabel.setVisible(true);
+            return null;
         }
 
         // Set operation
@@ -375,14 +471,36 @@ public class EventDialog extends Dialog<CalendarEvent> {
             e.setOperationId(null);
         }
 
+        if (regionCombo.getValue() != null) {
+            e.setRegion(regionCombo.getValue().getName());
+        } else {
+            e.setRegion(null);
+        }
+
+        if (taskCombo.getValue() != null) {
+            e.setTaskId(taskCombo.getValue().getId());
+        } else {
+            e.setTaskId(null);
+        }
+
+        if (noteCombo.getValue() != null) {
+            e.setNoteId(noteCombo.getValue().getId());
+        } else {
+            e.setNoteId(null);
+        }
+
+        System.out
+                .println("Event validation passed. Returning event with ID: " + e.getId() + ", Title: " + e.getTitle());
         return e;
     }
 
     private void applyCustomStyling() {
         DialogPane pane = getDialogPane();
-        pane.lookupButton(ButtonType.CANCEL).setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-text-fill: #000000; " +
+
+        Button cancelBtn = (Button) pane.lookupButton(ButtonType.CANCEL);
+        cancelBtn.setStyle(
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-text-fill: -roam-text-primary; " +
                         "-fx-font-family: 'Poppins Regular'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
@@ -390,15 +508,40 @@ public class EventDialog extends Dialog<CalendarEvent> {
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
 
-        pane.lookupButton(pane.getButtonTypes().get(pane.getButtonTypes().size() - 1)).setStyle(
-                "-fx-background-color: #4285f4; " +
+        Button submitBtn = (Button) pane.lookupButton(pane.getButtonTypes().get(pane.getButtonTypes().size() - 1));
+        submitBtn.setStyle(
+                "-fx-background-color: -roam-blue; " +
                         "-fx-text-fill: #FFFFFF; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                        "-fx-font-family: 'Poppins Bold'; " +
                         "-fx-font-size: 14px; " +
-                        "-fx-min-width: 100px; " +
+                        "-fx-min-width: 120px; " +
                         "-fx-min-height: 40px; " +
                         "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;");
+                        "-fx-cursor: hand; " +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(66, 133, 244, 0.3), 4, 0, 0, 2);");
+
+        // Add hover effect
+        submitBtn.setOnMouseEntered(e -> submitBtn.setStyle(
+                "-fx-background-color: #357ae8; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-font-family: 'Poppins Bold'; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-min-width: 120px; " +
+                        "-fx-min-height: 40px; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand; " +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(66, 133, 244, 0.5), 6, 0, 0, 2);"));
+
+        submitBtn.setOnMouseExited(e -> submitBtn.setStyle(
+                "-fx-background-color: -roam-blue; " +
+                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-font-family: 'Poppins Bold'; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-min-width: 120px; " +
+                        "-fx-min-height: 40px; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand; " +
+                        "-fx-effect: dropshadow(three-pass-box, rgba(66, 133, 244, 0.3), 4, 0, 0, 2);"));
     }
 
     // Custom cell for calendar source combo
@@ -438,6 +581,47 @@ public class EventDialog extends Dialog<CalendarEvent> {
                 setText("None");
             } else {
                 setText(item.getName());
+            }
+        }
+    }
+
+    // Custom cell for region combo
+    private static class RegionListCell extends ListCell<Region> {
+        @Override
+        protected void updateItem(Region item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                setText(item.getName());
+                setStyle("-fx-text-fill: " + item.getColor() + ";");
+            }
+        }
+    }
+
+    // Custom cell for task combo
+    private static class TaskListCell extends ListCell<Task> {
+        @Override
+        protected void updateItem(Task item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+            } else {
+                setText(item.getTitle());
+            }
+        }
+    }
+
+    // Custom cell for note combo
+    private static class NoteListCell extends ListCell<Note> {
+        @Override
+        protected void updateItem(Note item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setText(null);
+            } else {
+                setText(item.getTitle());
             }
         }
     }

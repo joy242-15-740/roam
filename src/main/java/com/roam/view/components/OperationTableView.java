@@ -122,10 +122,10 @@ public class OperationTableView extends TableView<Operation> {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText("No date set");
-                    setStyle("-fx-text-fill: #9E9E9E; -fx-font-style: italic; -fx-alignment: CENTER;");
+                    setStyle("-fx-text-fill: -roam-text-hint; -fx-font-style: italic; -fx-alignment: CENTER;");
                 } else {
                     setText(DATE_FORMATTER.format(item));
-                    setStyle("-fx-text-fill: #000000; -fx-alignment: CENTER;");
+                    setStyle("-fx-text-fill: -roam-text-primary; -fx-alignment: CENTER;");
                 }
             }
         });

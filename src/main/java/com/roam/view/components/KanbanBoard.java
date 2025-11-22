@@ -35,7 +35,7 @@ public class KanbanBoard extends HBox {
     public KanbanBoard() {
         setSpacing(20);
         setPadding(new Insets(20));
-        setStyle("-fx-background-color: #FAFAFA;");
+        setStyle("-fx-background-color: -roam-gray-bg;");
         setFillHeight(true);
 
         // Create task containers
@@ -49,11 +49,12 @@ public class KanbanBoard extends HBox {
         doneCountLabel = new Label("0");
 
         // Create columns
-        todoColumn = createColumn("To Do", "#E3F2FD", "#1976D2", TaskStatus.TODO, todoTasksContainer,
+        todoColumn = createColumn("To Do", "-roam-blue-tag-bg", "-roam-blue-tag", TaskStatus.TODO, todoTasksContainer,
                 todoCountLabel);
-        inProgressColumn = createColumn("In Progress", "#FFF3E0", "#F57C00", TaskStatus.IN_PROGRESS,
+        inProgressColumn = createColumn("In Progress", "-roam-orange-bg", "-roam-orange", TaskStatus.IN_PROGRESS,
                 inProgressTasksContainer, inProgressCountLabel);
-        doneColumn = createColumn("Done", "#E8F5E9", "#388E3C", TaskStatus.DONE, doneTasksContainer, doneCountLabel);
+        doneColumn = createColumn("Done", "-roam-green-bg", "-roam-green", TaskStatus.DONE, doneTasksContainer,
+                doneCountLabel);
 
         // Make columns equal width
         HBox.setHgrow(todoColumn, Priority.ALWAYS);
@@ -68,8 +69,8 @@ public class KanbanBoard extends HBox {
         VBox column = new VBox();
         column.setMinWidth(280);
         column.setStyle(
-                "-fx-background-color: #FFFFFF; " +
-                        "-fx-border-color: #E0E0E0; " +
+                "-fx-background-color: -roam-bg-primary; " +
+                        "-fx-border-color: -roam-border; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 8; " +
                         "-fx-background-radius: 8;");
@@ -107,30 +108,30 @@ public class KanbanBoard extends HBox {
         addBtn.setFont(Font.font("Poppins Regular", 13));
         addBtn.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-border-color: #BDBDBD; " +
+                        "-fx-border-color: -roam-text-hint; " +
                         "-fx-border-width: 2; " +
                         "-fx-border-style: dashed; " +
                         "-fx-border-radius: 6; " +
                         "-fx-background-radius: 6; " +
-                        "-fx-text-fill: #616161; " +
+                        "-fx-text-fill: -roam-text-secondary; " +
                         "-fx-cursor: hand;");
         addBtn.setOnMouseEntered(e -> addBtn.setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-border-color: #BDBDBD; " +
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-border-color: -roam-text-hint; " +
                         "-fx-border-width: 2; " +
                         "-fx-border-style: dashed; " +
                         "-fx-border-radius: 6; " +
                         "-fx-background-radius: 6; " +
-                        "-fx-text-fill: #616161; " +
+                        "-fx-text-fill: -roam-text-secondary; " +
                         "-fx-cursor: hand;"));
         addBtn.setOnMouseExited(e -> addBtn.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-border-color: #BDBDBD; " +
+                        "-fx-border-color: -roam-text-hint; " +
                         "-fx-border-width: 2; " +
                         "-fx-border-style: dashed; " +
                         "-fx-border-radius: 6; " +
                         "-fx-background-radius: 6; " +
-                        "-fx-text-fill: #616161; " +
+                        "-fx-text-fill: -roam-text-secondary; " +
                         "-fx-cursor: hand;"));
         addBtn.setOnAction(e -> {
             if (onAddTask != null) {

@@ -1,7 +1,9 @@
 package com.roam.controller;
 
 import com.roam.model.Operation;
+import com.roam.model.Region;
 import com.roam.repository.OperationRepository;
+import com.roam.repository.RegionRepository;
 import com.roam.util.DialogUtils;
 import com.roam.view.components.OperationDialog;
 import com.roam.view.components.OperationTableView;
@@ -12,11 +14,13 @@ import java.util.Optional;
 public class OperationsController {
 
     private final OperationRepository repository;
+    private final RegionRepository regionRepository;
     private OperationTableView tableView;
     private Runnable onDataChanged;
 
     public OperationsController() {
         this.repository = new OperationRepository();
+        this.regionRepository = new RegionRepository();
     }
 
     public void setTableView(OperationTableView tableView) {
@@ -47,7 +51,8 @@ public class OperationsController {
      * Create new operation
      */
     public void createOperation() {
-        OperationDialog dialog = new OperationDialog(null);
+        List<Region> regions = regionRepository.findAll();
+        OperationDialog dialog = new OperationDialog(null, regions);
         Optional<Operation> result = dialog.showAndWait();
 
         result.ifPresent(operation -> {
@@ -73,7 +78,8 @@ public class OperationsController {
         if (operation == null)
             return;
 
-        OperationDialog dialog = new OperationDialog(operation);
+        List<Region> regions = regionRepository.findAll();
+        OperationDialog dialog = new OperationDialog(operation, regions);
         Optional<Operation> result = dialog.showAndWait();
 
         result.ifPresent(updatedOp -> {

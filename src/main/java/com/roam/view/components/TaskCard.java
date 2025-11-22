@@ -28,8 +28,8 @@ public class TaskCard extends VBox {
         setPadding(new Insets(15));
         setMinHeight(100);
         setStyle(
-                "-fx-background-color: #FFFFFF; " +
-                        "-fx-border-color: #E0E0E0; " +
+                "-fx-background-color: -roam-bg-primary; " +
+                        "-fx-border-color: -roam-border; " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 8; " +
                         "-fx-background-radius: 8; " +
@@ -40,8 +40,8 @@ public class TaskCard extends VBox {
         // Hover effect
         setOnMouseEntered(e -> {
             setStyle(
-                    "-fx-background-color: #FFFFFF; " +
-                            "-fx-border-color: #E0E0E0; " +
+                    "-fx-background-color: -roam-bg-primary; " +
+                            "-fx-border-color: -roam-border; " +
                             "-fx-border-width: 1; " +
                             "-fx-border-radius: 8; " +
                             "-fx-background-radius: 8; " +
@@ -55,8 +55,8 @@ public class TaskCard extends VBox {
 
         setOnMouseExited(e -> {
             setStyle(
-                    "-fx-background-color: #FFFFFF; " +
-                            "-fx-border-color: #E0E0E0; " +
+                    "-fx-background-color: -roam-bg-primary; " +
+                            "-fx-border-color: -roam-border; " +
                             "-fx-border-width: 1; " +
                             "-fx-border-radius: 8; " +
                             "-fx-background-radius: 8; " +
@@ -68,7 +68,7 @@ public class TaskCard extends VBox {
         // Title
         Label titleLabel = new Label(task.getTitle());
         titleLabel.setFont(Font.font("Poppins Medium", 14));
-        titleLabel.setStyle("-fx-text-fill: #000000;");
+        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         titleLabel.setWrapText(true);
         titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -76,7 +76,7 @@ public class TaskCard extends VBox {
         if (task.getDescription() != null && !task.getDescription().isEmpty()) {
             Label descLabel = new Label(task.getDescription());
             descLabel.setFont(Font.font("Poppins Regular", 12));
-            descLabel.setStyle("-fx-text-fill: #616161;");
+            descLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
             descLabel.setWrapText(true);
             descLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -105,7 +105,7 @@ public class TaskCard extends VBox {
         if (task.getDueDate() != null) {
             Label dueDateLabel = new Label("📅 " + DATE_FORMATTER.format(task.getDueDate()));
             dueDateLabel.setFont(Font.font("Poppins Regular", 11));
-            dueDateLabel.setStyle("-fx-text-fill: #9E9E9E;");
+            dueDateLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             footer.getChildren().add(dueDateLabel);
         }
 
