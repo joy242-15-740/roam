@@ -1,12 +1,12 @@
 package com.roam.controller;
 
-import com.roam.model.Note;
+import com.roam.model.Wiki;
 import com.roam.model.Operation;
 import com.roam.model.Region;
 import com.roam.model.Task;
 import com.roam.model.TaskStatus;
 import com.roam.repository.CalendarEventRepository;
-import com.roam.repository.NoteRepository;
+import com.roam.repository.WikiRepository;
 import com.roam.repository.OperationRepository;
 import com.roam.repository.RegionRepository;
 import com.roam.repository.TaskRepository;
@@ -19,7 +19,7 @@ public class OperationDetailController {
 
     private final OperationRepository operationRepository;
     private final TaskRepository taskRepository;
-    private final NoteRepository noteRepository;
+    private final WikiRepository WikiRepository;
     private final RegionRepository regionRepository;
     private final CalendarEventRepository eventRepository;
 
@@ -30,7 +30,7 @@ public class OperationDetailController {
         this.operation = operation;
         this.operationRepository = new OperationRepository();
         this.taskRepository = new TaskRepository();
-        this.noteRepository = new NoteRepository();
+        this.WikiRepository = new WikiRepository();
         this.regionRepository = new RegionRepository();
         this.eventRepository = new CalendarEventRepository();
     }
@@ -107,7 +107,7 @@ public class OperationDetailController {
                 List.of(operation), // Only current operation
                 regionRepository.findAll(),
                 eventRepository.findAll(),
-                noteRepository.findAll());
+                WikiRepository.findAll());
         dialog.showAndWait().ifPresent(newTask -> {
             try {
                 newTask.setOperationId(operation.getId());
@@ -139,7 +139,7 @@ public class OperationDetailController {
                 List.of(operation),
                 regionRepository.findAll(),
                 eventRepository.findAll(),
-                noteRepository.findAll());
+                WikiRepository.findAll());
         dialog.showAndWait().ifPresent(updatedTask -> {
             try {
                 taskRepository.save(updatedTask);
@@ -209,14 +209,14 @@ public class OperationDetailController {
         }
     }
 
-    // ==================== NOTE OPERATIONS ====================
+    // ==================== Wiki OPERATIONS ====================
 
     /**
      * Load all notes for this operation
      */
-    public List<Note> loadNotes() {
+    public List<Wiki> loadNotes() {
         try {
-            return noteRepository.findByOperationId(operation.getId());
+            return WikiRepository.findByOperationId(operation.getId());
         } catch (Exception e) {
             System.err.println("✗ Failed to load notes: " + e.getMessage());
             DialogUtils.showError(
@@ -228,70 +228,70 @@ public class OperationDetailController {
     }
 
     /**
-     * Create new note
+     * Create new Wiki
      */
-    public Note createNote() {
+    public Wiki createNote() {
         try {
-            Note note = new Note("Untitled Note", operation.getId());
-            note = noteRepository.save(note);
-            System.out.println("✓ Note created: " + note.getTitle());
+            Wiki Wiki = new Wiki("Untitled Wiki", operation.getId());
+            Wiki = WikiRepository.save(Wiki);
+            System.out.println("✓ Wiki created: " + Wiki.getTitle());
             if (onDataChanged != null) {
                 onDataChanged.run();
             }
-            return note;
+            return Wiki;
         } catch (Exception e) {
-            System.err.println("✗ Failed to create note: " + e.getMessage());
+            System.err.println("✗ Failed to create Wiki: " + e.getMessage());
             DialogUtils.showError(
                     "Create Error",
-                    "Failed to create note",
+                    "Failed to create Wiki",
                     e.getMessage());
             return null;
         }
     }
 
     /**
-     * Save note
+     * Save Wiki
      */
-    public void saveNote(Note note) {
-        if (note == null)
+    public void saveNote(Wiki Wiki) {
+        if (Wiki == null)
             return;
 
         try {
-            noteRepository.save(note);
-            System.out.println("✓ Note saved: " + note.getTitle());
+            WikiRepository.save(Wiki);
+            System.out.println("✓ Wiki saved: " + Wiki.getTitle());
         } catch (Exception e) {
-            System.err.println("✗ Failed to save note: " + e.getMessage());
+            System.err.println("✗ Failed to save Wiki: " + e.getMessage());
             DialogUtils.showError(
                     "Save Error",
-                    "Failed to save note",
+                    "Failed to save Wiki",
                     e.getMessage());
         }
     }
 
     /**
-     * Delete note with confirmation
+     * Delete Wiki with confirmation
      */
-    public void deleteNote(Note note) {
-        if (note == null)
+    public void deleteNote(Wiki Wiki) {
+        if (Wiki == null)
             return;
 
         boolean confirmed = DialogUtils.showConfirmation(
-                "Delete Note",
-                "Are you sure you want to delete this note?",
-                "Note: " + note.getTitle());
+                "Delete Wiki",
+                "Are you sure you want to delete this Wiki?",
+                "Wiki: " + Wiki.getTitle());
 
         if (confirmed) {
             try {
-                noteRepository.delete(note);
-                System.out.println("✓ Note deleted: " + note.getTitle());
+                WikiRepository.delete(Wiki);
+                System.out.println("✓ Wiki deleted: " + Wiki.getTitle());
                 if (onDataChanged != null) {
                     onDataChanged.run();
                 }
             } catch (Exception e) {
-                System.err.println("✗ Failed to delete note: " + e.getMessage());
+                System.err.println("✗ Failed to delete Wiki: " + e.getMessage());
                 DialogUtils.showError(
                         "Delete Error",
-                        "Failed to delete note",
+                        "Failed to delete Wiki",
                         e.getMessage());
             }
         }

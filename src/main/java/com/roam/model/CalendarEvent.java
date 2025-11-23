@@ -65,8 +65,8 @@ public class CalendarEvent {
     @Column(length = 50)
     private String region;
 
-    @Column(name = "note_id")
-    private Long noteId;
+    @Column(name = "wiki_id")
+    private Long wikiId;
 
     // Constructors
     public CalendarEvent() {
@@ -247,12 +247,12 @@ public class CalendarEvent {
         this.region = region;
     }
 
-    public Long getNoteId() {
-        return noteId;
+    public Long getWikiId() {
+        return wikiId;
     }
 
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
+    public void setWikiId(Long wikiId) {
+        this.wikiId = wikiId;
     }
 
     @Override

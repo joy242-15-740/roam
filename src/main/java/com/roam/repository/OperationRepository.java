@@ -27,6 +27,7 @@ public class OperationRepository {
             if (operation.getId() == null) {
                 // New operation - persist
                 em.persist(operation);
+                em.flush(); // Ensure ID is generated
                 System.out.println("✓ Operation created: " + operation.getName());
             } else {
                 // Existing operation - merge

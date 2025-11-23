@@ -10,6 +10,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
@@ -108,17 +110,35 @@ public class OperationInfoCard extends VBox {
         // Priority badge
         Label priorityBadge = createPriorityBadge(operation.getPriority());
 
+        // Region badge (if exists)
+        if (operation.getRegion() != null && !operation.getRegion().isEmpty()) {
+            Label regionBadge = createRegionBadge(operation.getRegion());
+            metadata.getChildren().add(statusBadge);
+            metadata.getChildren().add(priorityBadge);
+            metadata.getChildren().add(regionBadge);
+        } else {
+            metadata.getChildren().add(statusBadge);
+            metadata.getChildren().add(priorityBadge);
+        }
+
         // Due date
         Label dueDateLabel = new Label();
         dueDateLabel.setFont(Font.font("Poppins Regular", 13));
         dueDateLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+
+        HBox dueDateBox = new HBox(5);
+        dueDateBox.setAlignment(Pos.CENTER_LEFT);
+        FontIcon calIcon = new FontIcon(Feather.CALENDAR);
+        calIcon.setIconSize(14);
+
         if (operation.getDueDate() != null) {
-            dueDateLabel.setText("📅 Due: " + DATE_FORMATTER.format(operation.getDueDate()));
+            dueDateLabel.setText("Due: " + DATE_FORMATTER.format(operation.getDueDate()));
         } else {
-            dueDateLabel.setText("📅 No due date");
+            dueDateLabel.setText("No due date");
         }
 
-        metadata.getChildren().addAll(statusBadge, priorityBadge, dueDateLabel);
+        dueDateBox.getChildren().addAll(calIcon, dueDateLabel);
+        metadata.getChildren().add(dueDateBox);
         return metadata;
     }
 
@@ -188,6 +208,16 @@ public class OperationInfoCard extends VBox {
             }
         }
 
+        return badge;
+    }
+
+    private Label createRegionBadge(String region) {
+        Label badge = new Label("🌍 " + region);
+        badge.setFont(Font.font("Poppins Regular", 13));
+        badge.setStyle("-fx-padding: 4 12 4 12; " +
+                "-fx-background-radius: 12; " +
+                "-fx-background-color: #E3F2FD; " +
+                "-fx-text-fill: #1976D2;");
         return badge;
     }
 

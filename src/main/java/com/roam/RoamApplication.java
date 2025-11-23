@@ -4,6 +4,7 @@ import com.roam.service.DatabaseService;
 import com.roam.service.SecurityContext;
 import com.roam.service.SettingsService;
 import com.roam.util.HibernateUtil;
+import com.roam.util.ThemeManager;
 import com.roam.view.LockScreen;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -28,6 +29,13 @@ public class RoamApplication extends Application {
 
             System.out.println("=".repeat(50));
 
+            // Load settings
+            SettingsService settingsService = SettingsService.getInstance();
+            String theme = settingsService.getSettings().getTheme();
+
+            // Apply AtlantaFX theme using ThemeManager
+            ThemeManager.getInstance().applyTheme(theme);
+
             // Load custom fonts
             Font regularFont = loadFonts();
             Font boldFont = Font.font("Poppins Bold", 14);
@@ -35,40 +43,26 @@ public class RoamApplication extends Application {
             // Create main layout with fonts
             MainLayout mainLayout = new MainLayout(regularFont, boldFont);
 
-            // Load CSS
+            // Load custom CSS (will complement AtlantaFX)
             String css = Objects.requireNonNull(
                     getClass().getResource("/styles/application.css")).toExternalForm();
-
-            // Load settings
-            SettingsService settingsService = SettingsService.getInstance();
-            String theme = settingsService.getSettings().getTheme();
-            boolean isDark = "Dark".equalsIgnoreCase(theme);
 
             // Check security
             if (SecurityContext.getInstance().isLockEnabled()) {
                 LockScreen lockScreen = new LockScreen(() -> {
                     Scene scene = new Scene(mainLayout, 1024, 600);
                     scene.getStylesheets().add(css);
-                    if (isDark) {
-                        scene.getRoot().getStyleClass().add("dark");
-                    }
                     primaryStage.setScene(scene);
                     primaryStage.centerOnScreen();
                 });
 
                 Scene lockScene = new Scene(lockScreen, 1024, 600);
                 lockScene.getStylesheets().add(css);
-                if (isDark) {
-                    lockScene.getRoot().getStyleClass().add("dark");
-                }
                 primaryStage.setScene(lockScene);
             } else {
                 // Create scene
                 Scene scene = new Scene(mainLayout, 1024, 600);
                 scene.getStylesheets().add(css);
-                if (isDark) {
-                    scene.getRoot().getStyleClass().add("dark");
-                }
                 primaryStage.setScene(scene);
             }
 

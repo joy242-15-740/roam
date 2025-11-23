@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -133,8 +135,9 @@ public class OperationsView extends VBox {
         container.setAlignment(Pos.CENTER);
 
         // Icon
-        Label icon = new Label("📋");
-        icon.setStyle("-fx-font-size: 72px;");
+        FontIcon icon = new FontIcon(Feather.CLIPBOARD);
+        icon.setIconSize(72);
+        icon.setStyle("-fx-icon-color: -roam-text-secondary;");
 
         // Title
         Label title = new Label("No Operations Yet");

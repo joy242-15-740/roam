@@ -2,6 +2,7 @@ package com.roam.controller;
 
 import com.roam.model.Operation;
 import com.roam.model.Region;
+import com.roam.service.SearchService;
 import com.roam.repository.OperationRepository;
 import com.roam.repository.RegionRepository;
 import com.roam.util.DialogUtils;
@@ -57,8 +58,9 @@ public class OperationsController {
 
         result.ifPresent(operation -> {
             try {
-                repository.save(operation);
-                System.out.println("✓ Operation created: " + operation.getName());
+                Operation savedOperation = repository.save(operation);
+                indexOperation(savedOperation);
+                System.out.println("✓ Operation created: " + savedOperation.getName());
                 refreshTable();
                 // Optional: DialogUtils.showSuccess("Operation created successfully!");
             } catch (Exception e) {
@@ -84,8 +86,9 @@ public class OperationsController {
 
         result.ifPresent(updatedOp -> {
             try {
-                repository.save(updatedOp);
-                System.out.println("✓ Operation updated: " + updatedOp.getName());
+                Operation savedOperation = repository.save(updatedOp);
+                indexOperation(savedOperation);
+                System.out.println("✓ Operation updated: " + savedOperation.getName());
                 refreshTable();
                 // Optional: DialogUtils.showSuccess("Operation updated successfully!");
             } catch (Exception e) {
@@ -113,6 +116,11 @@ public class OperationsController {
         if (confirmed) {
             try {
                 repository.delete(operation);
+                try {
+                    SearchService.getInstance().deleteDocument(operation.getId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 System.out.println("✓ Operation deleted: " + operation.getName());
                 refreshTable();
                 // Optional: DialogUtils.showSuccess("Operation deleted successfully!");
@@ -123,6 +131,20 @@ public class OperationsController {
                         "Failed to delete operation",
                         e.getMessage());
             }
+        }
+    }
+
+    private void indexOperation(Operation operation) {
+        try {
+            SearchService.getInstance().indexOperation(
+                    operation.getId(),
+                    operation.getName(),
+                    operation.getPurpose(),
+                    operation.getOutcome(),
+                    operation.getStatus() != null ? operation.getStatus().toString() : null,
+                    operation.getPriority() != null ? operation.getPriority().toString() : null);
+        } catch (Exception e) {
+            System.err.println("Failed to index operation: " + e.getMessage());
         }
     }
 

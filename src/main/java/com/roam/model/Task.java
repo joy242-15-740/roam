@@ -49,8 +49,8 @@ public class Task {
     @Column(name = "calendar_event_id")
     private Long calendarEventId;
 
-    @Column(name = "note_id")
-    private Long noteId;
+    @Column(name = "wiki_id")
+    private Long wikiId;
 
     // Constructors
     public Task() {
@@ -182,12 +182,12 @@ public class Task {
         this.calendarEventId = calendarEventId;
     }
 
-    public Long getNoteId() {
-        return noteId;
+    public Long getWikiId() {
+        return wikiId;
     }
 
-    public void setNoteId(Long noteId) {
-        this.noteId = noteId;
+    public void setWikiId(Long wikiId) {
+        this.wikiId = wikiId;
     }
 
     @Override
@@ -201,7 +201,7 @@ public class Task {
                 ", assignee='" + assignee + '\'' +
                 ", region='" + region + '\'' +
                 ", calendarEventId=" + calendarEventId +
-                ", noteId=" + noteId +
+                ", wikiId=" + wikiId +
                 '}';
     }
 }

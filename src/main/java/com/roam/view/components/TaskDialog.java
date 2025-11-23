@@ -1,7 +1,7 @@
 package com.roam.view.components;
 
 import com.roam.model.CalendarEvent;
-import com.roam.model.Note;
+import com.roam.model.Wiki;
 import com.roam.model.Operation;
 import com.roam.model.Priority;
 import com.roam.model.Region;
@@ -25,7 +25,7 @@ public class TaskDialog extends Dialog<Task> {
     private final ComboBox<Operation> operationCombo;
     private final ComboBox<Region> regionCombo;
     private final ComboBox<CalendarEvent> eventCombo;
-    private final ComboBox<Note> noteCombo;
+    private final ComboBox<Wiki> noteCombo;
     private final DatePicker dueDatePicker;
     private final Label errorLabel;
 
@@ -41,14 +41,14 @@ public class TaskDialog extends Dialog<Task> {
 
     // Constructor for global task creation with operation selector
     public TaskDialog(Task task, Runnable onDelete, List<Operation> operations, List<Region> regions,
-            List<CalendarEvent> events, List<Note> notes) {
+            List<CalendarEvent> events, List<Wiki> notes) {
         this.task = task;
         this.isEditMode = task != null && task.getId() != null;
         this.onDelete = onDelete;
         this.operations = operations;
 
         setTitle(isEditMode ? "Edit Task" : "Create New Task");
-        setResizable(false);
+        setResizable(true);
 
         // Create form fields
         titleField = createTextField("Enter task title", 255);
@@ -87,8 +87,17 @@ public class TaskDialog extends Dialog<Task> {
 
         // Create form layout
         VBox content = createFormLayout();
-        getDialogPane().setContent(content);
+
+        // Wrap content in ScrollPane for scrollability
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        scrollPane.setPrefHeight(500);
+        scrollPane.setMaxHeight(650);
+
+        getDialogPane().setContent(scrollPane);
         getDialogPane().setPrefWidth(500);
+        getDialogPane().setMaxHeight(700);
 
         // Pre-fill data if editing
         if (isEditMode) {
@@ -222,10 +231,10 @@ public class TaskDialog extends Dialog<Task> {
         return combo;
     }
 
-    private ComboBox<Note> createNoteComboBox(List<Note> notes) {
-        ComboBox<Note> combo = new ComboBox<>();
+    private ComboBox<Wiki> createNoteComboBox(List<Wiki> notes) {
+        ComboBox<Wiki> combo = new ComboBox<>();
         combo.getItems().addAll(notes);
-        combo.setPromptText("Link to Note");
+        combo.setPromptText("Link to Wiki");
         combo.setPrefHeight(40);
         combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
         combo.setButtonCell(new NoteListCell());
@@ -272,7 +281,7 @@ public class TaskDialog extends Dialog<Task> {
         }
 
         if (noteCombo != null) {
-            layout.getChildren().add(createFieldGroup("Note", noteCombo));
+            layout.getChildren().add(createFieldGroup("Wiki", noteCombo));
         }
 
         layout.getChildren().addAll(
@@ -318,9 +327,9 @@ public class TaskDialog extends Dialog<Task> {
                         .findFirst()
                         .ifPresent(eventCombo::setValue);
             }
-            if (noteCombo != null && task.getNoteId() != null) {
+            if (noteCombo != null && task.getWikiId() != null) {
                 noteCombo.getItems().stream()
-                        .filter(n -> n.getId().equals(task.getNoteId()))
+                        .filter(n -> n.getId().equals(task.getWikiId()))
                         .findFirst()
                         .ifPresent(noteCombo::setValue);
             }
@@ -362,9 +371,9 @@ public class TaskDialog extends Dialog<Task> {
         }
 
         if (noteCombo != null && noteCombo.getValue() != null) {
-            t.setNoteId(noteCombo.getValue().getId());
+            t.setWikiId(noteCombo.getValue().getId());
         } else {
-            t.setNoteId(null);
+            t.setWikiId(null);
         }
 
         if (dueDatePicker.getValue() != null) {
@@ -470,9 +479,9 @@ public class TaskDialog extends Dialog<Task> {
         }
     }
 
-    private static class NoteListCell extends ListCell<Note> {
+    private static class NoteListCell extends ListCell<Wiki> {
         @Override
-        protected void updateItem(Note item, boolean empty) {
+        protected void updateItem(Wiki item, boolean empty) {
             super.updateItem(item, empty);
             if (empty || item == null) {
                 setText(null);

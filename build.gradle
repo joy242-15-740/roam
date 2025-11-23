@@ -18,6 +18,13 @@ javafx {
 }
 
 dependencies {
+    // AtlantaFX Theme
+    implementation 'io.github.mkpaz:atlantafx-base:2.0.1'
+    
+    // Ikonli Icons (used by AtlantaFX)
+    implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-feather-pack:12.3.1'
+    
     // Hibernate & JPA
     implementation 'org.hibernate.orm:hibernate-core:6.4.1.Final'
     implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
@@ -33,6 +40,9 @@ dependencies {
     
     // CommonMark for Markdown Parsing
     implementation 'org.commonmark:commonmark:0.21.0'
+    implementation 'org.commonmark:commonmark-ext-gfm-tables:0.21.0'
+    implementation 'org.commonmark:commonmark-ext-gfm-strikethrough:0.21.0'
+    implementation 'org.commonmark:commonmark-ext-task-list-items:0.21.0'
     
     // Biweekly for iCalendar RRULE
     implementation 'net.sf.biweekly:biweekly:0.6.8'
@@ -43,6 +53,12 @@ dependencies {
     // Jackson for JSON
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.1'
+
+    // Apache Lucene for search
+    implementation 'org.apache.lucene:lucene-core:9.9.1'
+    implementation 'org.apache.lucene:lucene-queryparser:9.9.1'
+    implementation 'org.apache.lucene:lucene-highlighter:9.9.1'
+    implementation 'org.apache.lucene:lucene-analyzers-common:8.11.2'
 }
 
 application {

@@ -22,6 +22,7 @@ public class CalendarEventRepository {
 
             if (event.getId() == null) {
                 em.persist(event);
+                em.flush(); // Ensure ID is generated
                 System.out.println("✓ Calendar event created: " + event.getTitle());
             } else {
                 event = em.merge(event);

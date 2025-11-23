@@ -1,16 +1,24 @@
 package com.roam;
 
 import com.roam.model.Operation;
+import com.roam.service.SearchService;
+import com.roam.view.SearchView;
 import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.util.List;
 
 public class MainLayout extends BorderPane {
 
@@ -31,10 +39,20 @@ public class MainLayout extends BorderPane {
     private Button toggleButton;
     private Label titleLabel;
     private boolean sidebarCollapsed = false;
+    private HBox searchBar;
+    private TextField searchField;
+    private Region resizeHandle;
 
     // Sidebar dimensions
     private static final double SIDEBAR_WIDTH_EXPANDED = 240;
     private static final double SIDEBAR_WIDTH_COLLAPSED = 60;
+    private static final double SIDEBAR_MIN_WIDTH = 180;
+    private static final double SIDEBAR_MAX_WIDTH = 400;
+    private static final double RESIZE_HANDLE_WIDTH = 5;
+
+    // Resize state
+    private double dragStartX;
+    private double dragStartWidth;
 
     // Content area
     private StackPane contentArea;
@@ -53,12 +71,74 @@ public class MainLayout extends BorderPane {
         // Create sidebar
         sidebar = createSidebar();
 
+        // Create resize handle
+        resizeHandle = createResizeHandle();
+
+        // Create sidebar container with resize handle
+        HBox sidebarContainer = new HBox();
+        sidebarContainer.getChildren().addAll(sidebar, resizeHandle);
+
         // Create content area
         contentArea = createContentArea();
 
         // Set layout regions
-        setLeft(sidebar);
+        setLeft(sidebarContainer);
         setCenter(contentArea);
+    }
+
+    private Region createResizeHandle() {
+        Region handle = new Region();
+        handle.setPrefWidth(RESIZE_HANDLE_WIDTH);
+        handle.setMinWidth(RESIZE_HANDLE_WIDTH);
+        handle.setMaxWidth(RESIZE_HANDLE_WIDTH);
+        handle.setStyle("-fx-background-color: transparent; -fx-cursor: h-resize;");
+
+        // Change appearance on hover
+        handle.setOnMouseEntered(e -> {
+            handle.setCursor(Cursor.H_RESIZE);
+            handle.setStyle("-fx-background-color: rgba(66, 133, 244, 0.3); -fx-cursor: h-resize;");
+        });
+        handle.setOnMouseExited(e -> {
+            handle.setCursor(Cursor.DEFAULT);
+            handle.setStyle("-fx-background-color: transparent; -fx-cursor: h-resize;");
+        });
+
+        // Handle drag to resize
+        handle.setOnMousePressed(this::handleResizeStart);
+        handle.setOnMouseDragged(this::handleResizeDrag);
+
+        return handle;
+    }
+
+    private void handleResizeStart(MouseEvent event) {
+        dragStartX = event.getSceneX();
+        dragStartWidth = sidebar.getWidth();
+    }
+
+    private void handleResizeDrag(MouseEvent event) {
+        if (sidebarCollapsed)
+            return; // Don't resize when collapsed
+
+        double deltaX = event.getSceneX() - dragStartX;
+        double newWidth = dragStartWidth + deltaX;
+
+        // Clamp to min/max width
+        newWidth = Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, newWidth));
+
+        // Update sidebar width
+        sidebar.setPrefWidth(newWidth);
+        sidebar.setMinWidth(newWidth);
+        sidebar.setMaxWidth(newWidth);
+
+        // Update button widths proportionally
+        double buttonWidth = newWidth - 40; // Account for padding
+        operationsBtn.setPrefWidth(buttonWidth);
+        calendarBtn.setPrefWidth(buttonWidth);
+        tasksBtn.setPrefWidth(buttonWidth);
+        wikiBtn.setPrefWidth(buttonWidth);
+        journalBtn.setPrefWidth(buttonWidth);
+        statisticsBtn.setPrefWidth(buttonWidth);
+        settingsBtn.setPrefWidth(buttonWidth);
     }
 
     private VBox createSidebar() {
@@ -80,21 +160,25 @@ public class MainLayout extends BorderPane {
         HBox.setHgrow(titleLabel, Priority.ALWAYS);
 
         // Toggle button
-        toggleButton = new Button("☰");
+        toggleButton = new Button();
+        toggleButton.setGraphic(new FontIcon(Feather.MENU));
         toggleButton.getStyleClass().add("icon-button");
         toggleButton.setPrefSize(30, 30);
         toggleButton.setOnAction(e -> toggleSidebar());
 
         header.getChildren().addAll(titleLabel, toggleButton);
 
+        // Search bar
+        searchBar = createSearchBar();
+
         // Navigation buttons
-        operationsBtn = createNavButton("📋 Operations", true);
-        calendarBtn = createNavButton("📅 Calendar", false);
-        tasksBtn = createNavButton("✓ Tasks", false);
-        wikiBtn = createNavButton("📝 Wiki", false);
-        journalBtn = createNavButton("📓 Journal", false);
-        statisticsBtn = createNavButton("📊 Statistics", false);
-        settingsBtn = createNavButton("⚙ Settings", false);
+        operationsBtn = createNavButton("Operations", Feather.CLIPBOARD, true);
+        calendarBtn = createNavButton("Calendar", Feather.CALENDAR, false);
+        tasksBtn = createNavButton("Tasks", Feather.CHECK_SQUARE, false);
+        wikiBtn = createNavButton("Wiki", Feather.FILE_TEXT, false);
+        journalBtn = createNavButton("Journal", Feather.BOOK, false);
+        statisticsBtn = createNavButton("Statistics", Feather.BAR_CHART_2, false);
+        settingsBtn = createNavButton("Settings", Feather.SETTINGS, false);
 
         // Set button actions
         operationsBtn.setOnAction(e -> switchView("operations"));
@@ -111,6 +195,7 @@ public class MainLayout extends BorderPane {
 
         sidebar.getChildren().addAll(
                 header,
+                searchBar,
                 operationsBtn,
                 calendarBtn,
                 tasksBtn,
@@ -121,6 +206,96 @@ public class MainLayout extends BorderPane {
                 spacer);
 
         return sidebar;
+    }
+
+    private HBox createSearchBar() {
+        HBox searchContainer = new HBox(8);
+        searchContainer.setAlignment(Pos.CENTER_LEFT);
+        searchContainer.setPadding(new Insets(0, 0, 10, 0));
+        searchContainer.getStyleClass().add("search-bar");
+
+        // Search icon
+        FontIcon searchIcon = new FontIcon(Feather.SEARCH);
+        searchIcon.setIconSize(16);
+
+        // Search field
+        searchField = new TextField();
+        searchField.setPromptText("Search...");
+        searchField.getStyleClass().add("search-field");
+        searchField.setPrefHeight(35);
+        HBox.setHgrow(searchField, Priority.ALWAYS);
+
+        // Handle Enter key to perform search
+        searchField.setOnAction(e -> performSearch());
+
+        // Search button
+        Button searchBtn = new Button("Search");
+        searchBtn.getStyleClass().add("button-primary");
+        searchBtn.setPrefHeight(35);
+        searchBtn.setOnAction(e -> performSearch());
+
+        searchContainer.getChildren().addAll(searchIcon, searchField, searchBtn);
+        return searchContainer;
+    }
+
+    private void performSearch() {
+        String query = searchField.getText().trim();
+        if (query.isEmpty()) {
+            return;
+        }
+
+        try {
+            SearchService searchService = SearchService.getInstance();
+            SearchService.SearchFilter filter = new SearchService.SearchFilter();
+            List<SearchService.SearchResult> results = searchService.search(query, filter);
+
+            // Store the current view so we can return to it
+            Node currentView = contentArea.getChildren().isEmpty() ? null : contentArea.getChildren().get(0);
+
+            // Show results in SearchView
+            SearchView searchView = new SearchView(results, query);
+            searchView.setOnResultSelected(this::navigateToSearchResult);
+            searchView.setOnBackAction(() -> {
+                if (currentView != null) {
+                    showViewWithTransition(currentView);
+                } else {
+                    // Default to wiki view if no previous view
+                    switchView("wiki");
+                }
+            });
+
+            showViewWithTransition(searchView);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            // TODO: Show error dialog
+        }
+    }
+
+    private void navigateToSearchResult(SearchService.SearchResult result) {
+        // Navigate to the appropriate view based on result type
+        switch (result.type) {
+            case "wiki":
+                switchView("wiki");
+                // TODO: Navigate to specific wiki
+                break;
+            case "task":
+                switchView("tasks");
+                // TODO: Navigate to specific task
+                break;
+            case "operation":
+                switchView("operations");
+                // TODO: Navigate to specific operation
+                break;
+            case "event":
+                switchView("calendar");
+                // TODO: Navigate to specific event
+                break;
+            case "journal":
+                switchView("journal");
+                // TODO: Navigate to specific journal entry
+                break;
+        }
     }
 
     private void toggleSidebar() {
@@ -134,26 +309,31 @@ public class MainLayout extends BorderPane {
     }
 
     private void collapseSidebar() {
-        // Animate width change
-        TranslateTransition transition = new TranslateTransition(Duration.millis(250), sidebar);
-
         sidebar.setPrefWidth(SIDEBAR_WIDTH_COLLAPSED);
         sidebar.setMinWidth(SIDEBAR_WIDTH_COLLAPSED);
         sidebar.setMaxWidth(SIDEBAR_WIDTH_COLLAPSED);
         sidebar.setPadding(new Insets(20, 5, 20, 5));
 
+        // Hide resize handle when collapsed
+        resizeHandle.setVisible(false);
+        resizeHandle.setManaged(false);
+
         // Hide text elements
         titleLabel.setVisible(false);
         titleLabel.setManaged(false);
 
-        // Update button text to show only icons
-        operationsBtn.setText("📋");
-        calendarBtn.setText("📅");
-        tasksBtn.setText("✓");
-        wikiBtn.setText("📝");
-        journalBtn.setText("📓");
-        statisticsBtn.setText("📊");
-        settingsBtn.setText("⚙");
+        // Hide search bar
+        searchBar.setVisible(false);
+        searchBar.setManaged(false);
+
+        // Update button to show only icons
+        operationsBtn.setText("");
+        calendarBtn.setText("");
+        tasksBtn.setText("");
+        wikiBtn.setText("");
+        journalBtn.setText("");
+        statisticsBtn.setText("");
+        settingsBtn.setText("");
 
         // Center align buttons
         operationsBtn.setAlignment(Pos.CENTER);
@@ -172,32 +352,34 @@ public class MainLayout extends BorderPane {
         journalBtn.setPrefWidth(50);
         statisticsBtn.setPrefWidth(50);
         settingsBtn.setPrefWidth(50);
-
-        // Update toggle button icon
-        toggleButton.setText("☰");
     }
 
     private void expandSidebar() {
-        // Animate width change
-        TranslateTransition transition = new TranslateTransition(Duration.millis(250), sidebar);
-
         sidebar.setPrefWidth(SIDEBAR_WIDTH_EXPANDED);
         sidebar.setMinWidth(SIDEBAR_WIDTH_EXPANDED);
         sidebar.setMaxWidth(SIDEBAR_WIDTH_EXPANDED);
         sidebar.setPadding(new Insets(20));
 
+        // Show resize handle when expanded
+        resizeHandle.setVisible(true);
+        resizeHandle.setManaged(true);
+
         // Show text elements
         titleLabel.setVisible(true);
         titleLabel.setManaged(true);
 
+        // Show search bar
+        searchBar.setVisible(true);
+        searchBar.setManaged(true);
+
         // Restore full button text
-        operationsBtn.setText("📋 Operations");
-        calendarBtn.setText("📅 Calendar");
-        tasksBtn.setText("✓ Tasks");
-        wikiBtn.setText("📝 Wiki");
-        journalBtn.setText("📓 Journal");
-        statisticsBtn.setText("📊 Statistics");
-        settingsBtn.setText("⚙ Settings");
+        operationsBtn.setText("Operations");
+        calendarBtn.setText("Calendar");
+        tasksBtn.setText("Tasks");
+        wikiBtn.setText("Wiki");
+        journalBtn.setText("Journal");
+        statisticsBtn.setText("Statistics");
+        settingsBtn.setText("Settings");
 
         // Left align buttons
         operationsBtn.setAlignment(Pos.CENTER_LEFT);
@@ -216,17 +398,18 @@ public class MainLayout extends BorderPane {
         journalBtn.setPrefWidth(200);
         statisticsBtn.setPrefWidth(200);
         settingsBtn.setPrefWidth(200);
-
-        // Update toggle button icon
-        toggleButton.setText("☰");
     }
 
-    private Button createNavButton(String text, boolean active) {
+    private Button createNavButton(String text, Feather iconType, boolean active) {
         Button button = new Button(text);
+        FontIcon icon = new FontIcon(iconType);
+        icon.setIconSize(18);
+        button.setGraphic(icon);
         button.getStyleClass().add("nav-button");
         button.setPrefWidth(200);
         button.setPrefHeight(45);
         button.setAlignment(Pos.CENTER_LEFT);
+        button.setGraphicTextGap(10);
 
         // Apply initial state
         updateButtonState(button, active);

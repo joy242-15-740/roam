@@ -27,6 +27,7 @@ public class TaskRepository {
 
             if (task.getId() == null) {
                 em.persist(task);
+                em.flush(); // Ensure ID is generated
                 System.out.println("✓ Task created: " + task.getTitle());
             } else {
                 task = em.merge(task);

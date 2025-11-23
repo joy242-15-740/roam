@@ -2,7 +2,7 @@ package com.roam.view.components;
 
 import com.roam.model.CalendarEvent;
 import com.roam.model.CalendarSource;
-import com.roam.model.Note;
+import com.roam.model.Wiki;
 import com.roam.model.Operation;
 import com.roam.model.Region;
 import com.roam.model.Task;
@@ -33,7 +33,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
     private final ComboBox<Operation> operationCombo;
     private final ComboBox<Region> regionCombo;
     private final ComboBox<Task> taskCombo;
-    private final ComboBox<Note> noteCombo;
+    private final ComboBox<Wiki> noteCombo;
     private final Label errorLabel;
 
     private final CalendarEvent originalEvent;
@@ -42,7 +42,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
     private final Runnable onDelete;
 
     public EventDialog(CalendarEvent event, List<CalendarSource> calendarSources,
-            List<Operation> operations, List<Region> regions, List<Task> tasks, List<Note> notes, Runnable onDelete) {
+            List<Operation> operations, List<Region> regions, List<Task> tasks, List<Wiki> notes, Runnable onDelete) {
         this.originalEvent = event;
         this.isEditMode = event != null && event.getId() != null;
         this.onDelete = onDelete;
@@ -56,7 +56,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         }
 
         setTitle(isEditMode ? "Edit Event" : "Create Event");
-        setResizable(false);
+        setResizable(true);
 
         // Create form fields
         titleField = createTextField("Add title", 255);
@@ -250,10 +250,10 @@ public class EventDialog extends Dialog<CalendarEvent> {
         return combo;
     }
 
-    private ComboBox<Note> createNoteCombo(List<Note> notes) {
-        ComboBox<Note> combo = new ComboBox<>();
+    private ComboBox<Wiki> createNoteCombo(List<Wiki> notes) {
+        ComboBox<Wiki> combo = new ComboBox<>();
         combo.getItems().addAll(notes);
-        combo.setPromptText("Link to Note");
+        combo.setPromptText("Link to Wiki");
         combo.setPrefHeight(40);
         combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
         combo.setButtonCell(new NoteListCell());
@@ -293,7 +293,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
                 createFieldGroup("Operation", operationCombo),
                 createFieldGroup("Region", regionCombo),
                 createFieldGroup("Task", taskCombo),
-                createFieldGroup("Note", noteCombo));
+                createFieldGroup("Wiki", noteCombo));
 
         return layout;
     }
@@ -396,9 +396,9 @@ public class EventDialog extends Dialog<CalendarEvent> {
                         .ifPresent(taskCombo::setValue);
             }
 
-            if (originalEvent.getNoteId() != null) {
+            if (originalEvent.getWikiId() != null) {
                 noteCombo.getItems().stream()
-                        .filter(n -> n.getId().equals(originalEvent.getNoteId()))
+                        .filter(n -> n.getId().equals(originalEvent.getWikiId()))
                         .findFirst()
                         .ifPresent(noteCombo::setValue);
             }
@@ -484,9 +484,9 @@ public class EventDialog extends Dialog<CalendarEvent> {
         }
 
         if (noteCombo.getValue() != null) {
-            e.setNoteId(noteCombo.getValue().getId());
+            e.setWikiId(noteCombo.getValue().getId());
         } else {
-            e.setNoteId(null);
+            e.setWikiId(null);
         }
 
         System.out
@@ -613,10 +613,10 @@ public class EventDialog extends Dialog<CalendarEvent> {
         }
     }
 
-    // Custom cell for note combo
-    private static class NoteListCell extends ListCell<Note> {
+    // Custom cell for Wiki combo
+    private static class NoteListCell extends ListCell<Wiki> {
         @Override
-        protected void updateItem(Note item, boolean empty) {
+        protected void updateItem(Wiki item, boolean empty) {
             super.updateItem(item, empty);
             if (empty || item == null) {
                 setText(null);

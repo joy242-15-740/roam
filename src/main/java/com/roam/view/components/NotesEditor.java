@@ -1,6 +1,6 @@
 package com.roam.view.components;
 
-import com.roam.model.Note;
+import com.roam.model.Wiki;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,7 +21,7 @@ public class NotesEditor extends BorderPane {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
 
-    private final ListView<Note> notesList;
+    private final ListView<Wiki> notesList;
     private final TextField titleField;
     private final TextArea sourceEditor;
     private final WebView previewView;
@@ -30,11 +30,11 @@ public class NotesEditor extends BorderPane {
     private final Label statusLabel;
     private final StackPane editorContainer;
 
-    private Note currentNote;
-    private Consumer<Note> onSave;
-    private Consumer<Note> onDelete;
+    private Wiki currentNote;
+    private Consumer<Wiki> onSave;
+    private Consumer<Wiki> onDelete;
     private Runnable onNewNote;
-    private BiConsumer<Note, String> onTitleChanged;
+    private BiConsumer<Wiki, String> onTitleChanged;
 
     private PauseTransition autoSaveTimer;
     private boolean hasUnsavedChanges = false;
@@ -71,8 +71,8 @@ public class NotesEditor extends BorderPane {
         showEmptyState();
     }
 
-    private ListView<Note> createNotesList() {
-        ListView<Note> list = new ListView<>();
+    private ListView<Wiki> createNotesList() {
+        ListView<Wiki> list = new ListView<>();
         list.setCellFactory(lv -> new NoteListCell());
         list.getSelectionModel().selectedItemProperty().addListener((obs, old, newNote) -> {
             if (newNote != null && newNote != currentNote) {
@@ -95,12 +95,12 @@ public class NotesEditor extends BorderPane {
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        Label title = new Label("Notes");
+        Label title = new Label("Wiki");
         title.setFont(Font.font("Poppins Bold", 18));
         title.setStyle("-fx-text-fill: -roam-text-primary;");
         HBox.setHgrow(title, Priority.ALWAYS);
 
-        Button newNoteBtn = new Button("+ New Note");
+        Button newNoteBtn = new Button("+ New Wiki");
         newNoteBtn.setFont(Font.font("Poppins Regular", 12));
         newNoteBtn.setStyle(
                 "-fx-background-color: -roam-blue; " +
@@ -124,7 +124,7 @@ public class NotesEditor extends BorderPane {
 
     private TextField createTitleField() {
         TextField field = new TextField();
-        field.setPromptText("Note title");
+        field.setPromptText("Wiki title");
         field.setFont(Font.font("Poppins Medium", 16));
         field.setStyle(
                 "-fx-background-color: transparent; " +
@@ -144,7 +144,7 @@ public class NotesEditor extends BorderPane {
 
     private TextArea createSourceEditor() {
         TextArea editor = new TextArea();
-        editor.setPromptText("Write your notes in Markdown...");
+        editor.setPromptText("Write your wiki in Markdown...");
         editor.setWrapText(true);
         editor.setFont(Font.font("Consolas", 14));
         editor.setStyle("-fx-background-color: -roam-bg-primary; -fx-control-inner-background: -roam-bg-primary;");
@@ -334,7 +334,7 @@ public class NotesEditor extends BorderPane {
         Label icon = new Label("📝");
         icon.setStyle("-fx-font-size: 72px;");
 
-        Label message = new Label("Select a note or create a new one");
+        Label message = new Label("Select a Wiki or create a new one");
         message.setFont(Font.font("Poppins Regular", 18));
         message.setStyle("-fx-text-fill: -roam-text-hint;");
 
@@ -386,15 +386,15 @@ public class NotesEditor extends BorderPane {
         }
     }
 
-    private void loadNote(Note note) {
-        // Save current note if has changes
+    private void loadNote(Wiki Wiki) {
+        // Save current Wiki if has changes
         if (hasUnsavedChanges && currentNote != null) {
             saveCurrentNote();
         }
 
-        currentNote = note;
-        titleField.setText(note.getTitle());
-        sourceEditor.setText(note.getContent() != null ? note.getContent() : "");
+        currentNote = Wiki;
+        titleField.setText(Wiki.getTitle());
+        sourceEditor.setText(Wiki.getContent() != null ? Wiki.getContent() : "");
 
         hasUnsavedChanges = false;
         saveButton.setDisable(true);
@@ -404,7 +404,7 @@ public class NotesEditor extends BorderPane {
         ((ToggleButton) viewToggle.getToggles().get(0)).setSelected(true);
     }
 
-    public void loadNotes(List<Note> notes) {
+    public void loadNotes(List<Wiki> notes) {
         notesList.getItems().setAll(notes);
 
         if (notes.isEmpty()) {
@@ -413,15 +413,15 @@ public class NotesEditor extends BorderPane {
         }
     }
 
-    public void selectNote(Note note) {
-        notesList.getSelectionModel().select(note);
+    public void selectNote(Wiki Wiki) {
+        notesList.getSelectionModel().select(Wiki);
     }
 
-    public void setOnSave(Consumer<Note> handler) {
+    public void setOnSave(Consumer<Wiki> handler) {
         this.onSave = handler;
     }
 
-    public void setOnDelete(Consumer<Note> handler) {
+    public void setOnDelete(Consumer<Wiki> handler) {
         this.onDelete = handler;
     }
 
@@ -429,29 +429,29 @@ public class NotesEditor extends BorderPane {
         this.onNewNote = handler;
     }
 
-    public void setOnTitleChanged(BiConsumer<Note, String> handler) {
+    public void setOnTitleChanged(BiConsumer<Wiki, String> handler) {
         this.onTitleChanged = handler;
     }
 
     // Custom cell for notes list
-    private static class NoteListCell extends ListCell<Note> {
+    private static class NoteListCell extends ListCell<Wiki> {
         @Override
-        protected void updateItem(Note note, boolean empty) {
-            super.updateItem(note, empty);
+        protected void updateItem(Wiki Wiki, boolean empty) {
+            super.updateItem(Wiki, empty);
 
-            if (empty || note == null) {
+            if (empty || Wiki == null) {
                 setGraphic(null);
             } else {
                 VBox cell = new VBox(5);
                 cell.setPadding(new Insets(10));
 
-                Label title = new Label(note.getTitle());
+                Label title = new Label(Wiki.getTitle());
                 title.setFont(Font.font("Poppins Medium", 14));
                 title.setStyle("-fx-text-fill: -roam-text-primary;");
                 title.setMaxWidth(Double.MAX_VALUE);
 
-                String preview = note.getContent() != null && !note.getContent().isEmpty()
-                        ? note.getContent().substring(0, Math.min(60, note.getContent().length()))
+                String preview = Wiki.getContent() != null && !Wiki.getContent().isEmpty()
+                        ? Wiki.getContent().substring(0, Math.min(60, Wiki.getContent().length()))
                         : "No content";
                 Label content = new Label(preview);
                 content.setFont(Font.font("Poppins Regular", 12));
@@ -459,7 +459,7 @@ public class NotesEditor extends BorderPane {
                 content.setWrapText(true);
                 content.setMaxWidth(Double.MAX_VALUE);
 
-                Label date = new Label("Updated: " + DATE_FORMATTER.format(note.getUpdatedAt()));
+                Label date = new Label("Updated: " + DATE_FORMATTER.format(Wiki.getUpdatedAt()));
                 date.setFont(Font.font("Poppins Regular", 11));
                 date.setStyle("-fx-text-fill: -roam-text-hint;");
 

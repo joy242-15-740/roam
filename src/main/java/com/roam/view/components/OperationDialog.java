@@ -32,7 +32,7 @@ public class OperationDialog extends Dialog<Operation> {
 
         // Set dialog title
         setTitle(isEditMode ? "Edit Operation" : "Create New Operation");
-        setResizable(false);
+        setResizable(true);
 
         // Create form fields
         nameField = createTextField("Enter operation name", 255);
@@ -52,10 +52,19 @@ public class OperationDialog extends Dialog<Operation> {
 
         // Create form layout
         VBox content = createFormLayout();
-        getDialogPane().setContent(content);
 
-        // Set dialog width
+        // Wrap content in ScrollPane for scrollability
+        ScrollPane scrollPane = new ScrollPane(content);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        scrollPane.setPrefHeight(500);
+        scrollPane.setMaxHeight(650);
+
+        getDialogPane().setContent(scrollPane);
+
+        // Set dialog width and max height for screen-fit
         getDialogPane().setPrefWidth(550);
+        getDialogPane().setMaxHeight(700);
 
         // Pre-fill data if editing
         if (isEditMode) {
@@ -272,7 +281,7 @@ public class OperationDialog extends Dialog<Operation> {
         ButtonType submitType = isEditMode ? new ButtonType("Update", ButtonBar.ButtonData.OK_DONE)
                 : new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
 
-        // Note: The button type lookup might need to be more robust if the order
+        // Wiki: The button type lookup might need to be more robust if the order
         // changes,
         // but here we rely on the order we added them (submit, cancel).
         // Actually, we added submit then cancel. So submit is index 0?

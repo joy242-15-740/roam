@@ -1,6 +1,7 @@
 package com.roam.controller;
 
 import com.roam.model.*;
+import com.roam.service.SearchService;
 import com.roam.repository.*;
 import com.roam.util.DialogUtils;
 import com.roam.view.components.EventDialog;
@@ -19,7 +20,7 @@ public class CalendarController {
     private final OperationRepository operationRepository;
     private final TaskRepository taskRepository;
     private final RegionRepository regionRepository;
-    private final NoteRepository noteRepository;
+    private final WikiRepository WikiRepository;
 
     private List<CalendarSource> calendarSources;
     private List<CalendarEvent> allEvents;
@@ -32,7 +33,7 @@ public class CalendarController {
         this.operationRepository = new OperationRepository();
         this.taskRepository = new TaskRepository();
         this.regionRepository = new RegionRepository();
-        this.noteRepository = new NoteRepository();
+        this.WikiRepository = new WikiRepository();
 
         initialize();
     }
@@ -109,7 +110,7 @@ public class CalendarController {
             }
 
             // Get all tasks with due dates
-            // Note: You'll need to add a findAll() method to TaskRepository
+            // Wiki: You'll need to add a findAll() method to TaskRepository
             // For now, we'll skip this and implement it later
 
         } catch (Exception e) {
@@ -176,11 +177,12 @@ public class CalendarController {
                     operations,
                     regionRepository.findAll(),
                     taskRepository.findAll(),
-                    noteRepository.findAll(),
+                    WikiRepository.findAll(),
                     null);
             dialog.showAndWait().ifPresent(newEvent -> {
                 try {
                     eventRepository.save(newEvent);
+                    indexEvent(newEvent);
                     loadAllEvents();
                     if (onDataChanged != null) {
                         onDataChanged.run();
@@ -205,13 +207,14 @@ public class CalendarController {
                     operations,
                     regionRepository.findAll(),
                     taskRepository.findAll(),
-                    noteRepository.findAll(),
+                    WikiRepository.findAll(),
                     () -> deleteEvent(event));
 
             dialog.showAndWait().ifPresent(updatedEvent -> {
                 System.out.println("Saving edited event: " + updatedEvent.getTitle());
                 try {
                     eventRepository.save(updatedEvent);
+                    indexEvent(updatedEvent);
                     loadAllEvents();
                     if (onDataChanged != null) {
                         onDataChanged.run();
@@ -235,6 +238,11 @@ public class CalendarController {
         if (confirmed) {
             try {
                 eventRepository.delete(event.getId());
+                try {
+                    SearchService.getInstance().deleteDocument(event.getId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 loadAllEvents();
                 if (onDataChanged != null) {
                     onDataChanged.run();
@@ -242,6 +250,20 @@ public class CalendarController {
             } catch (Exception e) {
                 DialogUtils.showError("Delete Error", "Failed to delete event", e.getMessage());
             }
+        }
+    }
+
+    private void indexEvent(CalendarEvent event) {
+        try {
+            SearchService.getInstance().indexEvent(
+                    event.getId(),
+                    event.getTitle(),
+                    event.getDescription(),
+                    event.getStartDateTime(),
+                    event.getEndDateTime(),
+                    event.getLocation());
+        } catch (Exception e) {
+            System.err.println("Failed to index event: " + e.getMessage());
         }
     }
 
