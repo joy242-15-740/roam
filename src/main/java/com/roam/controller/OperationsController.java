@@ -8,12 +8,15 @@ import com.roam.repository.RegionRepository;
 import com.roam.util.DialogUtils;
 import com.roam.view.components.OperationDialog;
 import com.roam.view.components.OperationTableView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 
 public class OperationsController {
 
+    private static final Logger logger = LoggerFactory.getLogger(OperationsController.class);
     private final OperationRepository repository;
     private final RegionRepository regionRepository;
     private OperationTableView tableView;
@@ -39,7 +42,7 @@ public class OperationsController {
         try {
             return repository.findAll();
         } catch (Exception e) {
-            System.err.println("Failed to load operations: " + e.getMessage());
+            logger.error("Failed to load operations: {}", e.getMessage(), e);
             DialogUtils.showError(
                     "Database Error",
                     "Failed to load operations",

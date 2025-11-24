@@ -3,20 +3,30 @@ package com.roam.repository;
 import com.roam.model.Operation;
 import com.roam.model.OperationStatus;
 import com.roam.model.Priority;
+import com.roam.service.ValidationService;
 import com.roam.util.HibernateUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 
 public class OperationRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(OperationRepository.class);
+
+    private final ValidationService validationService = ValidationService.getInstance();
+
     /**
      * Save (create or update) an operation
      */
     public Operation save(Operation operation) {
+        // Validate entity before persisting
+        validationService.validate(operation);
+
         EntityManager em = HibernateUtil.getEntityManager();
         EntityTransaction tx = null;
 
@@ -28,11 +38,11 @@ public class OperationRepository {
                 // New operation - persist
                 em.persist(operation);
                 em.flush(); // Ensure ID is generated
-                System.out.println("✓ Operation created: " + operation.getName());
+                logger.debug("✓ Operation created: {}", operation.getName());
             } else {
                 // Existing operation - merge
                 operation = em.merge(operation);
-                System.out.println("✓ Operation updated: " + operation.getName());
+                logger.debug("✓ Operation updated: {}", operation.getName());
             }
 
             tx.commit();
@@ -42,7 +52,7 @@ public class OperationRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to save operation: " + e.getMessage());
+            logger.error("✗ Failed to save operation: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to save operation", e);
         } finally {
             em.close();
@@ -123,7 +133,7 @@ public class OperationRepository {
             Operation operation = em.find(Operation.class, id);
             if (operation != null) {
                 em.remove(operation);
-                System.out.println("✓ Operation deleted: " + operation.getName());
+                logger.debug("✓ Operation deleted: {}", operation.getName());
             }
 
             tx.commit();
@@ -132,7 +142,7 @@ public class OperationRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to delete operation: " + e.getMessage());
+            logger.error("✗ Failed to delete operation: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to delete operation", e);
         } finally {
             em.close();

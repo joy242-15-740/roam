@@ -8,6 +8,8 @@ import com.roam.util.HibernateUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +18,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TaskRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
 
     public Task save(Task task) {
         EntityManager em = HibernateUtil.getEntityManager();
@@ -28,10 +32,10 @@ public class TaskRepository {
             if (task.getId() == null) {
                 em.persist(task);
                 em.flush(); // Ensure ID is generated
-                System.out.println("✓ Task created: " + task.getTitle());
+                logger.debug("✓ Task created: {}", task.getTitle());
             } else {
                 task = em.merge(task);
-                System.out.println("✓ Task updated: " + task.getTitle());
+                logger.debug("✓ Task updated: {}", task.getTitle());
             }
 
             tx.commit();
@@ -41,7 +45,7 @@ public class TaskRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to save task: " + e.getMessage());
+            logger.error("✗ Failed to save task: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to save task", e);
         } finally {
             em.close();
@@ -96,7 +100,7 @@ public class TaskRepository {
             Task task = em.find(Task.class, id);
             if (task != null) {
                 em.remove(task);
-                System.out.println("✓ Task deleted: " + task.getTitle());
+                logger.debug("✓ Task deleted: {}", task.getTitle());
             }
 
             tx.commit();
@@ -105,7 +109,7 @@ public class TaskRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to delete task: " + e.getMessage());
+            logger.error("✗ Failed to delete task: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to delete task", e);
         } finally {
             em.close();
@@ -138,7 +142,7 @@ public class TaskRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to update task position: " + e.getMessage());
+            logger.error("✗ Failed to update task position: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to update task position", e);
         } finally {
             em.close();
@@ -364,14 +368,14 @@ public class TaskRepository {
             }
 
             tx.commit();
-            System.out.println("✓ Batch updated " + count + " tasks to status: " + newStatus);
+            logger.debug("✓ Batch updated {} tasks to status: {}", count, newStatus);
             return count;
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to batch update: " + e.getMessage());
+            logger.error("✗ Failed to batch update: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to batch update", e);
         } finally {
             em.close();
@@ -399,14 +403,14 @@ public class TaskRepository {
             }
 
             tx.commit();
-            System.out.println("✓ Batch deleted " + count + " tasks");
+            logger.debug("✓ Batch deleted {} tasks", count);
             return count;
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to batch delete: " + e.getMessage());
+            logger.error("✗ Failed to batch delete: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to batch delete", e);
         } finally {
             em.close();
@@ -435,14 +439,14 @@ public class TaskRepository {
             }
 
             tx.commit();
-            System.out.println("✓ Batch updated priority for " + count + " tasks to: " + newPriority);
+            logger.debug("✓ Batch updated priority for {} tasks to: {}", count, newPriority);
             return count;
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to batch update priority: " + e.getMessage());
+            logger.error("✗ Failed to batch update priority: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to batch update priority", e);
         } finally {
             em.close();
@@ -472,14 +476,14 @@ public class TaskRepository {
 
             tx.commit();
             String action = assignee == null ? "Unassigned" : "Assigned to " + assignee;
-            System.out.println("✓ " + action + " for " + count + " tasks");
+            logger.debug("✓ {} for {} tasks", action, count);
             return count;
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to batch assign: " + e.getMessage());
+            logger.error("✗ Failed to batch assign: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to batch assign", e);
         } finally {
             em.close();
@@ -509,14 +513,14 @@ public class TaskRepository {
 
             tx.commit();
             String action = dueDate == null ? "Cleared due date" : "Set due date";
-            System.out.println("✓ " + action + " for " + count + " tasks");
+            logger.debug("✓ {} for {} tasks", action, count);
             return count;
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to batch set due date: " + e.getMessage());
+            logger.error("✗ Failed to batch set due date: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to batch set due date", e);
         } finally {
             em.close();

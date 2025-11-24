@@ -3,9 +3,15 @@ package com.roam.util;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HibernateUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(HibernateUtil.class);
     private static volatile EntityManagerFactory entityManagerFactory;
     private static final String PERSISTENCE_UNIT_NAME = "roam-pu";
 
@@ -21,11 +27,24 @@ public class HibernateUtil {
             synchronized (HibernateUtil.class) {
                 if (entityManagerFactory == null) {
                     try {
-                        System.out.println("🔧 Initializing Hibernate EntityManagerFactory...");
-                        entityManagerFactory = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT_NAME);
-                        System.out.println("✓ Hibernate initialized successfully");
+                        logger.info("🔧 Initializing Hibernate EntityManagerFactory...");
+
+                        // Load database configuration dynamically
+                        DatabaseConfig dbConfig = DatabaseConfig.getInstance();
+
+                        // Override persistence.xml properties with runtime values
+                        Map<String, String> properties = new HashMap<>();
+                        properties.put("jakarta.persistence.jdbc.driver", dbConfig.getDriver());
+                        properties.put("jakarta.persistence.jdbc.url", dbConfig.getJdbcUrl());
+                        properties.put("jakarta.persistence.jdbc.user", dbConfig.getUsername());
+                        properties.put("jakarta.persistence.jdbc.password", dbConfig.getPassword());
+
+                        entityManagerFactory = Persistence.createEntityManagerFactory(
+                                PERSISTENCE_UNIT_NAME,
+                                properties);
+                        logger.info("✓ Hibernate initialized successfully");
                     } catch (Exception e) {
-                        System.err.println("✗ Failed to initialize Hibernate: " + e.getMessage());
+                        logger.error("✗ Failed to initialize Hibernate: {}", e.getMessage(), e);
                         e.printStackTrace();
                         throw new ExceptionInInitializerError(e);
                     }
@@ -47,9 +66,9 @@ public class HibernateUtil {
      */
     public static void shutdown() {
         if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
-            System.out.println("🔒 Shutting down Hibernate...");
+            logger.info("🔒 Shutting down Hibernate...");
             entityManagerFactory.close();
-            System.out.println("✓ Hibernate shutdown complete");
+            logger.info("✓ Hibernate shutdown complete");
         }
     }
 }

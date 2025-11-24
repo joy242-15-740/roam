@@ -5,11 +5,15 @@ import com.roam.util.HibernateUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 
 public class CalendarSourceRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(CalendarSourceRepository.class);
 
     public CalendarSource save(CalendarSource source) {
         EntityManager em = HibernateUtil.getEntityManager();
@@ -21,10 +25,10 @@ public class CalendarSourceRepository {
 
             if (source.getId() == null) {
                 em.persist(source);
-                System.out.println("✓ Calendar source created: " + source.getName());
+                logger.debug("✓ Calendar source created: {}", source.getName());
             } else {
                 source = em.merge(source);
-                System.out.println("✓ Calendar source updated: " + source.getName());
+                logger.debug("✓ Calendar source updated: {}", source.getName());
             }
 
             tx.commit();
@@ -34,7 +38,7 @@ public class CalendarSourceRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to save calendar source: " + e.getMessage());
+            logger.error("✗ Failed to save calendar source: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to save calendar source", e);
         } finally {
             em.close();
@@ -99,7 +103,7 @@ public class CalendarSourceRepository {
             CalendarSource source = em.find(CalendarSource.class, id);
             if (source != null) {
                 em.remove(source);
-                System.out.println("✓ Calendar source deleted: " + source.getName());
+                logger.debug("✓ Calendar source deleted: {}", source.getName());
             }
 
             tx.commit();
@@ -108,7 +112,7 @@ public class CalendarSourceRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to delete calendar source: " + e.getMessage());
+            logger.error("✗ Failed to delete calendar source: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to delete calendar source", e);
         } finally {
             em.close();

@@ -22,11 +22,13 @@
         
         <properties>
             <!-- H2 Database Configuration -->
-            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
-            <property name="jakarta.persistence.jdbc.url" 
-                      value="jdbc:h2:file:~/roam/roamdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;INIT=CREATE USER IF NOT EXISTS admin PASSWORD 'hulululu' ADMIN\;SET SCHEMA PUBLIC"/>
-            <property name="jakarta.persistence.jdbc.user" value="admin"/>
-            <property name="jakarta.persistence.jdbc.password" value="hulululu"/>
+            <!-- Credentials are now loaded dynamically from DatabaseConfig -->
+            <!-- Set environment variables: ROAM_DB_USER, ROAM_DB_PASSWORD -->
+            <!-- Or create ~/.roam/database.properties file -->
+            <property name="jakarta.persistence.jdbc.driver" value="${db.driver}"/>
+            <property name="jakarta.persistence.jdbc.url" value="${db.url}"/>
+            <property name="jakarta.persistence.jdbc.user" value="${db.username}"/>
+            <property name="jakarta.persistence.jdbc.password" value="${db.password}"/>
             
             <!-- Hibernate Configuration -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

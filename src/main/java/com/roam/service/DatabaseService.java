@@ -2,15 +2,19 @@ package com.roam.service;
 
 import com.roam.util.HibernateUtil;
 import jakarta.persistence.EntityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DatabaseService {
+
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseService.class);
 
     /**
      * Initialize database connection and schema
      */
     public static void initializeDatabase() {
         try {
-            System.out.println("📦 Initializing database...");
+            logger.info("📦 Initializing database...");
 
             // This will trigger EntityManagerFactory creation
             // which will create the database file and tables
@@ -18,18 +22,18 @@ public class DatabaseService {
 
             // Test connection
             if (testConnection()) {
-                System.out.println("✓ Database initialized successfully");
-                System.out.println("📍 Database location: " + getDatabasePath());
+                logger.info("✓ Database initialized successfully");
+                logger.info("📍 Database location: {}", getDatabasePath());
 
                 // Initialize default templates
                 DataInitializer initializer = new DataInitializer();
                 initializer.initializeDefaultTemplates();
             } else {
-                System.err.println("✗ Database connection test failed");
+                logger.error("✗ Database connection test failed");
             }
 
         } catch (Exception e) {
-            System.err.println("✗ Database initialization failed: " + e.getMessage());
+            logger.error("✗ Database initialization failed: {}", e.getMessage(), e);
             e.printStackTrace();
             throw new RuntimeException("Failed to initialize database", e);
         }
@@ -46,7 +50,7 @@ public class DatabaseService {
             em.createNativeQuery("SELECT 1").getSingleResult();
             return true;
         } catch (Exception e) {
-            System.err.println("Connection test failed: " + e.getMessage());
+            logger.error("Connection test failed: {}", e.getMessage());
             return false;
         } finally {
             if (em != null && em.isOpen()) {

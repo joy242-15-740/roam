@@ -5,12 +5,16 @@ import com.roam.util.HibernateUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 public class CalendarEventRepository {
+
+    private static final Logger logger = LoggerFactory.getLogger(CalendarEventRepository.class);
 
     public CalendarEvent save(CalendarEvent event) {
         EntityManager em = HibernateUtil.getEntityManager();
@@ -142,7 +146,7 @@ public class CalendarEventRepository {
             CalendarEvent event = em.find(CalendarEvent.class, id);
             if (event != null) {
                 em.remove(event);
-                System.out.println("✓ Calendar event deleted: " + event.getTitle());
+                logger.debug("✓ Calendar event deleted: {}", event.getTitle());
             }
 
             tx.commit();
@@ -151,7 +155,7 @@ public class CalendarEventRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to delete calendar event: " + e.getMessage());
+            logger.error("✗ Failed to delete calendar event: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to delete calendar event", e);
         } finally {
             em.close();
@@ -184,13 +188,13 @@ public class CalendarEventRepository {
             }
 
             tx.commit();
-            System.out.println("✓ Recurring series deleted (parent and " + instances.size() + " instances)");
+            logger.debug("✓ Recurring series deleted (parent and {} instances)", instances.size());
 
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to delete recurring series: " + e.getMessage());
+            logger.error("✗ Failed to delete recurring series: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to delete recurring series", e);
         } finally {
             em.close();

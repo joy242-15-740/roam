@@ -12,22 +12,26 @@ import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
 public class RoamApplication extends Application {
 
+    private static final Logger logger = LoggerFactory.getLogger(RoamApplication.class);
+
     @Override
     public void start(Stage primaryStage) {
         try {
             // Initialize database FIRST
-            System.out.println("=".repeat(50));
-            System.out.println("🚀 Starting Roam Application");
-            System.out.println("=".repeat(50));
+            logger.info("=".repeat(50));
+            logger.info("🚀 Starting Roam Application");
+            logger.info("=".repeat(50));
 
             DatabaseService.initializeDatabase();
 
-            System.out.println("=".repeat(50));
+            logger.info("=".repeat(50));
 
             // Load settings
             SettingsService settingsService = SettingsService.getInstance();
@@ -47,8 +51,11 @@ public class RoamApplication extends Application {
             String css = Objects.requireNonNull(
                     getClass().getResource("/styles/application.css")).toExternalForm();
 
-            // Check security
-            if (SecurityContext.getInstance().isLockEnabled()) {
+            // Check security - only show lock screen if both enabled AND PIN is set
+            String pinHash = settingsService.getSettings().getPinHash();
+            boolean hasPinSet = pinHash != null && !pinHash.isEmpty();
+
+            if (SecurityContext.getInstance().isLockEnabled() && hasPinSet) {
                 LockScreen lockScreen = new LockScreen(() -> {
                     Scene scene = new Scene(mainLayout, 1024, 600);
                     scene.getStylesheets().add(css);
@@ -60,10 +67,11 @@ public class RoamApplication extends Application {
                 lockScene.getStylesheets().add(css);
                 primaryStage.setScene(lockScene);
             } else {
-                // Create scene
+                // No lock screen - proceed directly to main app
                 Scene scene = new Scene(mainLayout, 1024, 600);
                 scene.getStylesheets().add(css);
                 primaryStage.setScene(scene);
+                SecurityContext.getInstance().setAuthenticated(true); // Auto-authenticate when no lock
             }
 
             // Set window properties
@@ -80,16 +88,16 @@ public class RoamApplication extends Application {
                                 getClass().getResourceAsStream("/icons/roam-icon.png")));
                 primaryStage.getIcons().add(icon);
             } catch (Exception e) {
-                System.err.println("Failed to load application icon: " + e.getMessage());
+                logger.warn("Failed to load application icon: {}", e.getMessage());
             }
 
             // Show window
             primaryStage.show();
 
-            System.out.println("✓ Application started successfully");
+            logger.info("✓ Application started successfully");
 
         } catch (Exception e) {
-            System.err.println("✗ Failed to start application: " + e.getMessage());
+            logger.error("✗ Failed to start application: {}", e.getMessage(), e);
             e.printStackTrace();
             showErrorDialog("Database Error",
                     "Failed to initialize database. The application will now close.",
@@ -101,11 +109,11 @@ public class RoamApplication extends Application {
     @Override
     public void stop() {
         // Shutdown Hibernate on application exit
-        System.out.println("\n" + "=".repeat(50));
-        System.out.println("🛑 Shutting down Roam Application");
-        System.out.println("=".repeat(50));
+        logger.info("=".repeat(50));
+        logger.info("🛑 Shutting down Roam Application");
+        logger.info("=".repeat(50));
         HibernateUtil.shutdown();
-        System.out.println("✓ Application shutdown complete");
+        logger.info("✓ Application shutdown complete");
     }
 
     private Font loadFonts() {
@@ -119,9 +127,9 @@ public class RoamApplication extends Application {
                     getClass().getResourceAsStream("/fonts/Poppins-SemiBold.ttf"), 14);
             Font.loadFont(
                     getClass().getResourceAsStream("/fonts/Poppins-Bold.ttf"), 14);
-            System.out.println("✓ Fonts loaded successfully");
+            logger.info("✓ Fonts loaded successfully");
         } catch (Exception e) {
-            System.err.println("✗ Failed to load fonts: " + e.getMessage());
+            logger.error("✗ Failed to load fonts: {}", e.getMessage());
         }
         return regularFont;
     }
