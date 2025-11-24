@@ -1,0 +1,222 @@
+package com.roam.model;
+
+import com.roam.validation.SafeTitle;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "wikis")
+public class Wiki {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "operation_id")
+    private Long operationId;
+
+    @NotBlank(message = "Wiki title cannot be blank")
+    @SafeTitle(max = 255)
+    @Column(nullable = false, length = 255)
+    private String title;
+
+    @Size(max = 100000, message = "Content exceeds maximum length of 100,000 characters")
+    @Column(columnDefinition = "TEXT")
+    private String content;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
+    @Column(name = "is_favorite", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean isFavorite = false;
+
+    @Column(name = "template_id")
+    private Long templateId;
+
+    @Column(name = "word_count", columnDefinition = "INTEGER DEFAULT 0")
+    private Integer wordCount = 0;
+
+    @Column(name = "linked_wiki_ids", columnDefinition = "TEXT")
+    private String linkedWikiIds;
+
+    @Column(length = 50)
+    private String region;
+
+    @Column(name = "task_id")
+    private Long taskId;
+
+    @Column(name = "calendar_event_id")
+    private Long calendarEventId;
+
+    @Column(name = "banner_url", length = 512)
+    private String bannerUrl;
+
+    // Constructors
+    public Wiki() {
+        this.title = "Untitled Wiki";
+        this.content = "";
+        this.isFavorite = false;
+        this.wordCount = 0;
+    }
+
+    public Wiki(String title, Long operationId) {
+        this.title = title;
+        this.operationId = operationId;
+        this.content = "";
+        this.isFavorite = false;
+        this.wordCount = 0;
+    }
+
+    // Lifecycle callbacks
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        calculateWordCount();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+        calculateWordCount();
+    }
+
+    public Integer calculateWordCount() {
+        if (content == null || content.trim().isEmpty()) {
+            this.wordCount = 0;
+            return 0;
+        }
+
+        String[] words = content.trim().split("\\s+");
+        this.wordCount = words.length;
+        return this.wordCount;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getOperationId() {
+        return operationId;
+    }
+
+    public void setOperationId(Long operationId) {
+        this.operationId = operationId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Boolean getIsFavorite() {
+        return isFavorite;
+    }
+
+    public void setIsFavorite(Boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+
+    public Integer getWordCount() {
+        return wordCount;
+    }
+
+    public void setWordCount(Integer wordCount) {
+        this.wordCount = wordCount;
+    }
+
+    public String getLinkedWikiIds() {
+        return linkedWikiIds;
+    }
+
+    public void setLinkedWikiIds(String linkedWikiIds) {
+        this.linkedWikiIds = linkedWikiIds;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
+    }
+
+    public Long getCalendarEventId() {
+        return calendarEventId;
+    }
+
+    public void setCalendarEventId(Long calendarEventId) {
+        this.calendarEventId = calendarEventId;
+    }
+
+    public String getBannerUrl() {
+        return bannerUrl;
+    }
+
+    public void setBannerUrl(String bannerUrl) {
+        this.bannerUrl = bannerUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "Wiki{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", operationId=" + operationId +
+                '}';
+    }
+}

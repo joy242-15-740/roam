@@ -1,0 +1,6 @@
+{
+  "pinHash" : "$2a$12$fCzUVDsHwQz0LQfIcRmf2OizB.GwjwY4Wv5Cl1U453/HH9z32I1v2",
+  "theme" : "Light",
+  "regions" : [ "Lifestyle", "Knowledge", "Skill", "Spirituality", "Career", "Finance", "Social", "Academic", "Relationship" ],
+  "lockEnabled" : true
+}
