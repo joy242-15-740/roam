@@ -27,10 +27,10 @@ public class CalendarEventRepository {
             if (event.getId() == null) {
                 em.persist(event);
                 em.flush(); // Ensure ID is generated
-                System.out.println("✓ Calendar event created: " + event.getTitle());
+                logger.debug("✓ Calendar event created: {}", event.getTitle());
             } else {
                 event = em.merge(event);
-                System.out.println("✓ Calendar event updated: " + event.getTitle());
+                logger.debug("✓ Calendar event updated: {}", event.getTitle());
             }
 
             tx.commit();
@@ -40,7 +40,7 @@ public class CalendarEventRepository {
             if (tx != null && tx.isActive()) {
                 tx.rollback();
             }
-            System.err.println("✗ Failed to save calendar event: " + e.getMessage());
+            logger.error("✗ Failed to save calendar event: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to save calendar event", e);
         } finally {
             em.close();

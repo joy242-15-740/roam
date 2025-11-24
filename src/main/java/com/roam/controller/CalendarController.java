@@ -1,10 +1,13 @@
 package com.roam.controller;
 
 import com.roam.model.*;
-import com.roam.service.SearchService;
+import com.roam.service.CalendarService;
+import com.roam.service.CalendarServiceImpl;
 import com.roam.repository.*;
 import com.roam.util.DialogUtils;
 import com.roam.view.components.EventDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +18,10 @@ import java.util.stream.Collectors;
 
 public class CalendarController {
 
-    private final CalendarEventRepository eventRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CalendarController.class);
+
+    private final CalendarService calendarService;
+    private final CalendarEventRepository eventRepository; // Keep for direct queries
     private final CalendarSourceRepository sourceRepository;
     private final OperationRepository operationRepository;
     private final TaskRepository taskRepository;
@@ -28,6 +34,7 @@ public class CalendarController {
     private Runnable onDataChanged;
 
     public CalendarController() {
+        this.calendarService = new CalendarServiceImpl();
         this.eventRepository = new CalendarEventRepository();
         this.sourceRepository = new CalendarSourceRepository();
         this.operationRepository = new OperationRepository();
@@ -43,14 +50,14 @@ public class CalendarController {
     }
 
     private void initialize() {
-        System.out.println("🗓️ Initializing Calendar...");
+        logger.info("🗓️ Initializing Calendar...");
 
         // Create default calendar sources if not exist
         createDefaultCalendarSources();
 
         // Load all calendar sources
         calendarSources = sourceRepository.findAll();
-        System.out.println("✓ Loaded " + calendarSources.size() + " calendar sources");
+        logger.info("✓ Loaded {} calendar sources", calendarSources.size());
 
         // Load all events
         loadAllEvents();
@@ -58,7 +65,7 @@ public class CalendarController {
         // Sync tasks to events
         syncTasksToEvents();
 
-        System.out.println("✓ Calendar initialized with " + allEvents.size() + " events");
+        logger.info("✓ Calendar initialized with {} events", allEvents.size());
     }
 
     private void createDefaultCalendarSources() {
@@ -86,7 +93,7 @@ public class CalendarController {
     private void createSourceIfNotExists(List<String> existingNames, String name, String color, CalendarSourceType type,
             boolean isDefault) {
         if (!existingNames.contains(name)) {
-            System.out.println("Creating calendar source: " + name);
+            logger.debug("Creating calendar source: {}", name);
             CalendarSource source = new CalendarSource(name, color, type);
             source.setIsDefault(isDefault);
             sourceRepository.save(source);
@@ -94,7 +101,7 @@ public class CalendarController {
     }
 
     private void loadAllEvents() {
-        allEvents = eventRepository.findAll();
+        allEvents = calendarService.findAll();
     }
 
     private void syncTasksToEvents() {
@@ -114,7 +121,7 @@ public class CalendarController {
             // For now, we'll skip this and implement it later
 
         } catch (Exception e) {
-            System.err.println("Failed to sync tasks: " + e.getMessage());
+            logger.error("Failed to sync tasks: {}", e.getMessage(), e);
         }
     }
 
@@ -181,8 +188,7 @@ public class CalendarController {
                     null);
             dialog.showAndWait().ifPresent(newEvent -> {
                 try {
-                    eventRepository.save(newEvent);
-                    indexEvent(newEvent);
+                    calendarService.createEvent(newEvent);
                     loadAllEvents();
                     if (onDataChanged != null) {
                         onDataChanged.run();
@@ -211,10 +217,9 @@ public class CalendarController {
                     () -> deleteEvent(event));
 
             dialog.showAndWait().ifPresent(updatedEvent -> {
-                System.out.println("Saving edited event: " + updatedEvent.getTitle());
+                logger.debug("Saving edited event: {}", updatedEvent.getTitle());
                 try {
-                    eventRepository.save(updatedEvent);
-                    indexEvent(updatedEvent);
+                    calendarService.updateEvent(updatedEvent);
                     loadAllEvents();
                     if (onDataChanged != null) {
                         onDataChanged.run();
@@ -237,12 +242,7 @@ public class CalendarController {
 
         if (confirmed) {
             try {
-                eventRepository.delete(event.getId());
-                try {
-                    SearchService.getInstance().deleteDocument(event.getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                calendarService.deleteEvent(event.getId());
                 loadAllEvents();
                 if (onDataChanged != null) {
                     onDataChanged.run();
@@ -250,20 +250,6 @@ public class CalendarController {
             } catch (Exception e) {
                 DialogUtils.showError("Delete Error", "Failed to delete event", e.getMessage());
             }
-        }
-    }
-
-    private void indexEvent(CalendarEvent event) {
-        try {
-            SearchService.getInstance().indexEvent(
-                    event.getId(),
-                    event.getTitle(),
-                    event.getDescription(),
-                    event.getStartDateTime(),
-                    event.getEndDateTime(),
-                    event.getLocation());
-        } catch (Exception e) {
-            System.err.println("Failed to index event: " + e.getMessage());
         }
     }
 
@@ -278,7 +264,7 @@ public class CalendarController {
                 calendarSources = sourceRepository.findAll();
             });
         } catch (Exception e) {
-            System.err.println("Failed to toggle calendar visibility: " + e.getMessage());
+            logger.error("Failed to toggle calendar visibility: {}", e.getMessage(), e);
         }
     }
 }

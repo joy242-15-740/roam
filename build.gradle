@@ -32,6 +32,9 @@ dependencies {
     // H2 Database
     implementation 'com.h2database:h2:2.2.224'
     
+    // Flyway for database migrations
+    implementation 'org.flywaydb:flyway-core:10.4.1'
+    
     // CalendarFX
     implementation 'com.calendarfx:view:11.12.7'
     
@@ -77,6 +80,18 @@ dependencies {
     
     // OWASP Java Encoder for XSS prevention
     implementation 'org.owasp.encoder:encoder:1.2.3'
+    
+    // JUnit 5 for testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    
+    // Mockito for mocking in tests
+    testImplementation 'org.mockito:mockito-core:5.5.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.5.0'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 application {

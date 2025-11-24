@@ -12,10 +12,14 @@ import com.roam.repository.RegionRepository;
 import com.roam.repository.TaskRepository;
 import com.roam.util.DialogUtils;
 import com.roam.view.components.TaskDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class OperationDetailController {
+
+    private static final Logger logger = LoggerFactory.getLogger(OperationDetailController.class);
 
     private final OperationRepository operationRepository;
     private final TaskRepository taskRepository;
@@ -62,12 +66,12 @@ public class OperationDetailController {
         try {
             operationRepository.save(updatedOperation);
             this.operation = updatedOperation;
-            System.out.println("✓ Operation updated: " + updatedOperation.getName());
+            logger.debug("✓ Operation updated: {}", updatedOperation.getName());
             if (onDataChanged != null) {
                 onDataChanged.run();
             }
         } catch (Exception e) {
-            System.err.println("✗ Failed to update operation: " + e.getMessage());
+            logger.error("✗ Failed to update operation: {}", e.getMessage(), e);
             DialogUtils.showError(
                     "Update Error",
                     "Failed to update operation",
@@ -84,7 +88,7 @@ public class OperationDetailController {
         try {
             return taskRepository.findByOperationId(operation.getId());
         } catch (Exception e) {
-            System.err.println("✗ Failed to load tasks: " + e.getMessage());
+            logger.error("✗ Failed to load tasks: {}", e.getMessage(), e);
             DialogUtils.showError(
                     "Load Error",
                     "Failed to load tasks",
@@ -112,12 +116,12 @@ public class OperationDetailController {
             try {
                 newTask.setOperationId(operation.getId());
                 taskRepository.save(newTask);
-                System.out.println("✓ Task created: " + newTask.getTitle());
+                logger.debug("✓ Task created: {}", newTask.getTitle());
                 if (onDataChanged != null) {
                     onDataChanged.run();
                 }
             } catch (Exception e) {
-                System.err.println("✗ Failed to create task: " + e.getMessage());
+                logger.error("✗ Failed to create task: {}", e.getMessage(), e);
                 DialogUtils.showError(
                         "Create Error",
                         "Failed to create task",
@@ -143,12 +147,12 @@ public class OperationDetailController {
         dialog.showAndWait().ifPresent(updatedTask -> {
             try {
                 taskRepository.save(updatedTask);
-                System.out.println("✓ Task updated: " + updatedTask.getTitle());
+                logger.debug("✓ Task updated: {}", updatedTask.getTitle());
                 if (onDataChanged != null) {
                     onDataChanged.run();
                 }
             } catch (Exception e) {
-                System.err.println("✗ Failed to update task: " + e.getMessage());
+                logger.error("✗ Failed to update task: {}", e.getMessage(), e);
                 DialogUtils.showError(
                         "Update Error",
                         "Failed to update task",
@@ -172,12 +176,12 @@ public class OperationDetailController {
         if (confirmed) {
             try {
                 taskRepository.delete(task);
-                System.out.println("✓ Task deleted: " + task.getTitle());
+                logger.debug("✓ Task deleted: {}", task.getTitle());
                 if (onDataChanged != null) {
                     onDataChanged.run();
                 }
             } catch (Exception e) {
-                System.err.println("✗ Failed to delete task: " + e.getMessage());
+                logger.error("✗ Failed to delete task: {}", e.getMessage(), e);
                 DialogUtils.showError(
                         "Delete Error",
                         "Failed to delete task",
@@ -196,12 +200,12 @@ public class OperationDetailController {
         try {
             task.setStatus(newStatus);
             taskRepository.save(task);
-            System.out.println("✓ Task status updated: " + task.getTitle() + " -> " + newStatus);
+            logger.debug("✓ Task status updated: {} -> {}", task.getTitle(), newStatus);
             if (onDataChanged != null) {
                 onDataChanged.run();
             }
         } catch (Exception e) {
-            System.err.println("✗ Failed to update task status: " + e.getMessage());
+            logger.error("✗ Failed to update task status: {}", e.getMessage(), e);
             DialogUtils.showError(
                     "Update Error",
                     "Failed to update task status",
@@ -218,7 +222,7 @@ public class OperationDetailController {
         try {
             return WikiRepository.findByOperationId(operation.getId());
         } catch (Exception e) {
-            System.err.println("✗ Failed to load notes: " + e.getMessage());
+            logger.error("✗ Failed to load notes: {}", e.getMessage(), e);
             DialogUtils.showError(
                     "Load Error",
                     "Failed to load notes",
@@ -234,13 +238,13 @@ public class OperationDetailController {
         try {
             Wiki Wiki = new Wiki("Untitled Wiki", operation.getId());
             Wiki = WikiRepository.save(Wiki);
-            System.out.println("✓ Wiki created: " + Wiki.getTitle());
+            logger.debug("✓ Wiki created: {}", Wiki.getTitle());
             if (onDataChanged != null) {
                 onDataChanged.run();
             }
             return Wiki;
         } catch (Exception e) {
-            System.err.println("✗ Failed to create Wiki: " + e.getMessage());
+            logger.error("✗ Failed to create Wiki: {}", e.getMessage(), e);
             DialogUtils.showError(
                     "Create Error",
                     "Failed to create Wiki",
@@ -258,9 +262,9 @@ public class OperationDetailController {
 
         try {
             WikiRepository.save(Wiki);
-            System.out.println("✓ Wiki saved: " + Wiki.getTitle());
+            logger.debug("✓ Wiki saved: {}", Wiki.getTitle());
         } catch (Exception e) {
-            System.err.println("✗ Failed to save Wiki: " + e.getMessage());
+            logger.error("✗ Failed to save Wiki: {}", e.getMessage(), e);
             DialogUtils.showError(
                     "Save Error",
                     "Failed to save Wiki",
@@ -283,12 +287,12 @@ public class OperationDetailController {
         if (confirmed) {
             try {
                 WikiRepository.delete(Wiki);
-                System.out.println("✓ Wiki deleted: " + Wiki.getTitle());
+                logger.debug("✓ Wiki deleted: {}", Wiki.getTitle());
                 if (onDataChanged != null) {
                     onDataChanged.run();
                 }
             } catch (Exception e) {
-                System.err.println("✗ Failed to delete Wiki: " + e.getMessage());
+                logger.error("✗ Failed to delete Wiki: {}", e.getMessage(), e);
                 DialogUtils.showError(
                         "Delete Error",
                         "Failed to delete Wiki",

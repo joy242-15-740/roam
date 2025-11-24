@@ -2,13 +2,17 @@ package com.roam.view.components;
 
 import com.roam.model.Priority;
 import com.roam.model.Task;
+import com.roam.model.TaskStatus;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
@@ -19,10 +23,16 @@ public class TaskCard extends VBox {
 
     private final Task task;
     private final Consumer<Task> onEdit;
+    private final Consumer<Task> onComplete;
+    private final Button editBtn;
+    private final Button completeBtn;
 
-    public TaskCard(Task task, Consumer<Task> onEdit) {
+    public TaskCard(Task task, Consumer<Task> onEdit, Consumer<Task> onComplete) {
         this.task = task;
         this.onEdit = onEdit;
+        this.onComplete = onComplete;
+        this.editBtn = new Button();
+        this.completeBtn = new Button();
 
         setSpacing(8);
         setPadding(new Insets(15));
@@ -51,6 +61,10 @@ public class TaskCard extends VBox {
                             "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2); " +
                             "-fx-scale-x: 1.02; " +
                             "-fx-scale-y: 1.02;");
+            editBtn.setVisible(true);
+            if (task.getStatus() != TaskStatus.DONE) {
+                completeBtn.setVisible(true);
+            }
         });
 
         setOnMouseExited(e -> {
@@ -63,7 +77,13 @@ public class TaskCard extends VBox {
                             "-fx-cursor: hand; " +
                             "-fx-border-left-width: 4; " +
                             "-fx-border-left-color: " + getPriorityColor(task.getPriority()) + ";");
+            editBtn.setVisible(false);
+            completeBtn.setVisible(false);
         });
+
+        // Header Row (Title + Buttons)
+        HBox header = new HBox(10);
+        header.setAlignment(Pos.TOP_LEFT);
 
         // Title
         Label titleLabel = new Label(task.getTitle());
@@ -71,6 +91,40 @@ public class TaskCard extends VBox {
         titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         titleLabel.setWrapText(true);
         titleLabel.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(titleLabel, javafx.scene.layout.Priority.ALWAYS);
+
+        // Edit button
+        FontIcon editIcon = new FontIcon(Feather.EDIT_2);
+        editIcon.setIconSize(14);
+        editBtn.setGraphic(editIcon);
+        editBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 2;");
+        editBtn.setVisible(false);
+        editBtn.setOnAction(e -> {
+            e.consume();
+            if (onEdit != null)
+                onEdit.accept(task);
+        });
+
+        // Complete button
+        FontIcon completeIcon = new FontIcon(Feather.CHECK_CIRCLE);
+        completeIcon.setIconSize(14);
+        completeIcon.setIconColor(javafx.scene.paint.Color.web("#388E3C"));
+        completeBtn.setGraphic(completeIcon);
+        completeBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 2;");
+        completeBtn.setVisible(false);
+        completeBtn.setOnAction(e -> {
+            e.consume();
+            if (onComplete != null)
+                onComplete.accept(task);
+        });
+
+        header.getChildren().add(titleLabel);
+        header.getChildren().add(editBtn);
+        if (task.getStatus() != TaskStatus.DONE) {
+            header.getChildren().add(completeBtn);
+        }
+
+        getChildren().add(header);
 
         // Description (if exists)
         if (task.getDescription() != null && !task.getDescription().isEmpty()) {
@@ -87,9 +141,7 @@ public class TaskCard extends VBox {
             }
             descLabel.setText(desc);
 
-            getChildren().addAll(titleLabel, descLabel);
-        } else {
-            getChildren().add(titleLabel);
+            getChildren().add(descLabel);
         }
 
         // Spacer

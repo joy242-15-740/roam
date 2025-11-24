@@ -2,8 +2,8 @@ package com.roam.controller;
 
 import com.roam.model.Operation;
 import com.roam.model.Region;
-import com.roam.service.SearchService;
-import com.roam.repository.OperationRepository;
+import com.roam.service.OperationService;
+import com.roam.service.OperationServiceImpl;
 import com.roam.repository.RegionRepository;
 import com.roam.util.DialogUtils;
 import com.roam.view.components.OperationDialog;
@@ -17,13 +17,13 @@ import java.util.Optional;
 public class OperationsController {
 
     private static final Logger logger = LoggerFactory.getLogger(OperationsController.class);
-    private final OperationRepository repository;
+    private final OperationService operationService;
     private final RegionRepository regionRepository;
     private OperationTableView tableView;
     private Runnable onDataChanged;
 
     public OperationsController() {
-        this.repository = new OperationRepository();
+        this.operationService = new OperationServiceImpl();
         this.regionRepository = new RegionRepository();
     }
 
@@ -40,7 +40,7 @@ public class OperationsController {
      */
     public List<Operation> loadOperations() {
         try {
-            return repository.findAll();
+            return operationService.findAll();
         } catch (Exception e) {
             logger.error("Failed to load operations: {}", e.getMessage(), e);
             DialogUtils.showError(
@@ -61,13 +61,11 @@ public class OperationsController {
 
         result.ifPresent(operation -> {
             try {
-                Operation savedOperation = repository.save(operation);
-                indexOperation(savedOperation);
-                System.out.println("✓ Operation created: " + savedOperation.getName());
+                Operation savedOperation = operationService.createOperation(operation);
+                logger.debug("✓ Operation created: {}", savedOperation.getName());
                 refreshTable();
-                // Optional: DialogUtils.showSuccess("Operation created successfully!");
             } catch (Exception e) {
-                System.err.println("✗ Failed to create operation: " + e.getMessage());
+                logger.error("✗ Failed to create operation: {}", e.getMessage(), e);
                 DialogUtils.showError(
                         "Save Error",
                         "Failed to create operation",
@@ -89,13 +87,11 @@ public class OperationsController {
 
         result.ifPresent(updatedOp -> {
             try {
-                Operation savedOperation = repository.save(updatedOp);
-                indexOperation(savedOperation);
-                System.out.println("✓ Operation updated: " + savedOperation.getName());
+                Operation savedOperation = operationService.updateOperation(updatedOp);
+                logger.debug("✓ Operation updated: {}", savedOperation.getName());
                 refreshTable();
-                // Optional: DialogUtils.showSuccess("Operation updated successfully!");
             } catch (Exception e) {
-                System.err.println("✗ Failed to update operation: " + e.getMessage());
+                logger.error("✗ Failed to update operation: {}", e.getMessage(), e);
                 DialogUtils.showError(
                         "Update Error",
                         "Failed to update operation",
@@ -118,36 +114,16 @@ public class OperationsController {
 
         if (confirmed) {
             try {
-                repository.delete(operation);
-                try {
-                    SearchService.getInstance().deleteDocument(operation.getId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                System.out.println("✓ Operation deleted: " + operation.getName());
+                operationService.deleteOperation(operation.getId());
+                logger.debug("✓ Operation deleted: {}", operation.getName());
                 refreshTable();
-                // Optional: DialogUtils.showSuccess("Operation deleted successfully!");
             } catch (Exception e) {
-                System.err.println("✗ Failed to delete operation: " + e.getMessage());
+                logger.error("✗ Failed to delete operation: {}", e.getMessage(), e);
                 DialogUtils.showError(
                         "Delete Error",
                         "Failed to delete operation",
                         e.getMessage());
             }
-        }
-    }
-
-    private void indexOperation(Operation operation) {
-        try {
-            SearchService.getInstance().indexOperation(
-                    operation.getId(),
-                    operation.getName(),
-                    operation.getPurpose(),
-                    operation.getOutcome(),
-                    operation.getStatus() != null ? operation.getStatus().toString() : null,
-                    operation.getPriority() != null ? operation.getPriority().toString() : null);
-        } catch (Exception e) {
-            System.err.println("Failed to index operation: " + e.getMessage());
         }
     }
 

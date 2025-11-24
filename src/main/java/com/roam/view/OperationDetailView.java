@@ -3,7 +3,6 @@ package com.roam.view;
 import com.roam.controller.CalendarController;
 import com.roam.controller.OperationDetailController;
 import com.roam.controller.WikiController;
-import com.roam.model.Wiki;
 import com.roam.model.Operation;
 import com.roam.view.components.*;
 import javafx.geometry.Insets;
@@ -25,6 +24,7 @@ public class OperationDetailView extends BorderPane {
     private KanbanBoard kanbanBoard;
     private CalendarView calendarView;
     private WikiNoteEditor wikiNoteEditor;
+    private com.roam.view.components.WikiSidebar wikiSidebar;
     private StackPane tasksCalendarContainer;
     private ScrollPane mainScrollPane;
 
@@ -35,6 +35,13 @@ public class OperationDetailView extends BorderPane {
         this.calendarController = new CalendarController();
         this.wikiController = new WikiController();
         this.onNavigateBack = onNavigateBack;
+
+        // Set up wiki change listener to update sidebar
+        wikiController.addOnNoteChangedListener(wiki -> {
+            if (wikiSidebar != null) {
+                wikiSidebar.refreshOperationWikis(controller.getOperation());
+            }
+        });
 
         initialize();
     }
@@ -225,6 +232,11 @@ public class OperationDetailView extends BorderPane {
         HBox notesToolbar = createNotesToolbar(poppinsRegular, poppinsBold);
         notesContainer.setTop(notesToolbar);
 
+        // Create wiki sidebar
+        wikiSidebar = new com.roam.view.components.WikiSidebar(wikiController, poppinsRegular, poppinsBold);
+        wikiSidebar.switchToOperationMode(controller.getOperation());
+        notesContainer.setLeft(wikiSidebar);
+
         // Create wiki note editor
         wikiNoteEditor = new WikiNoteEditor(wikiController, poppinsRegular, poppinsBold);
         notesContainer.setCenter(wikiNoteEditor);
@@ -254,11 +266,13 @@ public class OperationDetailView extends BorderPane {
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;");
         newNoteBtn.setOnAction(e -> {
+            // Create new wiki and link to this operation
             com.roam.model.Wiki newNote = wikiController.createNewNote();
             newNote.setOperationId(controller.getOperation().getId());
             newNote.setTitle(controller.getOperation().getName() + " Wiki");
             wikiController.saveCurrentNote();
-            wikiNoteEditor.loadNotesForOperation(controller.getOperation());
+            // Load the newly created note directly
+            wikiNoteEditor.loadNote(newNote);
         });
 
         // Templates Menu
@@ -300,25 +314,6 @@ public class OperationDetailView extends BorderPane {
             // Show list of all wikis for this operation
             showOperationNotesList();
         });
-
-        MenuItem refreshItem = new MenuItem("Refresh Wiki");
-        refreshItem.setGraphic(new FontIcon(Feather.REFRESH_CW));
-        refreshItem.setOnAction(e -> refreshNotes());
-
-        actionsMenu.getItems().addAll(viewAllNotesItem, new SeparatorMenuItem(), refreshItem);
-
-        // Three-dot menu for current note operations
-        MenuButton noteOpsMenu = new MenuButton();
-        noteOpsMenu.setGraphic(new FontIcon(Feather.MORE_VERTICAL));
-        noteOpsMenu.setFont(javafx.scene.text.Font.font(poppinsRegular.getFamily(), 18));
-        noteOpsMenu.setPrefSize(40, 40);
-        noteOpsMenu.setStyle(
-                "-fx-background-color: transparent; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 8; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand;");
 
         MenuItem duplicateWikiItem = new MenuItem("Duplicate Wiki");
         duplicateWikiItem.setGraphic(new FontIcon(Feather.COPY));
@@ -371,18 +366,25 @@ public class OperationDetailView extends BorderPane {
             }
         });
 
-        noteOpsMenu.getItems().addAll(
-                duplicateWikiItem,
+        MenuItem refreshItem = new MenuItem("Refresh Wiki");
+        refreshItem.setGraphic(new FontIcon(Feather.REFRESH_CW));
+        refreshItem.setOnAction(e -> refreshNotes());
+
+        actionsMenu.getItems().addAll(
+                viewAllNotesItem,
                 new SeparatorMenuItem(),
+                duplicateWikiItem,
                 addBannerItem,
                 removeBannerItem,
                 new SeparatorMenuItem(),
                 exportMdItem,
                 exportPdfItem,
                 new SeparatorMenuItem(),
-                deleteWikiItem);
+                deleteWikiItem,
+                new SeparatorMenuItem(),
+                refreshItem);
 
-        toolbar.getChildren().addAll(newNoteBtn, templatesMenu, spacer, actionsMenu, noteOpsMenu);
+        toolbar.getChildren().addAll(newNoteBtn, templatesMenu, spacer, actionsMenu);
         return toolbar;
     }
 
@@ -397,7 +399,8 @@ public class OperationDetailView extends BorderPane {
                 com.roam.model.Wiki newNote = wikiController.createNoteFromTemplate(template);
                 newNote.setOperationId(controller.getOperation().getId());
                 wikiController.saveCurrentNote();
-                wikiNoteEditor.loadNotesForOperation(controller.getOperation());
+                // Load the newly created note directly
+                wikiNoteEditor.loadNote(newNote);
             });
             templatesMenu.getItems().add(item);
         }
@@ -405,7 +408,9 @@ public class OperationDetailView extends BorderPane {
         // Custom templates
         List<com.roam.model.WikiTemplate> customTemplates = wikiController.loadCustomTemplates();
         if (!customTemplates.isEmpty()) {
-            templatesMenu.getItems().add(new SeparatorMenuItem());
+            if (!defaultTemplates.isEmpty()) {
+                templatesMenu.getItems().add(new SeparatorMenuItem());
+            }
             for (com.roam.model.WikiTemplate template : customTemplates) {
                 MenuItem item = new MenuItem(template.getIcon() + " " + template.getName());
                 item.setOnAction(e -> {
@@ -496,6 +501,13 @@ public class OperationDetailView extends BorderPane {
 
     private void refreshNotes() {
         // Load notes for this specific operation
-        wikiNoteEditor.loadNotesForOperation(controller.getOperation());
+        if (wikiNoteEditor != null) {
+            wikiNoteEditor.loadNotesForOperation(controller.getOperation());
+        }
+
+        // Update sidebar
+        if (wikiSidebar != null) {
+            wikiSidebar.refreshOperationWikis(controller.getOperation());
+        }
     }
 }

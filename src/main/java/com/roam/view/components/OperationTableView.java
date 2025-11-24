@@ -8,6 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -46,14 +48,19 @@ public class OperationTableView extends TableView<Operation> {
         setRowFactory(tv -> {
             TableRow<Operation> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
-                    if (onEdit != null) {
-                        onEdit.accept(row.getItem());
-                    }
-                } else if (event.getClickCount() == 1 && !row.isEmpty()) {
-                    // Single click - navigate to detail
-                    if (onOperationClick != null) {
-                        onOperationClick.accept(row.getItem());
+                if (!row.isEmpty()) {
+                    Operation operation = row.getItem();
+
+                    if (event.getClickCount() == 2) {
+                        // Double click - edit
+                        if (onEdit != null) {
+                            onEdit.accept(operation);
+                        }
+                    } else if (event.getClickCount() == 1) {
+                        // Single click - navigate to detail
+                        if (onOperationClick != null) {
+                            onOperationClick.accept(operation);
+                        }
                     }
                 }
             });
@@ -137,16 +144,31 @@ public class OperationTableView extends TableView<Operation> {
         col.setPrefWidth(80);
         col.setSortable(false);
         col.setCellFactory(tc -> new TableCell<>() {
-            private final Button menuBtn = createKebabMenuButton();
-            private final HBox container = new HBox(menuBtn);
+            private final Button editBtn = createActionButton(Feather.EDIT_2, "Edit operation");
+            private final Button deleteBtn = createActionButton(Feather.TRASH_2, "Delete operation");
+            private final HBox container = new HBox(5, editBtn, deleteBtn);
 
             {
                 container.setAlignment(Pos.CENTER);
 
-                menuBtn.setOnAction(e -> {
+                editBtn.setOnAction(e -> {
+                    e.consume();
                     Operation op = getTableView().getItems().get(getIndex());
-                    showContextMenu(op, menuBtn);
+                    if (onEdit != null)
+                        onEdit.accept(op);
                 });
+
+                deleteBtn.setOnAction(e -> {
+                    e.consume();
+                    Operation op = getTableView().getItems().get(getIndex());
+                    if (onDelete != null)
+                        onDelete.accept(op);
+                });
+
+                deleteBtn.setOnMouseEntered(e -> deleteBtn.setStyle(
+                        "-fx-background-color: #FFEBEE; -fx-cursor: hand; -fx-background-radius: 4;"));
+                deleteBtn.setOnMouseExited(e -> deleteBtn.setStyle(
+                        "-fx-background-color: transparent; -fx-cursor: hand; -fx-background-radius: 4;"));
             }
 
             @Override
@@ -158,32 +180,24 @@ public class OperationTableView extends TableView<Operation> {
         return col;
     }
 
-    private Button createKebabMenuButton() {
-        Button btn = new Button("⋮");
-        btn.getStyleClass().add("icon-button-small");
+    private Button createActionButton(Feather iconCode, String tooltip) {
+        Button btn = new Button();
+        FontIcon icon = new FontIcon(iconCode);
+        icon.setIconSize(16);
+        btn.setGraphic(icon);
         btn.setPrefSize(28, 28);
-        btn.setTooltip(new Tooltip("More actions"));
+        btn.setStyle(
+                "-fx-background-color: transparent; " +
+                        "-fx-cursor: hand; " +
+                        "-fx-background-radius: 4;");
+        btn.setTooltip(new Tooltip(tooltip));
+
+        btn.setOnMouseEntered(e -> btn.setStyle(
+                "-fx-background-color: -roam-gray-bg; -fx-cursor: hand; -fx-background-radius: 4;"));
+        btn.setOnMouseExited(e -> btn.setStyle(
+                "-fx-background-color: transparent; -fx-cursor: hand; -fx-background-radius: 4;"));
+
         return btn;
-    }
-
-    private void showContextMenu(Operation operation, Button sourceButton) {
-        ContextMenu contextMenu = new ContextMenu();
-
-        MenuItem editItem = new MenuItem("✎ Edit");
-        editItem.setOnAction(e -> {
-            if (onEdit != null)
-                onEdit.accept(operation);
-        });
-
-        MenuItem deleteItem = new MenuItem("🗑 Delete");
-        deleteItem.setStyle("-fx-text-fill: #D32F2F;");
-        deleteItem.setOnAction(e -> {
-            if (onDelete != null)
-                onDelete.accept(operation);
-        });
-
-        contextMenu.getItems().addAll(editItem, new SeparatorMenuItem(), deleteItem);
-        contextMenu.show(sourceButton, javafx.geometry.Side.BOTTOM, 0, 0);
     }
 
     private Label createStatusBadge(OperationStatus status) {

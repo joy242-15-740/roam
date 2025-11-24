@@ -108,11 +108,17 @@ public class RoamApplication extends Application {
 
     @Override
     public void stop() {
-        // Shutdown Hibernate on application exit
+        // Shutdown resources on application exit
         logger.info("=".repeat(50));
         logger.info("🛑 Shutting down Roam Application");
         logger.info("=".repeat(50));
+
+        // Shutdown thread pools gracefully
+        com.roam.util.ThreadPoolManager.getInstance().gracefulShutdown();
+
+        // Shutdown Hibernate
         HibernateUtil.shutdown();
+
         logger.info("✓ Application shutdown complete");
     }
 

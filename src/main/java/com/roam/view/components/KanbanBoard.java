@@ -219,7 +219,11 @@ public class KanbanBoard extends HBox {
 
         // Sort tasks by status
         for (Task task : tasks) {
-            TaskCard card = new TaskCard(task, onEditTask);
+            TaskCard card = new TaskCard(task, onEditTask, t -> {
+                if (onTaskStatusChanged != null) {
+                    onTaskStatusChanged.accept(t, TaskStatus.DONE);
+                }
+            });
 
             // Track mouse press position to distinguish click from drag
             final double[] startX = new double[1];

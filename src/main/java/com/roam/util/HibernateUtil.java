@@ -32,6 +32,18 @@ public class HibernateUtil {
                         // Load database configuration dynamically
                         DatabaseConfig dbConfig = DatabaseConfig.getInstance();
 
+                        // ===== FLYWAY MIGRATIONS =====
+                        // Run database migrations BEFORE initializing Hibernate
+                        logger.info("🔄 Running Flyway database migrations...");
+                        boolean migrationSuccess = FlywayManager.runMigrations(
+                                dbConfig.getJdbcUrl(),
+                                dbConfig.getUsername(),
+                                dbConfig.getPassword());
+
+                        if (!migrationSuccess) {
+                            throw new RuntimeException("Database migration failed. Cannot initialize Hibernate.");
+                        }
+
                         // Override persistence.xml properties with runtime values
                         Map<String, String> properties = new HashMap<>();
                         properties.put("jakarta.persistence.jdbc.driver", dbConfig.getDriver());
