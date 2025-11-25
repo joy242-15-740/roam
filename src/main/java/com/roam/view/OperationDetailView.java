@@ -13,12 +13,13 @@ import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 
-public class OperationDetailView extends BorderPane {
+public class OperationDetailView extends StackPane {
 
     private final OperationDetailController controller;
     private final CalendarController calendarController;
     private final WikiController wikiController;
     private final Runnable onNavigateBack;
+    private final BorderPane contentPane;
 
     private OperationInfoCard infoCard;
     private KanbanBoard kanbanBoard;
@@ -35,6 +36,8 @@ public class OperationDetailView extends BorderPane {
         this.calendarController = new CalendarController();
         this.wikiController = new WikiController();
         this.onNavigateBack = onNavigateBack;
+        this.contentPane = new BorderPane();
+        getChildren().add(contentPane);
 
         // Set up wiki change listener to update sidebar
         wikiController.addOnNoteChangedListener(wiki -> {
@@ -44,17 +47,43 @@ public class OperationDetailView extends BorderPane {
         });
 
         initialize();
+
+        // Add listeners for responsive scaling
+        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+    }
+
+    private void scaleContent() {
+        double width = getWidth();
+        double height = getHeight();
+
+        // Use layout bounds to get the actual size of the content
+        double contentWidth = contentPane.getLayoutBounds().getWidth();
+        double contentHeight = contentPane.getLayoutBounds().getHeight();
+
+        if (contentWidth == 0 || contentHeight == 0)
+            return;
+
+        // Calculate scale factors
+        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
+        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
+
+        // Use the smaller scale to maintain aspect ratio and fit within bounds
+        double scale = Math.min(scaleX, scaleY);
+
+        contentPane.setScaleX(scale);
+        contentPane.setScaleY(scale);
     }
 
     private void initialize() {
-        setStyle("-fx-background-color: -roam-bg-primary;");
+        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Set data change listener
         controller.setOnDataChanged(this::refreshData);
 
         // Create breadcrumb
         Breadcrumb breadcrumb = new Breadcrumb(controller.getOperation().getName(), onNavigateBack);
-        setTop(breadcrumb);
+        contentPane.setTop(breadcrumb);
 
         // Create center content
         VBox centerContent = createCenterContent();
@@ -67,7 +96,7 @@ public class OperationDetailView extends BorderPane {
         mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         mainScrollPane.setStyle("-fx-background-color: -roam-bg-primary; -fx-background: -roam-bg-primary;");
 
-        setCenter(mainScrollPane);
+        contentPane.setCenter(mainScrollPane);
     }
 
     private VBox createCenterContent() {

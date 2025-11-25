@@ -14,9 +14,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
-public class JournalView extends BorderPane {
+public class JournalView extends StackPane {
 
     private final JournalController controller;
+    private final BorderPane contentPane;
     private ListView<JournalEntry> entryList;
     private TextArea editorArea;
     private Label dateLabel;
@@ -24,7 +25,35 @@ public class JournalView extends BorderPane {
 
     public JournalView() {
         this.controller = new JournalController();
+        this.contentPane = new BorderPane();
+        getChildren().add(contentPane);
         initialize();
+
+        // Add listeners for responsive scaling
+        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+    }
+
+    private void scaleContent() {
+        double width = getWidth();
+        double height = getHeight();
+
+        // Use layout bounds to get the actual size of the content
+        double contentWidth = contentPane.getLayoutBounds().getWidth();
+        double contentHeight = contentPane.getLayoutBounds().getHeight();
+
+        if (contentWidth == 0 || contentHeight == 0)
+            return;
+
+        // Calculate scale factors
+        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
+        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
+
+        // Use the smaller scale to maintain aspect ratio and fit within bounds
+        double scale = Math.min(scaleX, scaleY);
+
+        contentPane.setScaleX(scale);
+        contentPane.setScaleY(scale);
     }
 
     private void initialize() {
@@ -64,7 +93,7 @@ public class JournalView extends BorderPane {
         VBox.setVgrow(entryList, Priority.ALWAYS);
 
         sidebar.getChildren().addAll(header, todayBtn, new Separator(), entryList);
-        setLeft(sidebar);
+        contentPane.setLeft(sidebar);
 
         // Center (Editor)
         VBox editorPane = new VBox(15);
@@ -96,7 +125,7 @@ public class JournalView extends BorderPane {
         VBox.setVgrow(editorArea, Priority.ALWAYS);
 
         editorPane.getChildren().addAll(toolbar, editorArea);
-        setCenter(editorPane);
+        contentPane.setCenter(editorPane);
 
         refreshList();
     }

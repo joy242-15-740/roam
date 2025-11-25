@@ -15,20 +15,49 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class OperationsView extends VBox {
+public class OperationsView extends StackPane {
 
     private final OperationsController controller;
     private final OperationTableView tableView;
     private final StackPane contentArea;
     private final VBox emptyState;
+    private final VBox contentPane;
 
     public OperationsView(OperationsController controller) {
         this.controller = controller;
         this.tableView = new OperationTableView();
         this.contentArea = new StackPane();
         this.emptyState = createEmptyState();
+        this.contentPane = new VBox();
+        getChildren().add(contentPane);
 
         initialize();
+
+        // Add listeners for responsive scaling
+        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+    }
+
+    private void scaleContent() {
+        double width = getWidth();
+        double height = getHeight();
+
+        // Use layout bounds to get the actual size of the content
+        double contentWidth = contentPane.getLayoutBounds().getWidth();
+        double contentHeight = contentPane.getLayoutBounds().getHeight();
+
+        if (contentWidth == 0 || contentHeight == 0)
+            return;
+
+        // Calculate scale factors
+        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
+        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
+
+        // Use the smaller scale to maintain aspect ratio and fit within bounds
+        double scale = Math.min(scaleX, scaleY);
+
+        contentPane.setScaleX(scale);
+        contentPane.setScaleY(scale);
     }
 
     public void setOnOperationClick(Consumer<Operation> handler) {
@@ -37,8 +66,8 @@ public class OperationsView extends VBox {
 
     private void initialize() {
         // Configure container
-        setStyle("-fx-background-color: -roam-bg-primary;");
-        setSpacing(0);
+        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
+        contentPane.setSpacing(0);
 
         // Create header
         HBox header = createHeader();
@@ -56,7 +85,7 @@ public class OperationsView extends VBox {
         tableView.setOnDelete(controller::deleteOperation);
 
         // Add components
-        getChildren().addAll(header, contentArea);
+        contentPane.getChildren().addAll(header, contentArea);
 
         // Initial load
         loadData();

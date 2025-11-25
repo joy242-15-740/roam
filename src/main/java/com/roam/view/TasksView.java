@@ -14,7 +14,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class TasksView extends BorderPane {
+public class TasksView extends StackPane {
 
     private final TasksController controller;
     private final TasksToolbar toolbar;
@@ -25,11 +25,14 @@ public class TasksView extends BorderPane {
     private final TasksTimelineView timelineView;
     private final TasksEisenhowerView matrixView;
     private final BatchOperationsBar batchBar;
+    private final BorderPane contentPane;
 
     public TasksView(TasksController controller) {
         this.controller = controller;
+        this.contentPane = new BorderPane();
+        getChildren().add(contentPane);
 
-        setStyle("-fx-background-color: -roam-bg-primary;");
+        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Create toolbar
         toolbar = new TasksToolbar(controller);
@@ -59,7 +62,7 @@ public class TasksView extends BorderPane {
         // Combine toolbar, filter panel, and stats bar
         VBox topContainer = new VBox(toolbar, filterPanel, statsBar);
 
-        setTop(topContainer);
+        contentPane.setTop(topContainer);
 
         // Use StackPane for center to allow batch bar overlay
         StackPane centerStack = new StackPane();
@@ -67,13 +70,39 @@ public class TasksView extends BorderPane {
         centerStack.getChildren().add(batchBar);
         StackPane.setAlignment(batchBar, Pos.BOTTOM_CENTER);
 
-        setCenter(centerStack);
+        contentPane.setCenter(centerStack);
 
         // Set up data change listener
         controller.setOnDataChanged(this::refreshView);
 
         // Initial load
         refreshView();
+
+        // Add listeners for responsive scaling
+        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+    }
+
+    private void scaleContent() {
+        double width = getWidth();
+        double height = getHeight();
+
+        // Use layout bounds to get the actual size of the content
+        double contentWidth = contentPane.getLayoutBounds().getWidth();
+        double contentHeight = contentPane.getLayoutBounds().getHeight();
+
+        if (contentWidth == 0 || contentHeight == 0)
+            return;
+
+        // Calculate scale factors
+        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
+        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
+
+        // Use the smaller scale to maintain aspect ratio and fit within bounds
+        double scale = Math.min(scaleX, scaleY);
+
+        contentPane.setScaleX(scale);
+        contentPane.setScaleY(scale);
     }
 
     private void switchView(String viewName) {
@@ -95,7 +124,7 @@ public class TasksView extends BorderPane {
         }
 
         StackPane.setAlignment(batchBar, Pos.BOTTOM_CENTER);
-        setCenter(centerStack);
+        contentPane.setCenter(centerStack);
         refreshView();
     }
 

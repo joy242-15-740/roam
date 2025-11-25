@@ -11,32 +11,62 @@ import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 import java.util.List;
 
-public class StatisticsView extends VBox {
+public class StatisticsView extends StackPane {
 
     private final WikiController controller;
     private final TaskRepository taskRepository;
+    private final VBox contentPane;
 
     public StatisticsView(WikiController controller) {
         this.controller = controller;
         this.taskRepository = new TaskRepository();
+        this.contentPane = new VBox();
+        getChildren().add(contentPane);
         initializeView();
+
+        // Add listeners for responsive scaling
+        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+    }
+
+    private void scaleContent() {
+        double width = getWidth();
+        double height = getHeight();
+
+        // Use layout bounds to get the actual size of the content
+        double contentWidth = contentPane.getLayoutBounds().getWidth();
+        double contentHeight = contentPane.getLayoutBounds().getHeight();
+
+        if (contentWidth == 0 || contentHeight == 0)
+            return;
+
+        // Calculate scale factors
+        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
+        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
+
+        // Use the smaller scale to maintain aspect ratio and fit within bounds
+        double scale = Math.min(scaleX, scaleY);
+
+        contentPane.setScaleX(scale);
+        contentPane.setScaleY(scale);
     }
 
     private void initializeView() {
-        setPadding(new Insets(30));
-        setSpacing(30);
-        setStyle("-fx-background-color: -roam-bg-primary;");
+        contentPane.setPadding(new Insets(30));
+        contentPane.setSpacing(30);
+        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Header
         Label headerLabel = new Label("Statistics");
         headerLabel.setFont(Font.font("Poppins Bold", 28));
         headerLabel.setStyle("-fx-text-fill: -roam-text-primary;");
-        getChildren().add(headerLabel);
+        contentPane.getChildren().add(headerLabel);
 
         // Overall stats
         GridPane grid = new GridPane();
@@ -57,7 +87,7 @@ public class StatisticsView extends VBox {
         addStat(grid, 0, 1, "Favorites", String.valueOf(favorites));
         addStat(grid, 1, 1, "Avg Word Count", String.valueOf(avgWords));
 
-        getChildren().add(grid);
+        contentPane.getChildren().add(grid);
 
         // Task Statistics
         Label taskHeader = new Label("Task Status");
@@ -80,7 +110,7 @@ public class StatisticsView extends VBox {
         // Make chart legend text color compatible with dark mode
         chart.setStyle("-fx-text-fill: -roam-text-primary;");
 
-        getChildren().addAll(taskHeader, chart);
+        contentPane.getChildren().addAll(taskHeader, chart);
     }
 
     private void addStat(GridPane grid, int col, int row, String label, String value) {

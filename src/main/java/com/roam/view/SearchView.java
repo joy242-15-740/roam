@@ -16,10 +16,11 @@ import java.util.stream.Collectors;
 /**
  * Dedicated view for displaying search results
  */
-public class SearchView extends BorderPane {
+public class SearchView extends StackPane {
 
     private final List<SearchService.SearchResult> results;
     private final String query;
+    private final BorderPane contentPane;
     private Consumer<SearchService.SearchResult> onResultSelected;
     private Runnable onBackAction;
 
@@ -33,17 +34,45 @@ public class SearchView extends BorderPane {
     public SearchView(List<SearchService.SearchResult> results, String query) {
         this.results = results;
         this.query = query;
+        this.contentPane = new BorderPane();
+        getChildren().add(contentPane);
 
         initializeView();
+
+        // Add listeners for responsive scaling
+        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
+    }
+
+    private void scaleContent() {
+        double width = getWidth();
+        double height = getHeight();
+
+        // Use layout bounds to get the actual size of the content
+        double contentWidth = contentPane.getLayoutBounds().getWidth();
+        double contentHeight = contentPane.getLayoutBounds().getHeight();
+
+        if (contentWidth == 0 || contentHeight == 0)
+            return;
+
+        // Calculate scale factors
+        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
+        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
+
+        // Use the smaller scale to maintain aspect ratio and fit within bounds
+        double scale = Math.min(scaleX, scaleY);
+
+        contentPane.setScaleX(scale);
+        contentPane.setScaleY(scale);
     }
 
     private void initializeView() {
-        setPadding(new Insets(30));
-        setStyle("-fx-background-color: -roam-bg-primary;");
+        contentPane.setPadding(new Insets(30));
+        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Top: Header with back button and title
         HBox header = createHeader();
-        setTop(header);
+        contentPane.setTop(header);
 
         // Center: Filters and results
         VBox centerContent = new VBox(20);
@@ -64,7 +93,7 @@ public class SearchView extends BorderPane {
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
         centerContent.getChildren().addAll(filters, scrollPane);
-        setCenter(centerContent);
+        contentPane.setCenter(centerContent);
     }
 
     private HBox createHeader() {
