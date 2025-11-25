@@ -72,7 +72,7 @@ public class TasksStatsBar extends HBox {
         content.getChildren().addAll(iconLabel, countLabel);
 
         Label textLabel = new Label(label);
-        textLabel.setFont(Font.font("Poppins Regular", 12));
+        textLabel.setFont(Font.font("Poppins", 12));
         textLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         container.getChildren().addAll(content, textLabel);

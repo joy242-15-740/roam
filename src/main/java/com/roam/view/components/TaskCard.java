@@ -3,6 +3,7 @@ package com.roam.view.components;
 import com.roam.model.Priority;
 import com.roam.model.Task;
 import com.roam.model.TaskStatus;
+import com.roam.util.StyleBuilder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -17,6 +18,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
+import static com.roam.util.UIConstants.*;
+
+/**
+ * A styled card component for displaying task information.
+ * Features priority-based left border, hover effects, and action buttons.
+ */
 public class TaskCard extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd");
@@ -34,33 +41,15 @@ public class TaskCard extends VBox {
         this.editBtn = new Button();
         this.completeBtn = new Button();
 
-        setSpacing(8);
-        setPadding(new Insets(15));
-        setMinHeight(100);
-        setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 8; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand; " +
-                        "-fx-border-left-width: 4; " +
-                        "-fx-border-left-color: " + getPriorityColor(task.getPriority()) + ";");
+        setSpacing(SPACING_SM);
+        setPadding(new Insets(SPACING_STANDARD));
+        setMinHeight(CARD_MIN_HEIGHT);
+        getStyleClass().add("task-card");
+        setStyle(buildCardStyle(false));
 
         // Hover effect
         setOnMouseEntered(e -> {
-            setStyle(
-                    "-fx-background-color: -roam-bg-primary; " +
-                            "-fx-border-color: -roam-border; " +
-                            "-fx-border-width: 1; " +
-                            "-fx-border-radius: 8; " +
-                            "-fx-background-radius: 8; " +
-                            "-fx-cursor: hand; " +
-                            "-fx-border-left-width: 4; " +
-                            "-fx-border-left-color: " + getPriorityColor(task.getPriority()) + "; " +
-                            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2); " +
-                            "-fx-scale-x: 1.02; " +
-                            "-fx-scale-y: 1.02;");
+            setStyle(buildCardStyle(true));
             editBtn.setVisible(true);
             if (task.getStatus() != TaskStatus.DONE) {
                 completeBtn.setVisible(true);
@@ -68,15 +57,7 @@ public class TaskCard extends VBox {
         });
 
         setOnMouseExited(e -> {
-            setStyle(
-                    "-fx-background-color: -roam-bg-primary; " +
-                            "-fx-border-color: -roam-border; " +
-                            "-fx-border-width: 1; " +
-                            "-fx-border-radius: 8; " +
-                            "-fx-background-radius: 8; " +
-                            "-fx-cursor: hand; " +
-                            "-fx-border-left-width: 4; " +
-                            "-fx-border-left-color: " + getPriorityColor(task.getPriority()) + ";");
+            setStyle(buildCardStyle(false));
             editBtn.setVisible(false);
             completeBtn.setVisible(false);
         });
@@ -129,7 +110,7 @@ public class TaskCard extends VBox {
         // Description (if exists)
         if (task.getDescription() != null && !task.getDescription().isEmpty()) {
             Label descLabel = new Label(task.getDescription());
-            descLabel.setFont(Font.font("Poppins Regular", 12));
+            descLabel.setFont(Font.font("Poppins", 12));
             descLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
             descLabel.setWrapText(true);
             descLabel.setMaxWidth(Double.MAX_VALUE);
@@ -156,7 +137,7 @@ public class TaskCard extends VBox {
         // Due date
         if (task.getDueDate() != null) {
             Label dueDateLabel = new Label("📅 " + DATE_FORMATTER.format(task.getDueDate()));
-            dueDateLabel.setFont(Font.font("Poppins Regular", 11));
+            dueDateLabel.setFont(Font.font("Poppins", 11));
             dueDateLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             footer.getChildren().add(dueDateLabel);
         }
@@ -165,11 +146,32 @@ public class TaskCard extends VBox {
     }
 
     private String getPriorityColor(Priority priority) {
+        // Using CSS variables for theme-aware colors
         return switch (priority) {
-            case HIGH -> "#C62828";
-            case MEDIUM -> "#F9A825";
-            case LOW -> "#616161";
+            case HIGH -> PRIORITY_HIGH;
+            case MEDIUM -> PRIORITY_MEDIUM;
+            case LOW -> PRIORITY_LOW;
         };
+    }
+
+    /**
+     * Builds the card style based on hover state.
+     */
+    private String buildCardStyle(boolean isHovered) {
+        StyleBuilder builder = StyleBuilder.create()
+                .backgroundColor(BG_PRIMARY)
+                .borderColor(BORDER)
+                .borderWidth(1)
+                .radius(RADIUS_STANDARD)
+                .cursorHand()
+                .addProperty("-fx-border-left-width", "4")
+                .addProperty("-fx-border-left-color", getPriorityColor(task.getPriority()));
+
+        if (isHovered) {
+            builder.effect(SHADOW_HOVER).scale(1.02);
+        }
+
+        return builder.build();
     }
 
     public Task getTask() {

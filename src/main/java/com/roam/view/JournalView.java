@@ -70,7 +70,7 @@ public class JournalView extends StackPane {
         Button todayBtn = new Button("Today's Entry");
         todayBtn.setMaxWidth(Double.MAX_VALUE);
         todayBtn.setStyle(
-                "-fx-background-color: -roam-blue; -fx-text-fill: #FFFFFF; -fx-background-radius: 4; -fx-cursor: hand;");
+                "-fx-background-color: -roam-blue; -fx-text-fill: -roam-white; -fx-background-radius: 4; -fx-cursor: hand;");
         todayBtn.setOnAction(e -> openToday());
 
         entryList = new ListView<>();
@@ -82,7 +82,7 @@ public class JournalView extends StackPane {
                     setText(null);
                 } else {
                     setText(item.getDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
-                    setFont(Font.font("Poppins Regular", 14));
+                    setFont(Font.font("Poppins", 14));
                 }
             }
         });
@@ -113,7 +113,7 @@ public class JournalView extends StackPane {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button saveBtn = new Button("Save");
-        saveBtn.setStyle("-fx-background-color: -roam-blue; -fx-text-fill: #FFFFFF; -fx-background-radius: 4;");
+        saveBtn.setStyle("-fx-background-color: -roam-blue; -fx-text-fill: -roam-white; -fx-background-radius: 4;");
         saveBtn.setOnAction(e -> saveCurrent());
 
         toolbar.getChildren().addAll(dateLabel, spacer, templatesBtn, saveBtn);

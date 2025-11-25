@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
@@ -32,8 +31,6 @@ import java.util.List;
 public class WikiNoteEditor extends BorderPane {
 
     private final WikiController controller;
-    private final Font poppinsRegular;
-    private final Font poppinsBold;
 
     private TextField titleField;
     private TextArea editorArea;
@@ -56,10 +53,8 @@ public class WikiNoteEditor extends BorderPane {
 
     private Wiki currentNote;
 
-    public WikiNoteEditor(WikiController controller, Font poppinsRegular, Font poppinsBold) {
+    public WikiNoteEditor(WikiController controller) {
         this.controller = controller;
-        this.poppinsRegular = poppinsRegular;
-        this.poppinsBold = poppinsBold;
 
         initializeComponents();
         setupLayout();
@@ -103,17 +98,12 @@ public class WikiNoteEditor extends BorderPane {
     private HBox createNoteHeader() {
         HBox header = new HBox(15);
         header.setPrefHeight(60);
-        header.setPadding(new Insets(15, 20, 15, 20));
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setStyle(
-                "-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 0 0 1 0;");
+        header.getStyleClass().add("wiki-header");
 
         // Title field
         titleField = new TextField();
         titleField.setPromptText("Untitled Wiki");
-        titleField.setFont(Font.font(poppinsBold.getFamily(), 20));
-        titleField
-                .setStyle("-fx-background-color: transparent; -fx-border-width: 0; -fx-text-fill: -roam-text-primary;");
+        titleField.getStyleClass().add("wiki-title-field");
         titleField.setPrefWidth(400);
         HBox.setHgrow(titleField, javafx.scene.layout.Priority.ALWAYS);
 
@@ -124,14 +114,7 @@ public class WikiNoteEditor extends BorderPane {
         favoriteBtn = new Button();
         favoriteBtn.setGraphic(new FontIcon(Feather.STAR));
         favoriteBtn.setPrefSize(36, 36);
-        favoriteBtn.setFont(Font.font(16));
-        favoriteBtn.setStyle(
-                "-fx-background-color: transparent; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 6; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;");
+        favoriteBtn.getStyleClass().add("icon-button");
         favoriteBtn.setTooltip(new Tooltip("Add to favorites"));
 
         // Edit/Preview toggle
@@ -141,26 +124,14 @@ public class WikiNoteEditor extends BorderPane {
         editBtn.setToggleGroup(editPreviewToggle);
         editBtn.setSelected(true);
         editBtn.setPrefSize(80, 36);
-        editBtn.setFont(Font.font(poppinsRegular.getFamily(), 14));
-        editBtn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-border-color: -roam-blue; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-background-radius: 6 0 0 6; " +
-                        "-fx-border-radius: 6 0 0 6;");
+        editBtn.getStyleClass().add("toggle-button");
+        editBtn.getStyleClass().add("left-pill");
 
         ToggleButton previewBtn = new ToggleButton("Preview");
         previewBtn.setToggleGroup(editPreviewToggle);
         previewBtn.setPrefSize(80, 36);
-        previewBtn.setFont(Font.font(poppinsRegular.getFamily(), 14));
-        previewBtn.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-text-fill: -roam-text-secondary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-background-radius: 0 6 6 0; " +
-                        "-fx-border-radius: 0 6 6 0;");
+        previewBtn.getStyleClass().add("toggle-button");
+        previewBtn.getStyleClass().add("right-pill");
 
         HBox toggleBox = new HBox(0);
         toggleBox.getChildren().addAll(editBtn, previewBtn);
@@ -169,13 +140,7 @@ public class WikiNoteEditor extends BorderPane {
         MenuButton moreBtn = new MenuButton();
         moreBtn.setGraphic(new FontIcon(Feather.MORE_VERTICAL));
         moreBtn.setPrefSize(36, 36);
-        moreBtn.setFont(Font.font(16));
-        moreBtn.setStyle(
-                "-fx-background-color: transparent; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 6; " +
-                        "-fx-background-radius: 6;");
+        moreBtn.getStyleClass().add("icon-button");
 
         MenuItem duplicateItem = new MenuItem("Duplicate Wiki");
         MenuItem addBannerItem = new MenuItem("Add/Change Banner");
@@ -183,7 +148,7 @@ public class WikiNoteEditor extends BorderPane {
         MenuItem exportMdItem = new MenuItem("Export as Markdown");
         MenuItem exportPdfItem = new MenuItem("Export as PDF");
         MenuItem deleteItem = new MenuItem("Delete Wiki");
-        deleteItem.setStyle("-fx-text-fill: -roam-red;");
+        deleteItem.getStyleClass().add("danger");
 
         moreBtn.getItems().addAll(
                 duplicateItem,
@@ -236,11 +201,9 @@ public class WikiNoteEditor extends BorderPane {
 
         // Editor area
         editorArea = new TextArea();
-        editorArea.setFont(Font.font("Consolas", 14));
         editorArea.setWrapText(true);
         editorArea.setPadding(new Insets(30));
-        editorArea.setStyle(
-                "-fx-background-color: -roam-bg-primary; -fx-border-width: 0; -fx-text-fill: -roam-text-primary; -fx-control-inner-background: -roam-bg-primary;");
+        editorArea.getStyleClass().add("wiki-editor-area");
 
         // Preview pane
         previewPane = new WebView();
@@ -256,40 +219,10 @@ public class WikiNoteEditor extends BorderPane {
                 if (selected.getText().equals("Edit")) {
                     editorArea.setVisible(true);
                     previewPane.setVisible(false);
-                    selected.setStyle(
-                            "-fx-background-color: -roam-blue; " +
-                                    "-fx-text-fill: white; " +
-                                    "-fx-border-color: -roam-blue; " +
-                                    "-fx-border-width: 1; " +
-                                    "-fx-background-radius: 6 0 0 6; " +
-                                    "-fx-border-radius: 6 0 0 6;");
-                    ToggleButton other = (ToggleButton) editPreviewToggle.getToggles().get(1);
-                    other.setStyle(
-                            "-fx-background-color: -roam-bg-primary; " +
-                                    "-fx-text-fill: -roam-text-secondary; " +
-                                    "-fx-border-color: -roam-border; " +
-                                    "-fx-border-width: 1; " +
-                                    "-fx-background-radius: 0 6 6 0; " +
-                                    "-fx-border-radius: 0 6 6 0;");
                 } else {
                     editorArea.setVisible(false);
                     previewPane.setVisible(true);
                     renderMarkdown();
-                    selected.setStyle(
-                            "-fx-background-color: -roam-blue; " +
-                                    "-fx-text-fill: white; " +
-                                    "-fx-border-color: -roam-blue; " +
-                                    "-fx-border-width: 1; " +
-                                    "-fx-background-radius: 0 6 6 0; " +
-                                    "-fx-border-radius: 0 6 6 0;");
-                    ToggleButton other = (ToggleButton) editPreviewToggle.getToggles().get(0);
-                    other.setStyle(
-                            "-fx-background-color: -roam-bg-primary; " +
-                                    "-fx-text-fill: -roam-text-secondary; " +
-                                    "-fx-border-color: -roam-border; " +
-                                    "-fx-border-width: 1; " +
-                                    "-fx-background-radius: 6 0 0 6; " +
-                                    "-fx-border-radius: 6 0 0 6;");
                 }
             }
         });
@@ -300,29 +233,23 @@ public class WikiNoteEditor extends BorderPane {
     private HBox createMetadataBar() {
         HBox bar = new HBox(15);
         bar.setPrefHeight(40);
-        bar.setPadding(new Insets(10, 20, 10, 20));
-        bar.setAlignment(Pos.CENTER_LEFT);
-        bar.setStyle("-fx-background-color: -roam-gray-bg; -fx-border-color: -roam-border; -fx-border-width: 1 0 0 0;");
+        bar.getStyleClass().add("wiki-metadata-bar");
 
         javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
         HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
 
         // Stats
         wordCountLabel = new Label("0 words");
-        wordCountLabel.setFont(Font.font(poppinsRegular.getFamily(), 11));
-        wordCountLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+        wordCountLabel.getStyleClass().add("wiki-metadata-label");
 
         charCountLabel = new Label("0 chars");
-        charCountLabel.setFont(Font.font(poppinsRegular.getFamily(), 11));
-        charCountLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+        charCountLabel.getStyleClass().add("wiki-metadata-label");
 
         Label separator = new Label("•");
-        separator.setFont(Font.font(poppinsRegular.getFamily(), 11));
-        separator.setStyle("-fx-text-fill: -roam-text-hint;");
+        separator.getStyleClass().add("wiki-metadata-label");
 
         updatedLabel = new Label("Updated now");
-        updatedLabel.setFont(Font.font(poppinsRegular.getFamily(), 11));
-        updatedLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+        updatedLabel.getStyleClass().add("wiki-metadata-label");
 
         bar.getChildren().addAll(spacer, wordCountLabel, charCountLabel, separator, updatedLabel);
         return bar;
@@ -615,7 +542,7 @@ public class WikiNoteEditor extends BorderPane {
     private void updateFavoriteButton() {
         FontIcon starIcon = new FontIcon(Feather.STAR);
         if (currentNote != null && currentNote.getIsFavorite()) {
-            starIcon.setStyle("-fx-icon-color: #FFD700;");
+            starIcon.getStyleClass().add("warning");
             favoriteBtn.setGraphic(starIcon);
             favoriteBtn.setTooltip(new Tooltip("Remove from favorites"));
         } else {
@@ -663,24 +590,16 @@ public class WikiNoteEditor extends BorderPane {
 
         FontIcon icon = new FontIcon(Feather.FILE_TEXT);
         icon.setIconSize(64);
-        icon.setStyle("-fx-icon-color: #9E9E9E;");
+        icon.getStyleClass().add("icon-muted");
 
         Label title = new Label("Select a Wiki to get started");
-        title.setFont(Font.font(poppinsBold.getFamily(), 20));
-        title.setStyle("-fx-text-fill: #616161;");
+        title.getStyleClass().add("wiki-empty-state-title");
 
         Label subtitle = new Label("Or create a new Wiki");
-        subtitle.setFont(Font.font(poppinsRegular.getFamily(), 14));
-        subtitle.setStyle("-fx-text-fill: #9E9E9E;");
+        subtitle.getStyleClass().add("wiki-empty-state-subtitle");
 
         Button newBtn = new Button("+ New Wiki");
-        newBtn.setFont(Font.font(poppinsBold.getFamily(), 14));
-        newBtn.setStyle(
-                "-fx-background-color: #4285f4; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-padding: 10 20 10 20; " +
-                        "-fx-cursor: hand;");
+        newBtn.getStyleClass().add("action-button");
         newBtn.setOnAction(e -> controller.createNewNote());
 
         emptyBox.getChildren().addAll(icon, title, subtitle, newBtn);
@@ -761,7 +680,7 @@ public class WikiNoteEditor extends BorderPane {
     private void createPropertiesSection() {
         propertiesSection = new VBox(10);
         propertiesSection.setPadding(new Insets(10, 20, 10, 20));
-        propertiesSection.setStyle("-fx-background-color: -roam-bg-primary;");
+        propertiesSection.getStyleClass().add("wiki-properties-section");
 
         // Region
         HBox regionRow = createPropertyRow("Region", regionCombo = new ComboBox<>());
@@ -832,7 +751,7 @@ public class WikiNoteEditor extends BorderPane {
         propertiesPane = new TitledPane("Properties", propertiesSection);
         propertiesPane.setExpanded(false);
         propertiesPane.setAnimated(true);
-        propertiesPane.setStyle("-fx-background-color: -roam-bg-primary; -fx-border-color: transparent;");
+        propertiesPane.getStyleClass().add("wiki-properties-pane");
 
         // Listeners for property changes
         regionCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -869,8 +788,7 @@ public class WikiNoteEditor extends BorderPane {
         row.setAlignment(Pos.CENTER_LEFT);
 
         Label label = new Label(labelText);
-        label.setFont(Font.font(poppinsRegular.getFamily(), 12));
-        label.setStyle("-fx-text-fill: -roam-text-secondary;");
+        label.getStyleClass().add("wiki-property-label");
         label.setPrefWidth(80);
 
         row.getChildren().addAll(label, control);

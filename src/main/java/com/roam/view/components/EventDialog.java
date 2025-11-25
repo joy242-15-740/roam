@@ -81,7 +81,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         errorLabel = createErrorLabel();
 
         // Setup all-day checkbox
-        allDayCheckBox.setFont(Font.font("Poppins Regular", 14));
+        allDayCheckBox.setFont(Font.font("Poppins", 14));
         allDayCheckBox.setOnAction(e -> {
             boolean allDay = allDayCheckBox.isSelected();
             startHourSpinner.setDisable(allDay);
@@ -108,7 +108,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
             getDialogPane().getButtonTypes().addAll(deleteButton, ButtonType.CANCEL, submitButton);
 
             Button deleteBtn = (Button) getDialogPane().lookupButton(deleteButton);
-            deleteBtn.setStyle("-fx-text-fill: #C62828;");
+            deleteBtn.setStyle("-fx-text-fill: -roam-red;");
             deleteBtn.addEventFilter(javafx.event.ActionEvent.ACTION, e -> {
                 e.consume();
                 if (onDelete != null) {
@@ -172,7 +172,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         TextField field = new TextField();
         field.setPromptText(prompt);
         field.setPrefHeight(40);
-        field.setFont(Font.font("Poppins Regular", 14));
+        field.setFont(Font.font("Poppins", 14));
         field.setStyle(
                 "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-background-color: -roam-bg-primary;");
 
@@ -190,7 +190,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         area.setPromptText(prompt);
         area.setPrefHeight(80);
         area.setWrapText(true);
-        area.setFont(Font.font("Poppins Regular", 14));
+        area.setFont(Font.font("Poppins", 14));
         area.setStyle(
                 "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-control-inner-background: -roam-bg-primary;");
 
@@ -217,7 +217,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         }
 
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         combo.setCellFactory(lv -> new CalendarSourceCell());
         combo.setButtonCell(new CalendarSourceCell());
@@ -232,7 +232,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         combo.setValue(null);
         combo.setPromptText("Link to operation (optional)");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         combo.setCellFactory(lv -> new OperationCell());
         combo.setButtonCell(new OperationCell());
@@ -245,7 +245,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         combo.getItems().addAll(regions);
         combo.setPromptText("Select Region");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         combo.setButtonCell(new RegionListCell());
         combo.setCellFactory(lv -> new RegionListCell());
         return combo;
@@ -256,7 +256,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         combo.getItems().addAll(tasks);
         combo.setPromptText("Link to Task");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         combo.setButtonCell(new TaskListCell());
         combo.setCellFactory(lv -> new TaskListCell());
         return combo;
@@ -267,7 +267,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         combo.getItems().addAll(notes);
         combo.setPromptText("Link to Wiki");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         combo.setButtonCell(new NoteListCell());
         combo.setCellFactory(lv -> new NoteListCell());
         return combo;
@@ -278,7 +278,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         combo.getItems().addAll("None", "Daily", "Weekly", "Monthly", "Yearly");
         combo.setValue("None");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         return combo;
     }
 
@@ -287,14 +287,14 @@ public class EventDialog extends Dialog<CalendarEvent> {
         spinner.setEditable(true);
         spinner.setPrefWidth(70);
         spinner.setPrefHeight(40);
-        spinner.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        spinner.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         return spinner;
     }
 
     private Label createErrorLabel() {
         Label label = new Label("Title is required");
-        label.setFont(Font.font("Poppins Regular", 12));
-        label.setStyle("-fx-text-fill: #C62828;");
+        label.setFont(Font.font("Poppins", 12));
+        label.setStyle("-fx-text-fill: -roam-red;");
         label.setVisible(false);
         return label;
     }
@@ -325,27 +325,27 @@ public class EventDialog extends Dialog<CalendarEvent> {
 
         // Start date/time
         Label startLabel = new Label("Start");
-        startLabel.setFont(Font.font("Poppins Regular", 13));
+        startLabel.setFont(Font.font("Poppins", 13));
         startLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         HBox startBox = new HBox(10);
         startDatePicker.setPrefWidth(200);
-        startDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        startDatePicker.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         Label startTimeLabel = new Label(":");
-        startTimeLabel.setFont(Font.font("Poppins Regular", 14));
+        startTimeLabel.setFont(Font.font("Poppins", 14));
         startTimeLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         startBox.getChildren().addAll(startDatePicker, startHourSpinner, startTimeLabel, startMinuteSpinner);
 
         // End date/time
         Label endLabel = new Label("End");
-        endLabel.setFont(Font.font("Poppins Regular", 13));
+        endLabel.setFont(Font.font("Poppins", 13));
         endLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         HBox endBox = new HBox(10);
         endDatePicker.setPrefWidth(200);
-        endDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        endDatePicker.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         Label endTimeLabel = new Label(":");
-        endTimeLabel.setFont(Font.font("Poppins Regular", 14));
+        endTimeLabel.setFont(Font.font("Poppins", 14));
         endTimeLabel.setStyle("-fx-text-fill: -roam-text-primary;");
         endBox.getChildren().addAll(endDatePicker, endHourSpinner, endTimeLabel, endMinuteSpinner);
 
@@ -356,13 +356,13 @@ public class EventDialog extends Dialog<CalendarEvent> {
     private VBox createRecurrenceSection() {
         VBox section = new VBox(10);
         Label label = new Label("Recurrence");
-        label.setFont(Font.font("Poppins Regular", 13));
+        label.setFont(Font.font("Poppins", 13));
         label.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         HBox box = new HBox(10);
         recurrenceCombo.setPrefWidth(150);
         recurrenceEndDatePicker.setPrefWidth(200);
-        recurrenceEndDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        recurrenceEndDatePicker.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         box.getChildren().addAll(recurrenceCombo, recurrenceEndDatePicker);
         section.getChildren().addAll(label, box);
@@ -374,7 +374,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
 
         if (!labelText.isEmpty()) {
             Label label = new Label(labelText);
-            label.setFont(Font.font("Poppins Regular", 13));
+            label.setFont(Font.font("Poppins", 13));
             label.setStyle("-fx-text-fill: -roam-text-secondary;");
             group.getChildren().add(label);
         }
@@ -559,7 +559,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         cancelBtn.setStyle(
                 "-fx-background-color: -roam-gray-bg; " +
                         "-fx-text-fill: -roam-text-primary; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                        "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
                         "-fx-min-height: 40px; " +
@@ -569,7 +569,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
         Button submitBtn = (Button) pane.lookupButton(pane.getButtonTypes().get(pane.getButtonTypes().size() - 1));
         submitBtn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-font-family: 'Poppins Bold'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 120px; " +
@@ -580,8 +580,8 @@ public class EventDialog extends Dialog<CalendarEvent> {
 
         // Add hover effect
         submitBtn.setOnMouseEntered(e -> submitBtn.setStyle(
-                "-fx-background-color: #357ae8; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                "-fx-background-color: -roam-blue-hover; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-font-family: 'Poppins Bold'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 120px; " +
@@ -592,7 +592,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
 
         submitBtn.setOnMouseExited(e -> submitBtn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-font-family: 'Poppins Bold'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 120px; " +
@@ -619,7 +619,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
                 colorDot.setFill(javafx.scene.paint.Color.web(item.getColor()));
 
                 Label nameLabel = new Label(item.getName());
-                nameLabel.setFont(Font.font("Poppins Regular", 14));
+                nameLabel.setFont(Font.font("Poppins", 14));
 
                 container.getChildren().addAll(colorDot, nameLabel);
                 setGraphic(container);

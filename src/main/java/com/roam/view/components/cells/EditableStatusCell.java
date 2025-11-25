@@ -129,18 +129,18 @@ public class EditableStatusCell extends TableCell<Task, TaskStatus> {
         switch (status) {
             case TODO:
                 label.setText("⭕ To Do");
-                badge.setStyle("-fx-background-color: #FFF3E0; -fx-background-radius: 12;");
-                label.setStyle("-fx-text-fill: #E65100;");
+                badge.setStyle("-fx-background-color: -roam-orange-bg; -fx-background-radius: 12;");
+                label.setStyle("-fx-text-fill: -roam-orange;");
                 break;
             case IN_PROGRESS:
                 label.setText("⏳ In Progress");
-                badge.setStyle("-fx-background-color: #E3F2FD; -fx-background-radius: 12;");
-                label.setStyle("-fx-text-fill: #1565C0;");
+                badge.setStyle("-fx-background-color: -roam-blue-tag-bg; -fx-background-radius: 12;");
+                label.setStyle("-fx-text-fill: -roam-blue-tag;");
                 break;
             case DONE:
                 label.setText("✓ Done");
-                badge.setStyle("-fx-background-color: #E8F5E9; -fx-background-radius: 12;");
-                label.setStyle("-fx-text-fill: #2E7D32;");
+                badge.setStyle("-fx-background-color: -roam-green-bg; -fx-background-radius: 12;");
+                label.setStyle("-fx-text-fill: -roam-green;");
                 break;
         }
 

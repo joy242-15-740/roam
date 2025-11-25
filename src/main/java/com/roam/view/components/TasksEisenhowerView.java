@@ -56,38 +56,35 @@ public class TasksEisenhowerView extends GridPane {
         setHgap(20);
         setVgap(20);
         setPadding(new Insets(20));
-        setStyle("-fx-background-color: -roam-bg-primary;");
+        // Remove manual background color to let theme handle it
+        // setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Create quadrants
         VBox urgentImportant = createQuadrant(
                 "DO FIRST",
                 "Urgent & Important",
-                "#FFEBEE",
-                "#C62828",
+                "danger", // Use semantic color names for mapping later or CSS classes
                 urgentImportantContainer = new VBox(10),
                 urgentImportantCount = new Label("0"));
 
         VBox notUrgentImportant = createQuadrant(
                 "SCHEDULE",
                 "Not Urgent but Important",
-                "#E3F2FD",
-                "#1976D2",
+                "accent",
                 notUrgentImportantContainer = new VBox(10),
                 notUrgentImportantCount = new Label("0"));
 
         VBox urgentNotImportant = createQuadrant(
                 "DELEGATE",
                 "Urgent but Not Important",
-                "#FFF3E0",
-                "#F57C00",
+                "warning",
                 urgentNotImportantContainer = new VBox(10),
                 urgentNotImportantCount = new Label("0"));
 
         VBox notUrgentNotImportant = createQuadrant(
                 "ELIMINATE",
                 "Not Urgent & Not Important",
-                "#F5F5F5",
-                "#616161",
+                "neutral",
                 notUrgentNotImportantContainer = new VBox(10),
                 notUrgentNotImportantCount = new Label("0"));
 
@@ -111,43 +108,46 @@ public class TasksEisenhowerView extends GridPane {
         getRowConstraints().addAll(row1, row2);
     }
 
-    private VBox createQuadrant(String title, String subtitle, String bgColor, String accentColor,
+    private VBox createQuadrant(String title, String subtitle, String colorStyle,
             VBox tasksContainer, Label countLabel) {
         VBox quadrant = new VBox();
-        quadrant.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 2; " +
-                        "-fx-border-radius: 12; " +
-                        "-fx-background-radius: 12;");
+        quadrant.getStyleClass().add(atlantafx.base.theme.Styles.ELEVATED_1);
+        quadrant.setPadding(new Insets(0)); // Padding handled by children or CSS
 
         // Header
         VBox header = new VBox(5);
-        header.setPadding(new Insets(20));
+        header.setPadding(new Insets(15));
         header.setAlignment(Pos.CENTER);
-        header.setStyle(
-                "-fx-background-color: " + bgColor + "; " +
-                        "-fx-border-radius: 12 12 0 0; " +
-                        "-fx-background-radius: 12 12 0 0;");
+        // Apply semantic color style class to header
+        header.getStyleClass().add("eisenhower-header-" + colorStyle);
+        // Fallback style if CSS not updated yet, but prefer CSS classes
+        String accentColor = switch (colorStyle) {
+            case "danger" -> "-color-danger-fg";
+            case "accent" -> "-color-accent-fg";
+            case "warning" -> "-color-warning-fg";
+            default -> "-color-fg-default";
+        };
+
+        header.setStyle("-fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;");
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Poppins Bold", 18));
+        titleLabel.getStyleClass().addAll(atlantafx.base.theme.Styles.TITLE_4);
         titleLabel.setStyle("-fx-text-fill: " + accentColor + ";");
 
         Label subtitleLabel = new Label(subtitle);
-        subtitleLabel.setFont(Font.font("Poppins Regular", 13));
-        subtitleLabel.setStyle("-fx-text-fill: " + accentColor + ";");
+        subtitleLabel.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_MUTED);
 
-        countLabel.setFont(Font.font("Poppins Bold", 14));
+        countLabel.getStyleClass().addAll(atlantafx.base.theme.Styles.TEXT_BOLD, atlantafx.base.theme.Styles.SUCCESS);
+        // Custom badge style
         countLabel.setStyle(
-                "-fx-background-color: white; " +
+                "-fx-background-color: -color-bg-default; " +
                         "-fx-text-fill: " + accentColor + "; " +
                         "-fx-border-color: " + accentColor + "; " +
-                        "-fx-border-width: 2; " +
-                        "-fx-border-radius: 16; " +
-                        "-fx-background-radius: 16; " +
-                        "-fx-padding: 4 12 4 12; " +
-                        "-fx-min-width: 40;");
+                        "-fx-border-width: 1; " +
+                        "-fx-border-radius: 10; " +
+                        "-fx-background-radius: 10; " +
+                        "-fx-padding: 2 8 2 8; " +
+                        "-fx-min-width: 30; -fx-alignment: center;");
 
         header.getChildren().addAll(titleLabel, subtitleLabel, countLabel);
 
@@ -226,10 +226,10 @@ public class TasksEisenhowerView extends GridPane {
     }
 
     private boolean isUrgent(Task task, LocalDateTime urgentThreshold) {
-        // Urgent = due date is within threshold OR overdue OR no due date (treat as
-        // urgent to force decision)
+        // Urgent = due date is within threshold OR overdue
+        // No due date = Not Urgent (Schedule or Eliminate)
         if (task.getDueDate() == null) {
-            return true; // Tasks without due dates should be reviewed
+            return false;
         }
         return task.getDueDate().isBefore(urgentThreshold);
     }
@@ -237,7 +237,7 @@ public class TasksEisenhowerView extends GridPane {
     private void showEmptyStateIfNeeded(VBox container, int count, String message) {
         if (count == 0) {
             Label emptyLabel = new Label(message);
-            emptyLabel.setFont(Font.font("Poppins Regular", 12));
+            emptyLabel.setFont(Font.font("Poppins", 12));
             emptyLabel.setStyle("-fx-text-fill: -roam-text-hint; -fx-font-style: italic;");
             emptyLabel.setWrapText(true);
             emptyLabel.setMaxWidth(Double.MAX_VALUE);
@@ -259,35 +259,17 @@ public class TasksEisenhowerView extends GridPane {
 
             setSpacing(8);
             setPadding(new Insets(12));
-            setStyle(
-                    "-fx-background-color: -roam-bg-primary; " +
-                            "-fx-border-color: -roam-border; " +
-                            "-fx-border-width: 1; " +
-                            "-fx-border-radius: 8; " +
-                            "-fx-background-radius: 8; " +
-                            "-fx-cursor: hand;");
+            // Use AtlantaFX interactive style for hover effects and borders
+            getStyleClass().add(atlantafx.base.theme.Styles.INTERACTIVE);
+            getStyleClass().add(atlantafx.base.theme.Styles.ELEVATED_1);
+            setStyle("-fx-cursor: hand; -fx-background-radius: 8; -fx-border-radius: 8;");
 
             setOnMouseEntered(e -> {
-                setStyle(
-                        "-fx-background-color: -roam-gray-bg; " +
-                                "-fx-border-color: -roam-border; " +
-                                "-fx-border-width: 1; " +
-                                "-fx-border-radius: 8; " +
-                                "-fx-background-radius: 8; " +
-                                "-fx-cursor: hand; " +
-                                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 2);");
                 editBtn.setVisible(true);
                 completeBtn.setVisible(true);
             });
 
             setOnMouseExited(e -> {
-                setStyle(
-                        "-fx-background-color: -roam-bg-primary; " +
-                                "-fx-border-color: -roam-border; " +
-                                "-fx-border-width: 1; " +
-                                "-fx-border-radius: 8; " +
-                                "-fx-background-radius: 8; " +
-                                "-fx-cursor: hand;");
                 editBtn.setVisible(false);
                 completeBtn.setVisible(false);
             });
@@ -311,10 +293,10 @@ public class TasksEisenhowerView extends GridPane {
                 Optional<Operation> operation = controller.getOperationById(task.getOperationId());
                 operation.ifPresent(op -> {
                     Label opBadge = new Label(op.getName());
-                    opBadge.setFont(Font.font("Poppins Regular", 10));
+                    opBadge.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_SMALL);
                     opBadge.setStyle(
-                            "-fx-background-color: -roam-blue-light; " +
-                                    "-fx-text-fill: -roam-blue; " +
+                            "-fx-background-color: -color-accent-subtle; " +
+                                    "-fx-text-fill: -color-accent-fg; " +
                                     "-fx-padding: 3 6 3 6; " +
                                     "-fx-background-radius: 8;");
                     topRow.getChildren().add(opBadge);
@@ -327,9 +309,9 @@ public class TasksEisenhowerView extends GridPane {
 
             // Edit button
             FontIcon editIcon = new FontIcon(Feather.EDIT_2);
-            editIcon.setIconSize(12);
+            editIcon.setIconSize(14);
             editBtn.setGraphic(editIcon);
-            editBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 2;");
+            editBtn.getStyleClass().addAll(atlantafx.base.theme.Styles.BUTTON_ICON, atlantafx.base.theme.Styles.FLAT);
             editBtn.setVisible(false);
             editBtn.setOnAction(e -> {
                 e.consume();
@@ -339,10 +321,11 @@ public class TasksEisenhowerView extends GridPane {
 
             // Complete button
             FontIcon completeIcon = new FontIcon(Feather.CHECK_CIRCLE);
-            completeIcon.setIconSize(12);
+            completeIcon.setIconSize(14);
             completeIcon.setIconColor(javafx.scene.paint.Color.web("#388E3C"));
             completeBtn.setGraphic(completeIcon);
-            completeBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 2;");
+            completeBtn.getStyleClass().addAll(atlantafx.base.theme.Styles.BUTTON_ICON,
+                    atlantafx.base.theme.Styles.FLAT);
             completeBtn.setVisible(false);
             completeBtn.setOnAction(e -> {
                 e.consume();
@@ -352,8 +335,7 @@ public class TasksEisenhowerView extends GridPane {
 
             // Title
             Label titleLabel = new Label(task.getTitle());
-            titleLabel.setFont(Font.font("Poppins Medium", 13));
-            titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
+            titleLabel.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_BOLD);
             titleLabel.setWrapText(true);
             titleLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -363,22 +345,22 @@ public class TasksEisenhowerView extends GridPane {
 
             if (task.getDueDate() != null) {
                 Label dueDateLabel = new Label("📅 " + formatDueDate(task.getDueDate()));
-                dueDateLabel.setFont(Font.font("Poppins Regular", 11));
+                dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_SMALL);
 
                 LocalDateTime now = LocalDateTime.now();
                 if (task.getDueDate().isBefore(now)) {
-                    dueDateLabel.setStyle("-fx-text-fill: #C62828; -fx-font-weight: bold;");
+                    dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.DANGER);
                 } else if (task.getDueDate().isBefore(now.plusDays(1))) {
-                    dueDateLabel.setStyle("-fx-text-fill: #F57C00; -fx-font-weight: bold;");
+                    dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.WARNING);
                 } else {
-                    dueDateLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+                    dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_MUTED);
                 }
 
                 footer.getChildren().add(dueDateLabel);
             } else {
                 Label noDueDateLabel = new Label("No due date");
-                noDueDateLabel.setFont(Font.font("Poppins Regular", 11));
-                noDueDateLabel.setStyle("-fx-text-fill: -roam-text-hint; -fx-font-style: italic;");
+                noDueDateLabel.getStyleClass().addAll(atlantafx.base.theme.Styles.TEXT_SMALL,
+                        atlantafx.base.theme.Styles.TEXT_MUTED);
                 footer.getChildren().add(noDueDateLabel);
             }
 
@@ -388,10 +370,11 @@ public class TasksEisenhowerView extends GridPane {
 
             if (task.getAssignee() != null && !task.getAssignee().isEmpty()) {
                 Label assigneeLabel = new Label(getInitials(task.getAssignee()));
-                assigneeLabel.setFont(Font.font("Poppins Medium", 10));
+                assigneeLabel.getStyleClass().addAll(atlantafx.base.theme.Styles.TEXT_SMALL,
+                        atlantafx.base.theme.Styles.TEXT_BOLD);
                 assigneeLabel.setStyle(
-                        "-fx-background-color: -roam-blue; " +
-                                "-fx-text-fill: white; " +
+                        "-fx-background-color: -color-accent-emphasis; " +
+                                "-fx-text-fill: -color-fg-emphasis; " +
                                 "-fx-background-radius: 10; " +
                                 "-fx-min-width: 20; " +
                                 "-fx-min-height: 20; " +
@@ -406,21 +389,24 @@ public class TasksEisenhowerView extends GridPane {
 
         private Label createPriorityBadge(Priority priority) {
             Label badge = new Label();
-            badge.setFont(Font.font("Poppins Regular", 10));
+            badge.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_SMALL);
             badge.setStyle("-fx-padding: 3 8 3 8; -fx-background-radius: 10;");
 
             switch (priority) {
                 case HIGH -> {
                     badge.setText("High");
-                    badge.setStyle(badge.getStyle() + "-fx-background-color: #FFEBEE; -fx-text-fill: #C62828;");
+                    badge.setStyle(badge.getStyle()
+                            + "-fx-background-color: -color-danger-subtle; -fx-text-fill: -color-danger-fg;");
                 }
                 case MEDIUM -> {
                     badge.setText("Med");
-                    badge.setStyle(badge.getStyle() + "-fx-background-color: #FFF8E1; -fx-text-fill: #F9A825;");
+                    badge.setStyle(badge.getStyle()
+                            + "-fx-background-color: -color-warning-subtle; -fx-text-fill: -color-warning-fg;");
                 }
                 case LOW -> {
                     badge.setText("Low");
-                    badge.setStyle(badge.getStyle() + "-fx-background-color: -roam-gray-bg; -fx-text-fill: #616161;");
+                    badge.setStyle(badge.getStyle()
+                            + "-fx-background-color: -color-neutral-subtle; -fx-text-fill: -color-fg-default;");
                 }
             }
 

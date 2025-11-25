@@ -35,19 +35,19 @@ public class PreferencesDialog extends Dialog<Void> {
 
         // Font family
         Label fontLabel = new Label("Editor Font:");
-        fontLabel.setFont(Font.font("Poppins Regular", 13));
+        fontLabel.setFont(Font.font("Poppins", 13));
         editorFontCombo = new ComboBox<>();
         editorFontCombo.getItems().addAll("Consolas", "Courier New", "Monaco", "Menlo", "Source Code Pro");
         editorFontCombo.setValue("Consolas");
-        editorFontCombo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 13px;");
+        editorFontCombo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 13px;");
 
         // Font size
         Label fontSizeLabel = new Label("Font Size:");
-        fontSizeLabel.setFont(Font.font("Poppins Regular", 13));
+        fontSizeLabel.setFont(Font.font("Poppins", 13));
         fontSizeSpinner = new Spinner<>(10, 24, 14, 1);
         fontSizeSpinner.setEditable(true);
         fontSizeSpinner.setPrefWidth(80);
-        fontSizeSpinner.setStyle("-fx-font-family: 'Poppins Regular';");
+        fontSizeSpinner.setStyle("-fx-font-family: 'Poppins';");
 
         editorGrid.add(fontLabel, 0, 0);
         editorGrid.add(editorFontCombo, 1, 0);
@@ -63,7 +63,7 @@ public class PreferencesDialog extends Dialog<Void> {
         autoSaveBox.setPadding(new Insets(10, 0, 0, 0));
 
         enableAutoSaveCheck = new CheckBox("Enable auto-save");
-        enableAutoSaveCheck.setFont(Font.font("Poppins Regular", 13));
+        enableAutoSaveCheck.setFont(Font.font("Poppins", 13));
         enableAutoSaveCheck.setSelected(true);
 
         GridPane autoSaveGrid = new GridPane();
@@ -71,14 +71,14 @@ public class PreferencesDialog extends Dialog<Void> {
         autoSaveGrid.setVgap(10);
 
         Label intervalLabel = new Label("Auto-save interval:");
-        intervalLabel.setFont(Font.font("Poppins Regular", 13));
+        intervalLabel.setFont(Font.font("Poppins", 13));
         autoSaveIntervalCombo = new ComboBox<>();
         autoSaveIntervalCombo.getItems().addAll(1, 2, 3, 5, 10);
         autoSaveIntervalCombo.setValue(2);
-        autoSaveIntervalCombo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 13px;");
+        autoSaveIntervalCombo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 13px;");
 
         Label secondsLabel = new Label("seconds");
-        secondsLabel.setFont(Font.font("Poppins Regular", 13));
+        secondsLabel.setFont(Font.font("Poppins", 13));
         secondsLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         autoSaveGrid.add(intervalLabel, 0, 0);
@@ -101,11 +101,11 @@ public class PreferencesDialog extends Dialog<Void> {
         displayBox.setPadding(new Insets(10, 0, 0, 0));
 
         showWordCountCheck = new CheckBox("Show word count in editor");
-        showWordCountCheck.setFont(Font.font("Poppins Regular", 13));
+        showWordCountCheck.setFont(Font.font("Poppins", 13));
         showWordCountCheck.setSelected(true);
 
         confirmDeleteCheck = new CheckBox("Confirm before deleting wikis");
-        confirmDeleteCheck.setFont(Font.font("Poppins Regular", 13));
+        confirmDeleteCheck.setFont(Font.font("Poppins", 13));
         confirmDeleteCheck.setSelected(true);
 
         displayBox.getChildren().addAll(showWordCountCheck, confirmDeleteCheck);

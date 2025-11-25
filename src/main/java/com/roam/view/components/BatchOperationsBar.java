@@ -50,7 +50,7 @@ public class BatchOperationsBar extends HBox {
         // Selection counter
         selectionCountLabel = new Label("0 tasks selected");
         selectionCountLabel.setFont(Font.font("Poppins Medium", 14));
-        selectionCountLabel.setStyle("-fx-text-fill: #FFFFFF;");
+        selectionCountLabel.setStyle("-fx-text-fill: -roam-white;");
 
         // Separator
         Region separator1 = createSeparator();
@@ -108,11 +108,11 @@ public class BatchOperationsBar extends HBox {
         container.setAlignment(Pos.CENTER_LEFT);
 
         Label label = new Label("Status:");
-        label.setFont(Font.font("Poppins Regular", 13));
+        label.setFont(Font.font("Poppins", 13));
         label.setStyle("-fx-text-fill: rgba(255, 255, 255, 0.9);");
 
         MenuButton statusBtn = new MenuButton("Change to...");
-        statusBtn.setFont(Font.font("Poppins Regular", 13));
+        statusBtn.setFont(Font.font("Poppins", 13));
         statusBtn.setPrefWidth(140);
         statusBtn.setPrefHeight(36);
         statusBtn.setStyle(
@@ -141,11 +141,11 @@ public class BatchOperationsBar extends HBox {
         container.setAlignment(Pos.CENTER_LEFT);
 
         Label label = new Label("Priority:");
-        label.setFont(Font.font("Poppins Regular", 13));
+        label.setFont(Font.font("Poppins", 13));
         label.setStyle("-fx-text-fill: rgba(255, 255, 255, 0.9);");
 
         MenuButton priorityBtn = new MenuButton("Change to...");
-        priorityBtn.setFont(Font.font("Poppins Regular", 13));
+        priorityBtn.setFont(Font.font("Poppins", 13));
         priorityBtn.setPrefWidth(140);
         priorityBtn.setPrefHeight(36);
         priorityBtn.setStyle(
@@ -174,11 +174,11 @@ public class BatchOperationsBar extends HBox {
         container.setAlignment(Pos.CENTER_LEFT);
 
         Label label = new Label("Assign:");
-        label.setFont(Font.font("Poppins Regular", 13));
+        label.setFont(Font.font("Poppins", 13));
         label.setStyle("-fx-text-fill: rgba(255, 255, 255, 0.9);");
 
         MenuButton assignBtn = new MenuButton("Assign to...");
-        assignBtn.setFont(Font.font("Poppins Regular", 13));
+        assignBtn.setFont(Font.font("Poppins", 13));
         assignBtn.setPrefWidth(150);
         assignBtn.setPrefHeight(36);
         assignBtn.setStyle(
@@ -215,11 +215,11 @@ public class BatchOperationsBar extends HBox {
         container.setAlignment(Pos.CENTER_LEFT);
 
         Label label = new Label("Due:");
-        label.setFont(Font.font("Poppins Regular", 13));
+        label.setFont(Font.font("Poppins", 13));
         label.setStyle("-fx-text-fill: rgba(255, 255, 255, 0.9);");
 
         Button dueDateBtn = new Button("📅 Set date...");
-        dueDateBtn.setFont(Font.font("Poppins Regular", 13));
+        dueDateBtn.setFont(Font.font("Poppins", 13));
         dueDateBtn.setPrefWidth(120);
         dueDateBtn.setPrefHeight(36);
         dueDateBtn.setStyle(
@@ -239,18 +239,18 @@ public class BatchOperationsBar extends HBox {
         deleteBtn.setPrefWidth(110);
         deleteBtn.setPrefHeight(36);
         deleteBtn.setStyle(
-                "-fx-background-color: #C62828; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                "-fx-background-color: -roam-red; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
         deleteBtn.setOnMouseEntered(e -> deleteBtn.setStyle(
-                "-fx-background-color: #B71C1C; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                "-fx-background-color: -roam-red-hover; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;"));
         deleteBtn.setOnMouseExited(e -> deleteBtn.setStyle(
-                "-fx-background-color: #C62828; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                "-fx-background-color: -roam-red; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;"));
         deleteBtn.setOnAction(e -> batchDelete());
@@ -260,12 +260,12 @@ public class BatchOperationsBar extends HBox {
 
     private Button createCancelButton() {
         Button cancelBtn = new Button("×");
-        cancelBtn.setFont(Font.font("Poppins Regular", 18));
+        cancelBtn.setFont(Font.font("Poppins", 18));
         cancelBtn.setPrefWidth(36);
         cancelBtn.setPrefHeight(36);
         cancelBtn.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-border-color: rgba(255, 255, 255, 0.5); " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 6; " +
@@ -273,7 +273,7 @@ public class BatchOperationsBar extends HBox {
                         "-fx-cursor: hand;");
         cancelBtn.setOnMouseEntered(e -> cancelBtn.setStyle(
                 "-fx-background-color: rgba(255, 255, 255, 0.2); " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-border-color: rgba(255, 255, 255, 0.5); " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 6; " +
@@ -281,7 +281,7 @@ public class BatchOperationsBar extends HBox {
                         "-fx-cursor: hand;"));
         cancelBtn.setOnMouseExited(e -> cancelBtn.setStyle(
                 "-fx-background-color: transparent; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-border-color: rgba(255, 255, 255, 0.5); " +
                         "-fx-border-width: 1; " +
                         "-fx-border-radius: 6; " +

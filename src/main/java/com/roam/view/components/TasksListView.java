@@ -34,7 +34,7 @@ public class TasksListView extends TableView<Task> {
     private void initialize() {
         setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         setStyle(
-                "-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px; -fx-background-color: -roam-bg-primary; -fx-control-inner-background: -roam-bg-primary; -fx-text-fill: -roam-text-primary;");
+                "-fx-font-family: 'Poppins'; -fx-font-size: 14px; -fx-background-color: -roam-bg-primary; -fx-control-inner-background: -roam-bg-primary; -fx-text-fill: -roam-text-primary;");
         getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         setFixedCellSize(50);
         setEditable(true);
@@ -174,7 +174,7 @@ public class TasksListView extends TableView<Task> {
                     if (task.getOperationId() != null) {
                         controller.getOperationById(task.getOperationId()).ifPresent(operation -> {
                             Label opBadge = new Label(operation.getName());
-                            opBadge.setFont(Font.font("Poppins Regular", 11));
+                            opBadge.setFont(Font.font("Poppins", 11));
                             opBadge.setStyle(
                                     "-fx-background-color: -roam-blue-light; " +
                                             "-fx-text-fill: -roam-blue; " +
@@ -269,7 +269,7 @@ public class TasksListView extends TableView<Task> {
                 });
 
                 deleteBtn.setOnMouseEntered(e -> deleteBtn.setStyle(
-                        "-fx-background-color: #FFEBEE; -fx-cursor: hand; -fx-background-radius: 4;"));
+                        "-fx-background-color: -roam-red-bg; -fx-cursor: hand; -fx-background-radius: 4;"));
                 deleteBtn.setOnMouseExited(e -> deleteBtn.setStyle(
                         "-fx-background-color: transparent; -fx-cursor: hand; -fx-background-radius: 4;"));
             }
@@ -306,7 +306,7 @@ public class TasksListView extends TableView<Task> {
 
     private Label createStatusBadge(TaskStatus status) {
         Label badge = new Label();
-        badge.setFont(Font.font("Poppins Regular", 12));
+        badge.setFont(Font.font("Poppins", 12));
         badge.setStyle("-fx-padding: 4 12 4 12; -fx-background-radius: 12;");
 
         switch (status) {
@@ -316,11 +316,12 @@ public class TasksListView extends TableView<Task> {
             }
             case IN_PROGRESS -> {
                 badge.setText("In Progress");
-                badge.setStyle(badge.getStyle() + "-fx-background-color: #FFF3E0; -fx-text-fill: #F57C00;");
+                badge.setStyle(
+                        badge.getStyle() + "-fx-background-color: -roam-orange-bg; -fx-text-fill: -roam-orange;");
             }
             case DONE -> {
                 badge.setText("Done");
-                badge.setStyle(badge.getStyle() + "-fx-background-color: #E8F5E9; -fx-text-fill: #388E3C;");
+                badge.setStyle(badge.getStyle() + "-fx-background-color: -roam-green-bg; -fx-text-fill: -roam-green;");
             }
         }
 
@@ -329,17 +330,18 @@ public class TasksListView extends TableView<Task> {
 
     private Label createPriorityBadge(Priority priority) {
         Label badge = new Label();
-        badge.setFont(Font.font("Poppins Regular", 12));
+        badge.setFont(Font.font("Poppins", 12));
         badge.setStyle("-fx-padding: 4 12 4 12; -fx-background-radius: 12;");
 
         switch (priority) {
             case HIGH -> {
                 badge.setText("High");
-                badge.setStyle(badge.getStyle() + "-fx-background-color: #FFEBEE; -fx-text-fill: #C62828;");
+                badge.setStyle(badge.getStyle() + "-fx-background-color: -roam-red-bg; -fx-text-fill: -roam-red;");
             }
             case MEDIUM -> {
                 badge.setText("Medium");
-                badge.setStyle(badge.getStyle() + "-fx-background-color: #FFF8E1; -fx-text-fill: #F9A825;");
+                badge.setStyle(
+                        badge.getStyle() + "-fx-background-color: -roam-yellow-bg; -fx-text-fill: -roam-yellow;");
             }
             case LOW -> {
                 badge.setText("Low");
@@ -353,9 +355,9 @@ public class TasksListView extends TableView<Task> {
 
     private String getPriorityColor(Priority priority) {
         return switch (priority) {
-            case HIGH -> "#C62828";
-            case MEDIUM -> "#F9A825";
-            case LOW -> "#616161";
+            case HIGH -> "-roam-priority-high";
+            case MEDIUM -> "-roam-priority-medium";
+            case LOW -> "-roam-priority-low";
         };
     }
 

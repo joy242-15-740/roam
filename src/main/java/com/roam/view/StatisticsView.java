@@ -20,7 +20,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 import java.util.List;
 import java.util.Map;
@@ -55,12 +54,12 @@ public class StatisticsView extends StackPane {
     private void initializeView() {
         contentPane.setPadding(new Insets(30));
         contentPane.setSpacing(30);
-        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
+        // Remove manual background
+        // contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Header
         Label headerLabel = new Label("Statistics");
-        headerLabel.setFont(Font.font("Poppins Bold", 28));
-        headerLabel.setStyle("-fx-text-fill: -roam-text-primary;");
+        headerLabel.getStyleClass().add(atlantafx.base.theme.Styles.TITLE_1);
         contentPane.getChildren().add(headerLabel);
 
         // Overall stats
@@ -105,9 +104,11 @@ public class StatisticsView extends StackPane {
 
     private VBox createTaskStatusChart() {
         VBox container = new VBox(10);
+        container.getStyleClass().add(atlantafx.base.theme.Styles.ELEVATED_1);
+        container.setPadding(new Insets(20));
+
         Label header = new Label("Task Status");
-        header.setFont(Font.font("Poppins Bold", 18));
-        header.setStyle("-fx-text-fill: -roam-text-primary;");
+        header.getStyleClass().add(atlantafx.base.theme.Styles.TITLE_4);
 
         long doneTasks = taskRepository.countByStatus(TaskStatus.DONE);
         long todoTasks = taskRepository.countByStatus(TaskStatus.TODO);
@@ -122,7 +123,6 @@ public class StatisticsView extends StackPane {
         chart.setLabelsVisible(true);
         chart.setPrefHeight(300);
         chart.setMaxHeight(300);
-        chart.setStyle("-fx-text-fill: -roam-text-primary;");
 
         container.getChildren().addAll(header, chart);
         return container;
@@ -130,9 +130,11 @@ public class StatisticsView extends StackPane {
 
     private VBox createOperationsChart() {
         VBox container = new VBox(10);
+        container.getStyleClass().add(atlantafx.base.theme.Styles.ELEVATED_1);
+        container.setPadding(new Insets(20));
+
         Label header = new Label("Tasks by Operation");
-        header.setFont(Font.font("Poppins Bold", 18));
-        header.setStyle("-fx-text-fill: -roam-text-primary;");
+        header.getStyleClass().add(atlantafx.base.theme.Styles.TITLE_4);
 
         List<Task> allTasks = taskRepository.findAll();
         List<Operation> allOps = operationsController.loadOperations();
@@ -153,7 +155,6 @@ public class StatisticsView extends StackPane {
         chart.setLabelsVisible(true);
         chart.setPrefHeight(300);
         chart.setMaxHeight(300);
-        chart.setStyle("-fx-text-fill: -roam-text-primary;");
 
         container.getChildren().addAll(header, chart);
         return container;
@@ -162,14 +163,15 @@ public class StatisticsView extends StackPane {
     private void addStat(GridPane grid, int col, int row, String label, String value) {
         VBox box = new VBox(5);
         box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add(atlantafx.base.theme.Styles.ELEVATED_1);
+        box.setPadding(new Insets(20));
+        box.setPrefWidth(250);
 
         Label valLabel = new Label(value);
-        valLabel.setFont(Font.font("Poppins Bold", 36));
-        valLabel.setStyle("-fx-text-fill: -roam-blue;");
+        valLabel.getStyleClass().addAll(atlantafx.base.theme.Styles.TITLE_1, atlantafx.base.theme.Styles.ACCENT);
 
         Label textLabel = new Label(label);
-        textLabel.setFont(Font.font("Poppins Regular", 14));
-        textLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+        textLabel.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_MUTED);
 
         box.getChildren().addAll(valLabel, textLabel);
         grid.add(box, col, row);

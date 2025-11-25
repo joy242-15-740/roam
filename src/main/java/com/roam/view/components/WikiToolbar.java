@@ -8,23 +8,18 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 
 import java.util.List;
 
 public class WikiToolbar extends HBox {
 
     private final WikiController controller;
-    private final Font poppinsRegular;
-    private final Font poppinsBold;
 
     private Button newNoteBtn;
     private MenuButton templatesMenu;
 
-    public WikiToolbar(WikiController controller, Font poppinsRegular, Font poppinsBold) {
+    public WikiToolbar(WikiController controller) {
         this.controller = controller;
-        this.poppinsRegular = poppinsRegular;
-        this.poppinsBold = poppinsBold;
 
         configureToolbar();
         createToolbarElements();
@@ -36,6 +31,7 @@ public class WikiToolbar extends HBox {
         setPadding(new Insets(15, 20, 15, 20));
         setSpacing(15);
         setAlignment(Pos.CENTER_LEFT);
+        getStyleClass().add("wiki-toolbar");
         setStyle("-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 0 0 1 0;");
     }
 
@@ -51,41 +47,17 @@ public class WikiToolbar extends HBox {
 
     private Button createNewNoteButton() {
         Button btn = new Button("+ New Wiki");
-        btn.setFont(Font.font(poppinsBold.getFamily(), 14));
+        btn.getStyleClass().add("action-button");
         btn.setPrefWidth(130);
         btn.setPrefHeight(40);
-        btn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand;");
-
-        btn.setOnMouseEntered(e -> btn.setStyle(
-                "-fx-background-color: -roam-blue-dark; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand;"));
-
-        btn.setOnMouseExited(e -> btn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand;"));
-
         return btn;
     }
 
     private MenuButton createTemplatesMenu() {
-        MenuButton menu = new MenuButton("Templates ▼");
-        menu.setFont(Font.font(poppinsRegular.getFamily(), 14));
+        MenuButton menu = new MenuButton("Templates");
+        menu.getStyleClass().add("button-secondary");
         menu.setPrefWidth(120);
         menu.setPrefHeight(40);
-        menu.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 8; " +
-                        "-fx-background-radius: 8;");
 
         // Populate on show
         menu.setOnShowing(e -> populateTemplatesMenu(menu));
@@ -100,7 +72,6 @@ public class WikiToolbar extends HBox {
         List<WikiTemplate> allTemplates = controller.loadAllTemplates();
         for (WikiTemplate template : allTemplates) {
             MenuItem item = new MenuItem(template.getIcon() + " " + template.getName());
-            item.setStyle("-fx-font-family: '" + poppinsRegular.getFamily() + "'; -fx-font-size: 13px;");
             item.setOnAction(e -> {
                 controller.createNoteFromTemplate(template);
             });
@@ -112,7 +83,6 @@ public class WikiToolbar extends HBox {
         }
 
         MenuItem manageItem = new MenuItem("Manage Templates...");
-        manageItem.setStyle("-fx-font-family: '" + poppinsRegular.getFamily() + "'; -fx-font-size: 13px;");
         manageItem.setOnAction(e -> {
             TemplateManagerDialog dialog = new TemplateManagerDialog(controller);
             dialog.showAndWait();

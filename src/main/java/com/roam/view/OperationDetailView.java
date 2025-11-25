@@ -117,7 +117,7 @@ public class OperationDetailView extends StackPane {
     private TabPane createTabPane() {
         TabPane tabPane = new TabPane();
         tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        tabPane.setStyle("-fx-font-family: 'Poppins Regular';");
+        tabPane.setStyle("-fx-font-family: 'Poppins';");
         tabPane.setMinHeight(800);
 
         // Tab 1: Tasks & Calendar
@@ -184,7 +184,7 @@ public class OperationDetailView extends StackPane {
 
         // Style toggle buttons
         String baseStyle = "-fx-padding: 10 20 10 20; " +
-                "-fx-font-family: 'Poppins Regular'; " +
+                "-fx-font-family: 'Poppins'; " +
                 "-fx-font-size: 14px; " +
                 "-fx-cursor: hand; " +
                 "-fx-border-color: -roam-border; " +
@@ -253,21 +253,17 @@ public class OperationDetailView extends StackPane {
     private BorderPane createNotesView() {
         BorderPane notesContainer = new BorderPane();
 
-        // Get fonts
-        javafx.scene.text.Font poppinsRegular = javafx.scene.text.Font.font("Poppins Regular", 14);
-        javafx.scene.text.Font poppinsBold = javafx.scene.text.Font.font("Poppins Bold", 16);
-
         // Create toolbar for notes
-        HBox notesToolbar = createNotesToolbar(poppinsRegular, poppinsBold);
+        HBox notesToolbar = createNotesToolbar();
         notesContainer.setTop(notesToolbar);
 
         // Create wiki sidebar
-        wikiSidebar = new com.roam.view.components.WikiSidebar(wikiController, poppinsRegular, poppinsBold);
+        wikiSidebar = new com.roam.view.components.WikiSidebar(wikiController);
         wikiSidebar.switchToOperationMode(controller.getOperation());
         notesContainer.setLeft(wikiSidebar);
 
         // Create wiki note editor
-        wikiNoteEditor = new WikiNoteEditor(wikiController, poppinsRegular, poppinsBold);
+        wikiNoteEditor = new WikiNoteEditor(wikiController);
         notesContainer.setCenter(wikiNoteEditor);
 
         // Load notes for this operation
@@ -276,7 +272,7 @@ public class OperationDetailView extends StackPane {
         return notesContainer;
     }
 
-    private HBox createNotesToolbar(javafx.scene.text.Font poppinsRegular, javafx.scene.text.Font poppinsBold) {
+    private HBox createNotesToolbar() {
         HBox toolbar = new HBox(15);
         toolbar.setPrefHeight(60);
         toolbar.setPadding(new Insets(15, 20, 15, 20));
@@ -286,7 +282,7 @@ public class OperationDetailView extends StackPane {
 
         // New Wiki button
         Button newNoteBtn = new Button("+ New Wiki");
-        newNoteBtn.setFont(javafx.scene.text.Font.font(poppinsBold.getFamily(), 14));
+        newNoteBtn.getStyleClass().add("action-button");
         newNoteBtn.setPrefWidth(130);
         newNoteBtn.setPrefHeight(40);
         newNoteBtn.setStyle(
@@ -307,7 +303,7 @@ public class OperationDetailView extends StackPane {
         // Templates Menu
         MenuButton templatesMenu = new MenuButton("Templates");
         templatesMenu.setGraphic(new FontIcon(Feather.FILE_TEXT));
-        templatesMenu.setFont(javafx.scene.text.Font.font(poppinsRegular.getFamily(), 14));
+        templatesMenu.getStyleClass().add("button-secondary");
         templatesMenu.setPrefHeight(40);
         templatesMenu.setStyle(
                 "-fx-background-color: transparent; " +
@@ -327,7 +323,7 @@ public class OperationDetailView extends StackPane {
         // Actions Menu
         MenuButton actionsMenu = new MenuButton("Actions");
         actionsMenu.setGraphic(new FontIcon(Feather.SETTINGS));
-        actionsMenu.setFont(javafx.scene.text.Font.font(poppinsRegular.getFamily(), 14));
+        actionsMenu.getStyleClass().add("button-secondary");
         actionsMenu.setPrefHeight(40);
         actionsMenu.setStyle(
                 "-fx-background-color: transparent; " +
@@ -485,7 +481,7 @@ public class OperationDetailView extends StackPane {
                             "\n   " + item.getWordCount() + " words • " +
                             (item.getUpdatedAt() != null ? item.getUpdatedAt().format(
                                     java.time.format.DateTimeFormatter.ofPattern("MMM d, yyyy")) : ""));
-                    setStyle("-fx-font-family: 'Poppins Regular'; -fx-padding: 10;");
+                    setStyle("-fx-font-family: 'Poppins'; -fx-padding: 10;");
                 }
             }
         });

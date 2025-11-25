@@ -53,9 +53,9 @@ public class GlobalTasksKanban extends HBox {
         // Create columns
         todoColumn = createColumn("To Do", "-roam-blue-light", "-roam-blue", TaskStatus.TODO,
                 todoTasksContainer, todoCountLabel);
-        inProgressColumn = createColumn("In Progress", "#FFF3E0", "#F57C00", TaskStatus.IN_PROGRESS,
+        inProgressColumn = createColumn("In Progress", "-roam-orange-bg", "-roam-orange", TaskStatus.IN_PROGRESS,
                 inProgressTasksContainer, inProgressCountLabel);
-        doneColumn = createColumn("Done", "#E8F5E9", "#388E3C", TaskStatus.DONE,
+        doneColumn = createColumn("Done", "-roam-green-bg", "-roam-green", TaskStatus.DONE,
                 doneTasksContainer, doneCountLabel);
 
         // Make columns equal width
@@ -91,7 +91,7 @@ public class GlobalTasksKanban extends HBox {
         HBox.setHgrow(titleLabel, Priority.ALWAYS);
 
         // Count badge
-        countLabel.setFont(Font.font("Poppins Regular", 12));
+        countLabel.setFont(Font.font("Poppins", 12));
         countLabel.setStyle(
                 "-fx-background-color: " + headerBg + "; " +
                         "-fx-text-fill: " + textColor + "; " +
@@ -107,7 +107,7 @@ public class GlobalTasksKanban extends HBox {
         Button addBtn = new Button("+ Add Task");
         addBtn.setMaxWidth(Double.MAX_VALUE);
         addBtn.setPrefHeight(40);
-        addBtn.setFont(Font.font("Poppins Regular", 13));
+        addBtn.setFont(Font.font("Poppins", 13));
         addBtn.setStyle(
                 "-fx-background-color: transparent; " +
                         "-fx-border-color: -roam-border; " +
@@ -330,7 +330,7 @@ public class GlobalTasksKanban extends HBox {
             if (task.getOperationId() != null) {
                 controller.getOperationById(task.getOperationId()).ifPresent(operation -> {
                     Label opBadge = new Label(operation.getName());
-                    opBadge.setFont(Font.font("Poppins Regular", 11));
+                    opBadge.setFont(Font.font("Poppins", 11));
                     opBadge.setStyle(
                             "-fx-background-color: -roam-blue-light; " +
                                     "-fx-text-fill: -roam-blue; " +
@@ -384,7 +384,7 @@ public class GlobalTasksKanban extends HBox {
             // Description (if exists)
             if (task.getDescription() != null && !task.getDescription().isEmpty()) {
                 Label descLabel = new Label(task.getDescription());
-                descLabel.setFont(Font.font("Poppins Regular", 12));
+                descLabel.setFont(Font.font("Poppins", 12));
                 descLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
                 descLabel.setWrapText(true);
                 descLabel.setMaxWidth(Double.MAX_VALUE);
@@ -410,7 +410,7 @@ public class GlobalTasksKanban extends HBox {
             // Due date
             if (task.getDueDate() != null) {
                 Label dueDateLabel = new Label("📅 " + formatDueDate(task.getDueDate()));
-                dueDateLabel.setFont(Font.font("Poppins Regular", 11));
+                dueDateLabel.setFont(Font.font("Poppins", 11));
                 dueDateLabel.setStyle("-fx-text-fill: -roam-text-hint;");
                 footer.getChildren().add(dueDateLabel);
             }
@@ -423,7 +423,7 @@ public class GlobalTasksKanban extends HBox {
             if (task.getAssignee() != null && !task.getAssignee().isEmpty()) {
                 String initials = getInitials(task.getAssignee());
                 Label assigneeLabel = new Label("👤 " + initials);
-                assigneeLabel.setFont(Font.font("Poppins Regular", 11));
+                assigneeLabel.setFont(Font.font("Poppins", 11));
                 assigneeLabel.setStyle("-fx-text-fill: -roam-text-hint;");
                 footer.getChildren().add(assigneeLabel);
             }
@@ -437,9 +437,9 @@ public class GlobalTasksKanban extends HBox {
 
         private String getPriorityColor(com.roam.model.Priority priority) {
             return switch (priority) {
-                case HIGH -> "#C62828";
-                case MEDIUM -> "#F9A825";
-                case LOW -> "#616161";
+                case HIGH -> "-roam-priority-high";
+                case MEDIUM -> "-roam-priority-medium";
+                case LOW -> "-roam-priority-low";
             };
         }
 

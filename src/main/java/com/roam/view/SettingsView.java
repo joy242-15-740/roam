@@ -11,6 +11,7 @@ import com.roam.service.SecurityContext;
 import com.roam.service.SettingsService;
 import com.roam.util.ExportUtils;
 import com.roam.util.ImportUtils;
+import com.roam.util.StyleBuilder;
 import com.roam.util.ThreadPoolManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -32,6 +33,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import static com.roam.util.UIConstants.*;
+
+/**
+ * Settings view for managing application preferences, security, and data.
+ */
 public class SettingsView extends ScrollPane {
 
     private final SettingsService settingsService;
@@ -55,8 +61,8 @@ public class SettingsView extends ScrollPane {
 
     private void initialize() {
         VBox content = new VBox();
-        content.setPadding(new Insets(30));
-        content.setSpacing(20);
+        content.setPadding(new Insets(SPACING_SECTION));
+        content.setSpacing(SPACING_LG);
         content.setAlignment(Pos.TOP_LEFT);
 
         // Configure ScrollPane
@@ -66,11 +72,11 @@ public class SettingsView extends ScrollPane {
         setHbarPolicy(ScrollBarPolicy.NEVER);
 
         Label header = new Label("Settings");
-        header.setFont(Font.font("Poppins Bold", 24));
+        header.setFont(Font.font(FONT_BOLD, FONT_SIZE_HEADER));
 
         // Security Section
         Label securityHeader = new Label("Security");
-        securityHeader.setFont(Font.font("Poppins Bold", 18));
+        securityHeader.setFont(Font.font(FONT_BOLD, FONT_SIZE_XL));
 
         CheckBox lockToggle = new CheckBox("Enable Lock Screen");
         lockToggle.setSelected(securityContext.isLockEnabled());
@@ -81,12 +87,11 @@ public class SettingsView extends ScrollPane {
         changePinBtn.disableProperty().bind(lockToggle.selectedProperty().not());
 
         VBox securityBox = new VBox(10, securityHeader, lockToggle, changePinBtn);
-        securityBox.setStyle(
-                "-fx-border-color: -roam-border; -fx-border-radius: 5; -fx-padding: 15; -fx-background-color: -roam-bg-primary;");
+        securityBox.setStyle(StyleBuilder.sectionStyle());
 
         // Appearance Section
         Label appearanceHeader = new Label("Appearance");
-        appearanceHeader.setFont(Font.font("Poppins Bold", 18));
+        appearanceHeader.setFont(Font.font(FONT_BOLD, FONT_SIZE_XL));
 
         ComboBox<String> themeSelector = new ComboBox<>();
         themeSelector.getItems().addAll("Light", "Dark");
@@ -94,51 +99,38 @@ public class SettingsView extends ScrollPane {
         themeSelector.setOnAction(e -> handleThemeChange(themeSelector.getValue()));
 
         VBox appearanceBox = new VBox(10, appearanceHeader, new Label("Theme"), themeSelector);
-        appearanceBox.setStyle(
-                "-fx-border-color: -roam-border; -fx-border-radius: 5; -fx-padding: 15; -fx-background-color: -roam-bg-primary;");
+        appearanceBox.setStyle(StyleBuilder.sectionStyle());
 
         // Data Management Section
         Label dataHeader = new Label("Data Management");
-        dataHeader.setFont(Font.font("Poppins Bold", 18));
+        dataHeader.setFont(Font.font(FONT_BOLD, FONT_SIZE_XL));
 
         Button exportBtn = new Button("Export Data (JSON)");
-        exportBtn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-padding: 10 20; " +
-                        "-fx-cursor: hand;");
+        exportBtn.setStyle(createActionButtonStyle(BLUE));
         exportBtn.setOnAction(e -> handleExport());
 
         Button importBtn = new Button("Import Data (JSON)");
-        importBtn.setStyle(
-                "-fx-background-color: -roam-green; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-padding: 10 20; " +
-                        "-fx-cursor: hand;");
+        importBtn.setStyle(createActionButtonStyle(GREEN));
         importBtn.setOnAction(e -> handleImport());
 
         Button rebuildIndexBtn = new Button("Rebuild Search Index");
-        rebuildIndexBtn.setStyle(
-                "-fx-background-color: -roam-orange; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-padding: 10 20; " +
-                        "-fx-cursor: hand;");
+        rebuildIndexBtn.setStyle(createActionButtonStyle(ORANGE));
         rebuildIndexBtn.setOnAction(e -> handleRebuildIndex());
 
         Label dataWarning = new Label("⚠️ Import will merge with existing data. Backup first!");
-        dataWarning.setFont(Font.font("Poppins Regular", 11));
-        dataWarning.setStyle("-fx-text-fill: #F57C00;");
+        dataWarning.setFont(Font.font(FONT_REGULAR, FONT_SIZE_SM));
+        dataWarning.setStyle("-fx-text-fill: " + ORANGE + ";");
 
         Label indexInfo = new Label("Rebuild search index to update search results with all content.");
-        indexInfo.setFont(Font.font("Poppins Regular", 11));
-        indexInfo.setStyle("-fx-text-fill: #666666;");
+        indexInfo.setFont(Font.font(FONT_REGULAR, FONT_SIZE_SM));
+        indexInfo.setStyle("-fx-text-fill: " + TEXT_SECONDARY + ";");
 
         HBox buttonBox = new HBox(10, exportBtn, importBtn);
         buttonBox.setAlignment(Pos.CENTER_LEFT);
 
         // Specific Exports
         Label exportHeader = new Label("Export Content");
-        exportHeader.setFont(Font.font("Poppins Medium", 14));
+        exportHeader.setFont(Font.font(FONT_MEDIUM, FONT_SIZE_STANDARD));
 
         Button exportWikisBtn = new Button("Export Wikis (MD)");
         exportWikisBtn.setOnAction(e -> handleExportWikis());
@@ -157,7 +149,7 @@ public class SettingsView extends ScrollPane {
 
         // Specific Imports
         Label importHeader = new Label("Import Content");
-        importHeader.setFont(Font.font("Poppins Medium", 14));
+        importHeader.setFont(Font.font(FONT_MEDIUM, FONT_SIZE_STANDARD));
 
         Button importWikisBtn = new Button("Import Wikis (MD)");
         importWikisBtn.setOnAction(e -> handleImportWikis());
@@ -176,21 +168,31 @@ public class SettingsView extends ScrollPane {
 
         VBox dataBox = new VBox(10, dataHeader, buttonBox, dataWarning, rebuildIndexBtn, indexInfo, new Separator(),
                 exportHeader, specificExportsBox, new Separator(), importHeader, specificImportsBox);
-        dataBox.setStyle(
-                "-fx-border-color: -roam-border; -fx-border-radius: 5; -fx-padding: 15; -fx-background-color: -roam-bg-primary;");
+        dataBox.setStyle(StyleBuilder.sectionStyle());
 
         // Templates Section
         Label templatesHeader = new Label("Templates");
-        templatesHeader.setFont(Font.font("Poppins Bold", 18));
+        templatesHeader.setFont(Font.font(FONT_BOLD, FONT_SIZE_XL));
 
         VBox wikiTemplatesBox = createWikiTemplatesBox();
         VBox journalTemplatesBox = createJournalTemplatesBox();
 
         VBox templatesBox = new VBox(10, templatesHeader, wikiTemplatesBox, journalTemplatesBox);
-        templatesBox.setStyle(
-                "-fx-border-color: -roam-border; -fx-border-radius: 5; -fx-padding: 15; -fx-background-color: -roam-bg-primary;");
+        templatesBox.setStyle(StyleBuilder.sectionStyle());
 
         content.getChildren().addAll(header, securityBox, appearanceBox, dataBox, templatesBox);
+    }
+
+    /**
+     * Creates a consistent style for action buttons.
+     */
+    private String createActionButtonStyle(String bgColor) {
+        return StyleBuilder.create()
+                .backgroundColor(bgColor)
+                .textFill(TEXT_WHITE)
+                .padding(10, 20)
+                .cursorHand()
+                .build();
     }
 
     private void handleLockToggle(CheckBox toggle) {

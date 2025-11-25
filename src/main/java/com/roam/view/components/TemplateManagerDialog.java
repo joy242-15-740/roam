@@ -84,8 +84,8 @@ public class TemplateManagerDialog extends Dialog<Void> {
         deleteButton = new Button("Delete");
         deleteButton.setStyle(
                 "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-text-fill: #D32F2F; " +
-                        "-fx-border-color: #D32F2F; " +
+                        "-fx-text-fill: -roam-red; " +
+                        "-fx-border-color: -roam-red; " +
                         "-fx-border-width: 1; " +
                         "-fx-background-radius: 6; " +
                         "-fx-padding: 8 16; " +
@@ -173,8 +173,8 @@ public class TemplateManagerDialog extends Dialog<Void> {
                     Label defaultBadge = new Label("DEFAULT");
                     defaultBadge.setFont(Font.font(10));
                     defaultBadge.setStyle(
-                            "-fx-background-color: #E8F5E9; " +
-                                    "-fx-text-fill: #2E7D32; " +
+                            "-fx-background-color: -roam-green-bg; " +
+                                    "-fx-text-fill: -roam-green; " +
                                     "-fx-padding: 2 8; " +
                                     "-fx-background-radius: 4;");
                     Region spacer = new Region();

@@ -41,11 +41,10 @@ public class RoamApplication extends Application {
             ThemeManager.getInstance().applyTheme(theme);
 
             // Load custom fonts
-            Font regularFont = loadFonts();
-            Font boldFont = Font.font("Poppins Bold", 14);
+            loadFonts();
 
-            // Create main layout with fonts
-            MainLayout mainLayout = new MainLayout(regularFont, boldFont);
+            // Create main layout
+            MainLayout mainLayout = new MainLayout();
 
             // Load custom CSS (will complement AtlantaFX)
             String css = Objects.requireNonNull(
@@ -122,10 +121,9 @@ public class RoamApplication extends Application {
         logger.info("✓ Application shutdown complete");
     }
 
-    private Font loadFonts() {
-        Font regularFont = null;
+    private void loadFonts() {
         try {
-            regularFont = Font.loadFont(
+            Font.loadFont(
                     getClass().getResourceAsStream("/fonts/Poppins-Regular.ttf"), 14);
             Font.loadFont(
                     getClass().getResourceAsStream("/fonts/Poppins-Medium.ttf"), 14);
@@ -137,7 +135,6 @@ public class RoamApplication extends Application {
         } catch (Exception e) {
             logger.error("✗ Failed to load fonts: {}", e.getMessage());
         }
-        return regularFont;
     }
 
     private void showErrorDialog(String title, String header, String content) {

@@ -116,11 +116,11 @@ public class SearchView extends StackPane {
 
         Label titleLabel = new Label("Search Results");
         titleLabel.setFont(Font.font("Poppins Bold", 24));
-        titleLabel.setStyle("-fx-text-fill: #000000;");
+        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
 
         Label queryLabel = new Label("\"" + query + "\" - " + results.size() + " results found");
-        queryLabel.setFont(Font.font("Poppins Regular", 14));
-        queryLabel.setStyle("-fx-text-fill: #666666;");
+        queryLabel.setFont(Font.font("Poppins", 14));
+        queryLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         titleBox.getChildren().addAll(titleLabel, queryLabel);
         HBox.setHgrow(titleBox, Priority.ALWAYS);
@@ -192,8 +192,8 @@ public class SearchView extends StackPane {
 
         if (filteredResults.isEmpty()) {
             Label noResults = new Label("No results found");
-            noResults.setFont(Font.font("Poppins Regular", 14));
-            noResults.setStyle("-fx-text-fill: #666666; -fx-padding: 20;");
+            noResults.setFont(Font.font("Poppins", 14));
+            noResults.setStyle("-fx-text-fill: -roam-text-secondary; -fx-padding: 20;");
             resultsContainer.getChildren().add(noResults);
             return;
         }
@@ -248,7 +248,7 @@ public class SearchView extends StackPane {
 
         Label label = new Label(text);
         label.setFont(Font.font("Poppins Bold", 16));
-        label.setStyle("-fx-text-fill: #333333;");
+        label.setStyle("-fx-text-fill: -roam-text-primary;");
 
         header.getChildren().addAll(icon, label);
         return header;
@@ -257,18 +257,18 @@ public class SearchView extends StackPane {
     private VBox createResultItem(SearchService.SearchResult result) {
         VBox item = new VBox(8);
         item.setPadding(new Insets(15));
-        item.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 8; " +
-                "-fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-border-width: 1; -fx-cursor: hand;");
+        item.setStyle("-fx-background-color: -roam-bg-primary; -fx-background-radius: 8; " +
+                "-fx-border-color: -roam-border; -fx-border-radius: 8; -fx-border-width: 1; -fx-cursor: hand;");
 
         // Title
         Label titleLabel = new Label(result.title != null ? result.title : "Untitled");
         titleLabel.setFont(Font.font("Poppins Bold", 14));
-        titleLabel.setStyle("-fx-text-fill: #000000;");
+        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
 
         // Snippet
         Label snippetLabel = new Label(result.snippet);
-        snippetLabel.setFont(Font.font("Poppins Regular", 12));
-        snippetLabel.setStyle("-fx-text-fill: #666666;");
+        snippetLabel.setFont(Font.font("Poppins", 12));
+        snippetLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
         snippetLabel.setWrapText(true);
 
         // Metadata
@@ -282,32 +282,32 @@ public class SearchView extends StackPane {
         // Additional metadata based on type
         if (result.priority != null) {
             Label priorityLabel = new Label("Priority: " + result.priority);
-            priorityLabel.setFont(Font.font("Poppins Regular", 11));
-            priorityLabel.setStyle("-fx-text-fill: #888888;");
+            priorityLabel.setFont(Font.font("Poppins", 11));
+            priorityLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             metadata.getChildren().add(priorityLabel);
         }
 
         if (result.status != null) {
             Label statusLabel = new Label("Status: " + result.status);
-            statusLabel.setFont(Font.font("Poppins Regular", 11));
-            statusLabel.setStyle("-fx-text-fill: #888888;");
+            statusLabel.setFont(Font.font("Poppins", 11));
+            statusLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             metadata.getChildren().add(statusLabel);
         }
 
         if (result.region != null && !result.region.isEmpty()) {
             Label regionLabel = new Label("Region: " + result.region);
-            regionLabel.setFont(Font.font("Poppins Regular", 11));
-            regionLabel.setStyle("-fx-text-fill: #888888;");
+            regionLabel.setFont(Font.font("Poppins", 11));
+            regionLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             metadata.getChildren().add(regionLabel);
         }
 
         item.getChildren().addAll(titleLabel, snippetLabel, metadata);
 
         // Hover effect
-        item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 8; " +
-                "-fx-border-color: #4285f4; -fx-border-radius: 8; -fx-border-width: 2; -fx-cursor: hand;"));
-        item.setOnMouseExited(e -> item.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 8; " +
-                "-fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-border-width: 1; -fx-cursor: hand;"));
+        item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: -roam-gray-bg; -fx-background-radius: 8; " +
+                "-fx-border-color: -roam-blue; -fx-border-radius: 8; -fx-border-width: 2; -fx-cursor: hand;"));
+        item.setOnMouseExited(e -> item.setStyle("-fx-background-color: -roam-bg-primary; -fx-background-radius: 8; " +
+                "-fx-border-color: -roam-border; -fx-border-radius: 8; -fx-border-width: 1; -fx-cursor: hand;"));
 
         // Click handler
         item.setOnMouseClicked(e -> {
@@ -328,19 +328,19 @@ public class SearchView extends StackPane {
         switch (type) {
             case "wiki":
                 badge.setText("WIKI");
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #4285f4;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-blue;");
                 break;
             case "task":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #34a853;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-green;");
                 break;
             case "operation":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #ea4335;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-red;");
                 break;
             case "event":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #fbbc04;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-orange;");
                 break;
             case "journal":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #9c27b0;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-purple;");
                 break;
         }
 

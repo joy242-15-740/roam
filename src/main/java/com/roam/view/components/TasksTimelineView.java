@@ -119,7 +119,7 @@ public class TasksTimelineView extends BorderPane {
         boolean isToday = date.equals(LocalDate.now());
         if (isToday) {
             dayNum.setStyle(
-                    "-fx-text-fill: #FFFFFF; " +
+                    "-fx-text-fill: -roam-white; " +
                             "-fx-background-color: -roam-blue; " +
                             "-fx-background-radius: 50%; " +
                             "-fx-min-width: 45; " +
@@ -137,7 +137,7 @@ public class TasksTimelineView extends BorderPane {
 
         Label monthYear = new Label(
                 date.format(DateTimeFormatter.ofPattern("MMM yyyy")));
-        monthYear.setFont(Font.font("Poppins Regular", 12));
+        monthYear.setFont(Font.font("Poppins", 12));
         monthYear.setStyle("-fx-text-fill: -roam-text-hint;");
 
         dateInfo.getChildren().addAll(dayName, monthYear);
@@ -186,7 +186,7 @@ public class TasksTimelineView extends BorderPane {
         Optional<Operation> operation = controller.getOperationById(task.getOperationId());
         if (operation.isPresent()) {
             Label opLabel = new Label(operation.get().getName());
-            opLabel.setFont(Font.font("Poppins Regular", 10));
+            opLabel.setFont(Font.font("Poppins", 10));
             opLabel.setStyle(
                     "-fx-background-color: -roam-blue-light; " +
                             "-fx-text-fill: -roam-blue; " +
@@ -197,7 +197,7 @@ public class TasksTimelineView extends BorderPane {
 
         if (task.getAssignee() != null && !task.getAssignee().isEmpty()) {
             Label assigneeLabel = new Label("@" + task.getAssignee());
-            assigneeLabel.setFont(Font.font("Poppins Regular", 10));
+            assigneeLabel.setFont(Font.font("Poppins", 10));
             assigneeLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
             tagsBox.getChildren().add(assigneeLabel);
         }
@@ -253,10 +253,10 @@ public class TasksTimelineView extends BorderPane {
         title.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         Button createBtn = new Button("+ Create Task");
-        createBtn.setFont(Font.font("Poppins Regular", 14));
+        createBtn.setFont(Font.font("Poppins", 14));
         createBtn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-min-width: 150px; " +
                         "-fx-min-height: 36px; " +
                         "-fx-background-radius: 6; " +
@@ -269,9 +269,9 @@ public class TasksTimelineView extends BorderPane {
 
     private String getPriorityColor(Priority priority) {
         return switch (priority) {
-            case HIGH -> "#C62828";
-            case MEDIUM -> "#F9A825";
-            case LOW -> "#616161";
+            case HIGH -> "-roam-priority-high";
+            case MEDIUM -> "-roam-priority-medium";
+            case LOW -> "-roam-priority-low";
         };
     }
 }

@@ -69,25 +69,17 @@ public class CalendarController {
     }
 
     private void createDefaultCalendarSources() {
-        List<CalendarSource> existing = sourceRepository.findAll();
-        List<String> existingNames = existing.stream()
+        // Create calendar sources from Regions
+        List<Region> regions = regionRepository.findAll();
+        List<CalendarSource> existingSources = sourceRepository.findAll();
+        List<String> existingNames = existingSources.stream()
                 .map(CalendarSource::getName)
                 .collect(Collectors.toList());
 
-        createSourceIfNotExists(existingNames, "Personal", "#4285f4", CalendarSourceType.PERSONAL, true);
-        createSourceIfNotExists(existingNames, "Work", "#F4B400", CalendarSourceType.WORK, false);
-        createSourceIfNotExists(existingNames, "Operations", "#0F9D58", CalendarSourceType.OPERATIONS, false);
-
-        // New Regions
-        createSourceIfNotExists(existingNames, "Lifestyle", "#FF5722", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Knowledge", "#9C27B0", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Skill", "#795548", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Spirituality", "#607D8B", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Relationship", "#E91E63", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Social", "#FF9800", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Career", "#3F51B5", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Finance", "#8BC34A", CalendarSourceType.CUSTOM, false);
-        createSourceIfNotExists(existingNames, "Academic", "#00BCD4", CalendarSourceType.CUSTOM, false);
+        for (Region region : regions) {
+            createSourceIfNotExists(existingNames, region.getName(), region.getColor(), CalendarSourceType.REGION,
+                    region.getIsDefault());
+        }
     }
 
     private void createSourceIfNotExists(List<String> existingNames, String name, String color, CalendarSourceType type,
@@ -106,13 +98,13 @@ public class CalendarController {
 
     private void syncTasksToEvents() {
         try {
-            // Get operations calendar
-            CalendarSource operationsCal = calendarSources.stream()
-                    .filter(s -> s.getType() == CalendarSourceType.OPERATIONS)
+            // Get the first region-based calendar source for task syncing
+            CalendarSource regionCal = calendarSources.stream()
+                    .filter(s -> s.getType() == CalendarSourceType.REGION)
                     .findFirst()
                     .orElse(null);
 
-            if (operationsCal == null) {
+            if (regionCal == null) {
                 return;
             }
 

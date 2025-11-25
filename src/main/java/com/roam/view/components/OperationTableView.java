@@ -30,7 +30,7 @@ public class OperationTableView extends TableView<Operation> {
     private void initialize() {
         // Table configuration
         setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         // Create columns
         TableColumn<Operation, String> nameCol = createNameColumn();
@@ -166,7 +166,7 @@ public class OperationTableView extends TableView<Operation> {
                 });
 
                 deleteBtn.setOnMouseEntered(e -> deleteBtn.setStyle(
-                        "-fx-background-color: #FFEBEE; -fx-cursor: hand; -fx-background-radius: 4;"));
+                        "-fx-background-color: -roam-red-bg; -fx-cursor: hand; -fx-background-radius: 4;"));
                 deleteBtn.setOnMouseExited(e -> deleteBtn.setStyle(
                         "-fx-background-color: transparent; -fx-cursor: hand; -fx-background-radius: 4;"));
             }

@@ -32,32 +32,6 @@ public class OperationsView extends StackPane {
         getChildren().add(contentPane);
 
         initialize();
-
-        // Add listeners for responsive scaling
-        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
-        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
-    }
-
-    private void scaleContent() {
-        double width = getWidth();
-        double height = getHeight();
-
-        // Use layout bounds to get the actual size of the content
-        double contentWidth = contentPane.getLayoutBounds().getWidth();
-        double contentHeight = contentPane.getLayoutBounds().getHeight();
-
-        if (contentWidth == 0 || contentHeight == 0)
-            return;
-
-        // Calculate scale factors
-        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
-        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
-
-        // Use the smaller scale to maintain aspect ratio and fit within bounds
-        double scale = Math.min(scaleX, scaleY);
-
-        contentPane.setScaleX(scale);
-        contentPane.setScaleY(scale);
     }
 
     public void setOnOperationClick(Consumer<Operation> handler) {
@@ -116,25 +90,25 @@ public class OperationsView extends StackPane {
 
     private Button createNewOperationButton() {
         Button btn = new Button("+ New Operation");
-        btn.setFont(Font.font("Poppins Regular", 14));
+        btn.setFont(Font.font("Poppins", 14));
         btn.setMinWidth(150);
         btn.setPrefHeight(40);
         btn.setPadding(new Insets(10, 20, 10, 20));
         btn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;");
 
         btn.setOnMouseEntered(e -> btn.setStyle(
                 "-fx-background-color: -roam-blue-hover; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;"));
 
         btn.setOnMouseExited(e -> btn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-background-radius: 8; " +
                         "-fx-cursor: hand;"));
 
@@ -159,7 +133,7 @@ public class OperationsView extends StackPane {
 
         // Description
         Label description = new Label("Click '+ New Operation' above to create your first operation");
-        description.setFont(Font.font("Poppins Regular", 16));
+        description.setFont(Font.font("Poppins", 16));
         description.setStyle("-fx-text-fill: -roam-text-hint;");
 
         container.getChildren().addAll(icon, title, description);

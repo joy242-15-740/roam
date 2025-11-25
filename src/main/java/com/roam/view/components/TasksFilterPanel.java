@@ -86,7 +86,7 @@ public class TasksFilterPanel extends HBox {
 
         // Clear filters button
         clearFiltersButton = new Button("Clear Filters");
-        clearFiltersButton.setFont(Font.font("Poppins Regular", 12));
+        clearFiltersButton.setFont(Font.font("Poppins", 12));
         clearFiltersButton.setPrefHeight(36);
         clearFiltersButton.setPadding(new Insets(8, 16, 8, 16));
         clearFiltersButton.setStyle(
@@ -136,7 +136,7 @@ public class TasksFilterPanel extends HBox {
                         "-fx-border-color: -roam-border; " +
                         "-fx-border-radius: 6; " +
                         "-fx-border-width: 1; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                        "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 13px;");
         return combo;
     }

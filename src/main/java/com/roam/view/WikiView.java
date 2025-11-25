@@ -5,7 +5,6 @@ import com.roam.view.components.WikiNoteEditor;
 import com.roam.view.components.WikiSidebar;
 import com.roam.view.components.WikiToolbar;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.text.Font;
 
 public class WikiView extends BorderPane {
 
@@ -13,17 +12,13 @@ public class WikiView extends BorderPane {
     private final WikiToolbar toolbar;
     private final WikiSidebar sidebar;
     private final WikiNoteEditor noteEditor;
-    private final Font poppinsRegular;
-    private final Font poppinsBold;
 
-    public WikiView(WikiController controller, Font poppinsRegular, Font poppinsBold) {
+    public WikiView(WikiController controller) {
         this.controller = controller;
-        this.poppinsRegular = poppinsRegular;
-        this.poppinsBold = poppinsBold;
 
-        this.toolbar = new WikiToolbar(controller, poppinsRegular, poppinsBold);
-        this.sidebar = new WikiSidebar(controller, poppinsRegular, poppinsBold);
-        this.noteEditor = new WikiNoteEditor(controller, poppinsRegular, poppinsBold);
+        this.toolbar = new WikiToolbar(controller);
+        this.sidebar = new WikiSidebar(controller);
+        this.noteEditor = new WikiNoteEditor(controller);
 
         initializeLayout();
     }
@@ -35,7 +30,7 @@ public class WikiView extends BorderPane {
         setCenter(noteEditor);
 
         // Set background
-        setStyle("-fx-background-color: -roam-bg-primary;");
+        getStyleClass().add("wiki-view");
 
         // Load initial data
         controller.loadAllNotes();

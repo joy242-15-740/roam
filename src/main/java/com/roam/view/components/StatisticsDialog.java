@@ -54,7 +54,7 @@ public class StatisticsDialog extends Dialog<Void> {
         valLabel.setStyle("-fx-text-fill: -roam-blue;");
 
         Label textLabel = new Label(label);
-        textLabel.setFont(Font.font("Poppins Regular", 13));
+        textLabel.setFont(Font.font("Poppins", 13));
         textLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         box.getChildren().addAll(valLabel, textLabel);

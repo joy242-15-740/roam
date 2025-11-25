@@ -102,7 +102,7 @@ public class OperationDialog extends Dialog<Operation> {
         TextField field = new TextField();
         field.setPromptText(prompt);
         field.setPrefHeight(40);
-        field.setFont(Font.font("Poppins Regular", 14));
+        field.setFont(Font.font("Poppins", 14));
         field.setStyle(
                 "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-background-color: -roam-bg-primary;");
 
@@ -121,7 +121,7 @@ public class OperationDialog extends Dialog<Operation> {
         area.setPromptText(prompt);
         area.setPrefHeight(100);
         area.setWrapText(true);
-        area.setFont(Font.font("Poppins Regular", 14));
+        area.setFont(Font.font("Poppins", 14));
         area.setStyle(
                 "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-control-inner-background: -roam-bg-primary;");
 
@@ -139,7 +139,7 @@ public class OperationDialog extends Dialog<Operation> {
         DatePicker picker = new DatePicker();
         picker.setPromptText("Select due date");
         picker.setPrefHeight(40);
-        picker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        picker.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         return picker;
     }
 
@@ -148,7 +148,7 @@ public class OperationDialog extends Dialog<Operation> {
         combo.getItems().addAll(OperationStatus.values());
         combo.setValue(OperationStatus.ONGOING);
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         // Custom display
         combo.setButtonCell(new StatusListCell());
@@ -162,7 +162,7 @@ public class OperationDialog extends Dialog<Operation> {
         combo.getItems().addAll(Priority.values());
         combo.setValue(Priority.MEDIUM);
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         // Custom display
         combo.setButtonCell(new PriorityListCell());
@@ -176,7 +176,7 @@ public class OperationDialog extends Dialog<Operation> {
         combo.getItems().addAll(regions);
         combo.setPromptText("Select Region");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         combo.setButtonCell(new RegionListCell());
         combo.setCellFactory(lv -> new RegionListCell());
@@ -186,8 +186,8 @@ public class OperationDialog extends Dialog<Operation> {
 
     private Label createErrorLabel() {
         Label label = new Label("Name is required");
-        label.setFont(Font.font("Poppins Regular", 12));
-        label.setStyle("-fx-text-fill: #C62828;");
+        label.setFont(Font.font("Poppins", 12));
+        label.setStyle("-fx-text-fill: -roam-red;");
         label.setVisible(false);
         return label;
     }
@@ -213,7 +213,7 @@ public class OperationDialog extends Dialog<Operation> {
         VBox group = new VBox(5);
 
         Label label = new Label(labelText);
-        label.setFont(Font.font("Poppins Regular", 13));
+        label.setFont(Font.font("Poppins", 13));
         label.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         group.getChildren().addAll(label, field);
@@ -271,7 +271,7 @@ public class OperationDialog extends Dialog<Operation> {
         pane.lookupButton(ButtonType.CANCEL).setStyle(
                 "-fx-background-color: -roam-gray-bg; " +
                         "-fx-text-fill: -roam-text-primary; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                        "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
                         "-fx-min-height: 40px; " +
@@ -293,8 +293,8 @@ public class OperationDialog extends Dialog<Operation> {
 
         pane.lookupButton(pane.getButtonTypes().get(0)).setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                        "-fx-text-fill: -roam-white; " +
+                        "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
                         "-fx-min-height: 40px; " +

@@ -2,6 +2,7 @@ package com.roam.view.components;
 
 import com.roam.model.Operation;
 import com.roam.model.OperationStatus;
+import com.roam.util.StyleBuilder;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -16,6 +17,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
+import static com.roam.util.UIConstants.*;
+
+/**
+ * A styled card component for displaying operation details.
+ * Features status badges, priority indicators, and metadata.
+ */
 public class OperationInfoCard extends VBox {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM dd, yyyy");
@@ -27,15 +34,10 @@ public class OperationInfoCard extends VBox {
         this.operation = operation;
         this.onEdit = onEdit;
 
-        setSpacing(15);
-        setPadding(new Insets(25));
-        setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 8; " +
-                        "-fx-background-radius: 8;");
-        VBox.setMargin(this, new Insets(0, 0, 20, 0));
+        setSpacing(SPACING_STANDARD);
+        setPadding(new Insets(SPACING_XL));
+        setStyle(StyleBuilder.sectionStyle());
+        VBox.setMargin(this, new Insets(0, 0, SPACING_LG, 0));
 
         // Header row
         HBox header = createHeader();
@@ -60,36 +62,30 @@ public class OperationInfoCard extends VBox {
     }
 
     private HBox createHeader() {
-        HBox header = new HBox(15);
+        HBox header = new HBox(SPACING_STANDARD);
         header.setAlignment(Pos.CENTER_LEFT);
 
         // Operation name
         Label nameLabel = new Label(operation.getName());
-        nameLabel.setFont(Font.font("Poppins Bold", 32));
-        nameLabel.setStyle("-fx-text-fill: -roam-text-primary;");
+        nameLabel.setFont(Font.font(FONT_BOLD, FONT_SIZE_DISPLAY));
+        nameLabel.setStyle("-fx-text-fill: " + TEXT_PRIMARY + ";");
         HBox.setHgrow(nameLabel, javafx.scene.layout.Priority.ALWAYS);
 
-        // Edit button
+        // Edit button with consistent styling
         Button editBtn = new Button("✎ Edit Info");
-        editBtn.setFont(Font.font("Poppins Regular", 14));
-        editBtn.setStyle(
-                "-fx-background-color: -roam-gray-bg; " +
-                        "-fx-text-fill: -roam-text-primary; " +
-                        "-fx-padding: 8 16 8 16; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;");
-        editBtn.setOnMouseEntered(e -> editBtn.setStyle(
-                "-fx-background-color: -roam-border; " +
-                        "-fx-text-fill: -roam-text-primary; " +
-                        "-fx-padding: 8 16 8 16; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;"));
-        editBtn.setOnMouseExited(e -> editBtn.setStyle(
-                "-fx-background-color: -roam-gray-bg; " +
-                        "-fx-text-fill: -roam-text-primary; " +
-                        "-fx-padding: 8 16 8 16; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;"));
+        editBtn.setFont(Font.font(FONT_REGULAR, FONT_SIZE_STANDARD));
+        String normalStyle = StyleBuilder.secondaryButtonStyle();
+        String hoverStyle = StyleBuilder.create()
+                .backgroundColor(BORDER)
+                .textFill(TEXT_PRIMARY)
+                .padding(SPACING_SM, SPACING_STANDARD)
+                .radius(RADIUS_STANDARD)
+                .cursorHand()
+                .build();
+
+        editBtn.setStyle(normalStyle);
+        editBtn.setOnMouseEntered(e -> editBtn.setStyle(hoverStyle));
+        editBtn.setOnMouseExited(e -> editBtn.setStyle(normalStyle));
         editBtn.setOnAction(e -> {
             if (onEdit != null) {
                 onEdit.accept(operation);
@@ -101,7 +97,7 @@ public class OperationInfoCard extends VBox {
     }
 
     private HBox createMetadata() {
-        HBox metadata = new HBox(20);
+        HBox metadata = new HBox(SPACING_LG);
         metadata.setAlignment(Pos.CENTER_LEFT);
 
         // Status badge
@@ -123,13 +119,13 @@ public class OperationInfoCard extends VBox {
 
         // Due date
         Label dueDateLabel = new Label();
-        dueDateLabel.setFont(Font.font("Poppins Regular", 13));
-        dueDateLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+        dueDateLabel.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD + 1));
+        dueDateLabel.setStyle("-fx-text-fill: " + TEXT_SECONDARY + ";");
 
-        HBox dueDateBox = new HBox(5);
+        HBox dueDateBox = new HBox(SPACING_XS + 1);
         dueDateBox.setAlignment(Pos.CENTER_LEFT);
         FontIcon calIcon = new FontIcon(Feather.CALENDAR);
-        calIcon.setIconSize(14);
+        calIcon.setIconSize(ICON_SM);
 
         if (operation.getDueDate() != null) {
             dueDateLabel.setText("Due: " + DATE_FORMATTER.format(operation.getDueDate()));
@@ -143,15 +139,15 @@ public class OperationInfoCard extends VBox {
     }
 
     private VBox createTextSection(String title, String content) {
-        VBox section = new VBox(5);
+        VBox section = new VBox(SPACING_XS + 1);
 
         Label titleLabel = new Label(title);
-        titleLabel.setFont(Font.font("Poppins Regular", 12));
-        titleLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+        titleLabel.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD));
+        titleLabel.setStyle("-fx-text-fill: " + TEXT_HINT + ";");
 
         Label contentLabel = new Label(content);
-        contentLabel.setFont(Font.font("Poppins Regular", 14));
-        contentLabel.setStyle("-fx-text-fill: -roam-text-primary; -fx-line-spacing: 0.6;");
+        contentLabel.setFont(Font.font(FONT_REGULAR, FONT_SIZE_STANDARD));
+        contentLabel.setStyle("-fx-text-fill: " + TEXT_PRIMARY + "; -fx-line-spacing: 0.6;");
         contentLabel.setWrapText(true);
         contentLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -161,24 +157,25 @@ public class OperationInfoCard extends VBox {
 
     private Label createStatusBadge(OperationStatus status) {
         Label badge = new Label();
-        badge.setFont(Font.font("Poppins Regular", 13));
-        badge.setStyle("-fx-padding: 4 12 4 12; -fx-background-radius: 12;");
+        badge.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD + 1));
+        String baseBadgeStyle = "-fx-padding: 4 12 4 12; -fx-background-radius: " + RADIUS_LARGE + ";";
+        badge.setStyle(baseBadgeStyle);
 
         switch (status) {
             case ONGOING -> {
                 badge.setText("Ongoing");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: -roam-blue-light; -fx-text-fill: -roam-blue;");
+                        "-fx-background-color: " + BLUE_LIGHT + "; -fx-text-fill: " + BLUE + ";");
             }
             case IN_PROGRESS -> {
                 badge.setText("In Progress");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #FFF3E0; -fx-text-fill: #F57C00;");
+                        "-fx-background-color: " + ORANGE_BG + "; -fx-text-fill: " + ORANGE + ";");
             }
             case END -> {
                 badge.setText("Completed");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #E8F5E9; -fx-text-fill: #388E3C;");
+                        "-fx-background-color: " + GREEN_BG + "; -fx-text-fill: " + GREEN + ";");
             }
         }
 
@@ -187,24 +184,25 @@ public class OperationInfoCard extends VBox {
 
     private Label createPriorityBadge(com.roam.model.Priority priority) {
         Label badge = new Label();
-        badge.setFont(Font.font("Poppins Regular", 13));
-        badge.setStyle("-fx-padding: 4 12 4 12; -fx-background-radius: 12;");
+        badge.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD + 1));
+        String baseBadgeStyle = "-fx-padding: 4 12 4 12; -fx-background-radius: " + RADIUS_LARGE + ";";
+        badge.setStyle(baseBadgeStyle);
 
         switch (priority) {
             case HIGH -> {
                 badge.setText("High");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #FFEBEE; -fx-text-fill: #C62828;");
+                        "-fx-background-color: " + RED_BG + "; -fx-text-fill: " + RED + ";");
             }
             case MEDIUM -> {
                 badge.setText("Medium");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: #FFF8E1; -fx-text-fill: #F9A825;");
+                        "-fx-background-color: " + YELLOW_BG + "; -fx-text-fill: " + YELLOW + ";");
             }
             case LOW -> {
                 badge.setText("Low");
                 badge.setStyle(badge.getStyle() +
-                        "-fx-background-color: -roam-gray-bg; -fx-text-fill: -roam-text-secondary;");
+                        "-fx-background-color: " + BG_GRAY + "; -fx-text-fill: " + TEXT_SECONDARY + ";");
             }
         }
 
@@ -213,11 +211,8 @@ public class OperationInfoCard extends VBox {
 
     private Label createRegionBadge(String region) {
         Label badge = new Label("🌍 " + region);
-        badge.setFont(Font.font("Poppins Regular", 13));
-        badge.setStyle("-fx-padding: 4 12 4 12; " +
-                "-fx-background-radius: 12; " +
-                "-fx-background-color: #E3F2FD; " +
-                "-fx-text-fill: #1976D2;");
+        badge.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD + 1));
+        badge.setStyle(StyleBuilder.badgeStyle("-roam-blue-tag-bg", "-roam-blue-tag"));
         return badge;
     }
 

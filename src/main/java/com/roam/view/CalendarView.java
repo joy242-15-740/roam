@@ -122,8 +122,8 @@ public class CalendarView extends BorderPane {
         Button newEventBtn = createToolbarButton("+ New Event");
         newEventBtn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                        "-fx-text-fill: -roam-white; " +
+                        "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 120px; " +
                         "-fx-min-height: 36px; " +
@@ -144,7 +144,7 @@ public class CalendarView extends BorderPane {
 
     private Button createToolbarButton(String text) {
         Button btn = new Button(text);
-        btn.setFont(Font.font("Poppins Regular", 14));
+        btn.setFont(Font.font("Poppins", 14));
         btn.setMinWidth(80);
         btn.setPrefHeight(36);
         btn.setStyle(
@@ -198,7 +198,7 @@ public class CalendarView extends BorderPane {
 
     private ToggleButton createViewToggleButton(String text, ViewType viewType, boolean isFirst) {
         ToggleButton btn = new ToggleButton(text);
-        btn.setFont(Font.font("Poppins Regular", 13));
+        btn.setFont(Font.font("Poppins", 13));
         btn.setMinWidth(70);
         btn.setPrefHeight(36);
 
@@ -382,7 +382,7 @@ public class CalendarView extends BorderPane {
         for (int hour = 6; hour <= 23; hour++) {
             Label timeLabel = new Label(
                     String.format("%d:00", hour > 12 ? hour - 12 : hour) + (hour >= 12 ? " PM" : " AM"));
-            timeLabel.setFont(Font.font("Poppins Regular", 11));
+            timeLabel.setFont(Font.font("Poppins", 11));
             timeLabel.setPrefHeight(60);
             timeLabel.setAlignment(Pos.TOP_RIGHT);
             timeLabel.setPadding(new Insets(5, 5, 0, 0));
@@ -412,7 +412,7 @@ public class CalendarView extends BorderPane {
             boolean isToday = date.equals(LocalDate.now());
             if (isToday) {
                 dayNum.setStyle(
-                        "-fx-text-fill: #FFFFFF; -fx-background-color: -roam-blue; -fx-background-radius: 50%; -fx-min-width: 30; -fx-min-height: 30; -fx-alignment: center;");
+                        "-fx-text-fill: -roam-white; -fx-background-color: -roam-blue; -fx-background-radius: 50%; -fx-min-width: 30; -fx-min-height: 30; -fx-alignment: center;");
             } else {
                 dayNum.setStyle("-fx-text-fill: -roam-text-primary;");
             }
@@ -485,11 +485,11 @@ public class CalendarView extends BorderPane {
 
         String timeStr = event.getStartDateTime().toLocalTime().toString();
         Label label = new Label(timeStr + " " + event.getTitle());
-        label.setFont(Font.font("Poppins Regular", 11));
+        label.setFont(Font.font("Poppins", 11));
         label.setMaxWidth(Double.MAX_VALUE);
         label.setStyle(
                 "-fx-background-color: " + color + "; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-padding: 3 5 3 5; " +
                         "-fx-background-radius: 3; " +
                         "-fx-cursor: hand;");
@@ -528,7 +528,7 @@ public class CalendarView extends BorderPane {
             }
         } else {
             Label noEvents = new Label("No all-day events");
-            noEvents.setFont(Font.font("Poppins Regular", 11));
+            noEvents.setFont(Font.font("Poppins", 11));
             noEvents.setStyle("-fx-text-fill: -roam-text-hint;");
             allDaySection.getChildren().add(noEvents);
         }
@@ -557,7 +557,7 @@ public class CalendarView extends BorderPane {
             // Time label
             Label timeLabel = new Label(String.format("%d:00", hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour))
                     + (hour >= 12 ? " PM" : " AM"));
-            timeLabel.setFont(Font.font("Poppins Regular", 12));
+            timeLabel.setFont(Font.font("Poppins", 12));
             timeLabel.setPrefHeight(80);
             timeLabel.setAlignment(Pos.TOP_RIGHT);
             timeLabel.setPadding(new Insets(5, 10, 0, 0));
@@ -622,12 +622,12 @@ public class CalendarView extends BorderPane {
         }
 
         Label label = new Label(text);
-        label.setFont(Font.font("Poppins Regular", 12));
+        label.setFont(Font.font("Poppins", 12));
         label.setMaxWidth(Double.MAX_VALUE);
         label.setWrapText(true);
         label.setStyle(
                 "-fx-background-color: " + color + "; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-padding: 8 10 8 10; " +
                         "-fx-background-radius: 4; " +
                         "-fx-cursor: hand;");
@@ -657,7 +657,7 @@ public class CalendarView extends BorderPane {
 
         // Day number
         Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
-        dayLabel.setFont(Font.font("Poppins Regular", 14));
+        dayLabel.setFont(Font.font("Poppins", 14));
         dayLabel.setStyle("-fx-text-fill: " + (isCurrentMonth ? "-roam-text-primary" : "-roam-text-hint"));
         dayLabel.setAlignment(Pos.TOP_RIGHT);
         dayLabel.setMaxWidth(Double.MAX_VALUE);
@@ -673,7 +673,7 @@ public class CalendarView extends BorderPane {
             if (count >= 3) {
                 int remaining = eventsOnDate.size() - 3;
                 Label moreLabel = new Label("+" + remaining + " more");
-                moreLabel.setFont(Font.font("Poppins Regular", 11));
+                moreLabel.setFont(Font.font("Poppins", 11));
                 moreLabel.setStyle(
                         "-fx-text-fill: -roam-blue; " +
                                 "-fx-cursor: hand; " +
@@ -711,7 +711,7 @@ public class CalendarView extends BorderPane {
         String color = source != null ? source.getColor() : "#4285f4";
 
         Label label = new Label(event.getTitle());
-        label.setFont(Font.font("Poppins Regular", 11));
+        label.setFont(Font.font("Poppins", 11));
         label.setMaxWidth(Double.MAX_VALUE);
         label.setStyle(
                 "-fx-background-color: " + color + "; " +
@@ -748,7 +748,7 @@ public class CalendarView extends BorderPane {
         VBox calendarsBox = new VBox(8);
         for (CalendarSource source : controller.getCalendarSources()) {
             CheckBox cb = new CheckBox(source.getName());
-            cb.setFont(Font.font("Poppins Regular", 14));
+            cb.setFont(Font.font("Poppins", 14));
             cb.setSelected(source.getIsVisible());
 
             // Color indicator
@@ -829,11 +829,11 @@ public class CalendarView extends BorderPane {
             emptyBox.setAlignment(Pos.CENTER);
 
             Label emptyLabel = new Label("No events scheduled for " + currentYearMonth.format(MONTH_YEAR_FORMATTER));
-            emptyLabel.setFont(Font.font("Poppins Regular", 16));
+            emptyLabel.setFont(Font.font("Poppins", 16));
             emptyLabel.setStyle("-fx-text-fill: -roam-text-hint;");
 
             Button createBtn = new Button("+ Create Event");
-            createBtn.setFont(Font.font("Poppins Regular", 14));
+            createBtn.setFont(Font.font("Poppins", 14));
             createBtn.setStyle(
                     "-fx-background-color: -roam-blue; " +
                             "-fx-text-fill: #FFFFFF; " +
@@ -891,7 +891,7 @@ public class CalendarView extends BorderPane {
 
                 Label monthYear = new Label(
                         eventDate.format(DateTimeFormatter.ofPattern("MMM yyyy")));
-                monthYear.setFont(Font.font("Poppins Regular", 12));
+                monthYear.setFont(Font.font("Poppins", 12));
                 monthYear.setStyle("-fx-text-fill: -roam-text-hint;");
 
                 dateInfo.getChildren().addAll(dayName, monthYear);
@@ -932,7 +932,7 @@ public class CalendarView extends BorderPane {
 
             Label endTime = new Label(
                     event.getEndDateTime().toLocalTime().format(DateTimeFormatter.ofPattern("h:mm a")));
-            endTime.setFont(Font.font("Poppins Regular", 11));
+            endTime.setFont(Font.font("Poppins", 11));
             endTime.setStyle("-fx-text-fill: -roam-text-hint;");
 
             timeBox.getChildren().addAll(startTime, endTime);
@@ -961,7 +961,7 @@ public class CalendarView extends BorderPane {
         // Location
         if (event.getLocation() != null && !event.getLocation().isEmpty()) {
             Label locationLabel = new Label("📍 " + event.getLocation());
-            locationLabel.setFont(Font.font("Poppins Regular", 12));
+            locationLabel.setFont(Font.font("Poppins", 12));
             locationLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
             detailsBox.getChildren().add(locationLabel);
         }
@@ -969,7 +969,7 @@ public class CalendarView extends BorderPane {
         // Calendar source
         if (source != null) {
             Label sourceLabel = new Label(source.getName());
-            sourceLabel.setFont(Font.font("Poppins Regular", 11));
+            sourceLabel.setFont(Font.font("Poppins", 11));
             sourceLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             detailsBox.getChildren().add(sourceLabel);
         }
@@ -1001,7 +1001,7 @@ public class CalendarView extends BorderPane {
                 dot.setFill(Color.web(source.getColor()));
 
                 Label name = new Label(source.getName());
-                name.setFont(Font.font("Poppins Regular", 12));
+                name.setFont(Font.font("Poppins", 12));
                 name.setStyle("-fx-text-fill: -roam-text-secondary;");
 
                 item.getChildren().addAll(dot, name);

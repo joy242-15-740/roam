@@ -106,7 +106,7 @@ public class EditableDateCell extends TableCell<Task, LocalDateTime> {
 
         if (date == null) {
             Label label = new Label("No date");
-            label.setFont(Font.font("Poppins Regular", 12));
+            label.setFont(Font.font("Poppins", 12));
             label.setTextFill(Color.GRAY);
             container.getChildren().add(label);
         } else {
@@ -120,7 +120,7 @@ public class EditableDateCell extends TableCell<Task, LocalDateTime> {
             }
 
             Label dateLabel = new Label(date.format(FORMATTER));
-            dateLabel.setFont(Font.font("Poppins Regular", 12));
+            dateLabel.setFont(Font.font("Poppins", 12));
 
             if (isOverdue) {
                 dateLabel.setTextFill(Color.rgb(198, 40, 40));

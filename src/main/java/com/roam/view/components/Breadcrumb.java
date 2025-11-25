@@ -24,7 +24,7 @@ public class Breadcrumb extends HBox {
 
         // "Operations" link
         Hyperlink operationsLink = new Hyperlink("Operations");
-        operationsLink.setFont(Font.font("Poppins Regular", 14));
+        operationsLink.setFont(Font.font("Poppins", 14));
         operationsLink.setStyle("-fx-text-fill: -roam-blue; -fx-border-width: 0; -fx-underline: false;");
         operationsLink.setOnMouseEntered(
                 e -> operationsLink.setStyle("-fx-text-fill: -roam-blue; -fx-border-width: 0; -fx-underline: true;"));
@@ -38,7 +38,7 @@ public class Breadcrumb extends HBox {
 
         // Separator
         Label separator = new Label(">");
-        separator.setFont(Font.font("Poppins Regular", 14));
+        separator.setFont(Font.font("Poppins", 14));
         separator.setStyle("-fx-text-fill: -roam-text-hint;");
 
         // Operation name
@@ -46,7 +46,7 @@ public class Breadcrumb extends HBox {
                 ? operationName.substring(0, 40) + "..."
                 : operationName;
         Label nameLabel = new Label(displayName);
-        nameLabel.setFont(Font.font("Poppins Regular", 14));
+        nameLabel.setFont(Font.font("Poppins", 14));
         nameLabel.setStyle("-fx-text-fill: -roam-text-primary;");
 
         // Spacer
@@ -55,7 +55,7 @@ public class Breadcrumb extends HBox {
 
         // Back button
         Hyperlink backButton = new Hyperlink("← Back");
-        backButton.setFont(Font.font("Poppins Regular", 14));
+        backButton.setFont(Font.font("Poppins", 14));
         backButton.setStyle(
                 "-fx-background-color: transparent; " +
                         "-fx-text-fill: -roam-text-secondary; " +

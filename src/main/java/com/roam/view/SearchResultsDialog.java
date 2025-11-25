@@ -47,7 +47,7 @@ public class SearchResultsDialog {
 
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(20));
-        root.setStyle("-fx-background-color: white;");
+        root.setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Top: Title and filters
         VBox top = new VBox(15);
@@ -55,12 +55,12 @@ public class SearchResultsDialog {
         // Title
         Label titleLabel = new Label("Search Results for \"" + query + "\"");
         titleLabel.setFont(Font.font("Poppins Bold", 18));
-        titleLabel.setStyle("-fx-text-fill: #000000;");
+        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
 
         // Result count
         Label countLabel = new Label(results.size() + " results found");
-        countLabel.setFont(Font.font("Poppins Regular", 12));
-        countLabel.setStyle("-fx-text-fill: #666666;");
+        countLabel.setFont(Font.font("Poppins", 12));
+        countLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         // Filters
         HBox filters = createFilters();
@@ -105,7 +105,7 @@ public class SearchResultsDialog {
         filters.setPadding(new Insets(10, 0, 0, 0));
 
         Label filterLabel = new Label("Filter by type:");
-        filterLabel.setFont(Font.font("Poppins Regular", 12));
+        filterLabel.setFont(Font.font("Poppins", 12));
 
         noteFilter = new CheckBox("Wiki");
         taskFilter = new CheckBox("Tasks");
@@ -161,8 +161,8 @@ public class SearchResultsDialog {
 
         if (filteredResults.isEmpty()) {
             Label noResults = new Label("No results found");
-            noResults.setFont(Font.font("Poppins Regular", 14));
-            noResults.setStyle("-fx-text-fill: #666666;");
+            noResults.setFont(Font.font("Poppins", 14));
+            noResults.setStyle("-fx-text-fill: -roam-text-secondary;");
             resultsContainer.getChildren().add(noResults);
             return;
         }
@@ -209,7 +209,7 @@ public class SearchResultsDialog {
     private Label createGroupHeader(String text) {
         Label header = new Label(text);
         header.setFont(Font.font("Poppins Bold", 14));
-        header.setStyle("-fx-text-fill: #333333;");
+        header.setStyle("-fx-text-fill: -roam-text-primary;");
         header.setPadding(new Insets(10, 0, 5, 0));
         return header;
     }
@@ -217,17 +217,17 @@ public class SearchResultsDialog {
     private VBox createResultItem(SearchService.SearchResult result) {
         VBox item = new VBox(5);
         item.setPadding(new Insets(10));
-        item.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 8; -fx-cursor: hand;");
+        item.setStyle("-fx-background-color: -roam-gray-bg; -fx-background-radius: 8; -fx-cursor: hand;");
 
         // Title
         Label titleLabel = new Label(result.title != null ? result.title : "Untitled");
         titleLabel.setFont(Font.font("Poppins Bold", 13));
-        titleLabel.setStyle("-fx-text-fill: #000000;");
+        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
 
         // Snippet
         Label snippetLabel = new Label(result.snippet);
-        snippetLabel.setFont(Font.font("Poppins Regular", 11));
-        snippetLabel.setStyle("-fx-text-fill: #666666;");
+        snippetLabel.setFont(Font.font("Poppins", 11));
+        snippetLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
         snippetLabel.setWrapText(true);
 
         // Metadata
@@ -241,22 +241,22 @@ public class SearchResultsDialog {
         // Additional metadata based on type
         if (result.priority != null) {
             Label priorityLabel = new Label("Priority: " + result.priority);
-            priorityLabel.setFont(Font.font("Poppins Regular", 10));
-            priorityLabel.setStyle("-fx-text-fill: #888888;");
+            priorityLabel.setFont(Font.font("Poppins", 10));
+            priorityLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             metadata.getChildren().add(priorityLabel);
         }
 
         if (result.status != null) {
             Label statusLabel = new Label("Status: " + result.status);
-            statusLabel.setFont(Font.font("Poppins Regular", 10));
-            statusLabel.setStyle("-fx-text-fill: #888888;");
+            statusLabel.setFont(Font.font("Poppins", 10));
+            statusLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             metadata.getChildren().add(statusLabel);
         }
 
         if (result.region != null && !result.region.isEmpty()) {
             Label regionLabel = new Label("Region: " + result.region);
-            regionLabel.setFont(Font.font("Poppins Regular", 10));
-            regionLabel.setStyle("-fx-text-fill: #888888;");
+            regionLabel.setFont(Font.font("Poppins", 10));
+            regionLabel.setStyle("-fx-text-fill: -roam-text-hint;");
             metadata.getChildren().add(regionLabel);
         }
 
@@ -264,9 +264,10 @@ public class SearchResultsDialog {
 
         // Hover effect
         item.setOnMouseEntered(
-                e -> item.setStyle("-fx-background-color: #e8e8e8; -fx-background-radius: 8; -fx-cursor: hand;"));
+                e -> item.setStyle(
+                        "-fx-background-color: -roam-gray-light; -fx-background-radius: 8; -fx-cursor: hand;"));
         item.setOnMouseExited(
-                e -> item.setStyle("-fx-background-color: #f5f5f5; -fx-background-radius: 8; -fx-cursor: hand;"));
+                e -> item.setStyle("-fx-background-color: -roam-gray-bg; -fx-background-radius: 8; -fx-cursor: hand;"));
 
         // Click handler
         item.setOnMouseClicked(e -> {
@@ -288,19 +289,19 @@ public class SearchResultsDialog {
         switch (type) {
             case "wiki":
                 badge.setText("WIKI");
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #4285f4;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-blue;");
                 break;
             case "task":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #34a853;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-green;");
                 break;
             case "operation":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #ea4335;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-red;");
                 break;
             case "event":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #fbbc04;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-orange;");
                 break;
             case "journal":
-                badge.setStyle(badge.getStyle() + " -fx-background-color: #9c27b0;");
+                badge.setStyle(badge.getStyle() + " -fx-background-color: -roam-purple;");
                 break;
         }
 

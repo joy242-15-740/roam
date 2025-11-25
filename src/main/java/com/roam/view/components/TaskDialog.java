@@ -86,7 +86,7 @@ public class TaskDialog extends Dialog<Task> {
 
             // Handle delete button
             Button deleteBtn = (Button) getDialogPane().lookupButton(deleteButton);
-            deleteBtn.setStyle("-fx-text-fill: #C62828;");
+            deleteBtn.setStyle("-fx-text-fill: -roam-red;");
             deleteBtn.addEventFilter(javafx.event.ActionEvent.ACTION, event -> {
                 event.consume();
                 if (onDelete != null) {
@@ -154,8 +154,9 @@ public class TaskDialog extends Dialog<Task> {
         TextField field = new TextField();
         field.setPromptText(prompt);
         field.setPrefHeight(40);
-        field.setFont(Font.font("Poppins Regular", 14));
-        field.setStyle("-fx-border-color: #E0E0E0; -fx-border-radius: 4; -fx-background-radius: 4;");
+        field.setFont(Font.font("Poppins", 14));
+        field.setStyle(
+                "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-background-color: -roam-bg-primary;");
 
         field.textProperty().addListener((obs, old, newVal) -> {
             if (newVal != null && newVal.length() > maxLength) {
@@ -171,8 +172,9 @@ public class TaskDialog extends Dialog<Task> {
         area.setPromptText(prompt);
         area.setPrefHeight(80);
         area.setWrapText(true);
-        area.setFont(Font.font("Poppins Regular", 14));
-        area.setStyle("-fx-border-color: #E0E0E0; -fx-border-radius: 4; -fx-background-radius: 4;");
+        area.setFont(Font.font("Poppins", 14));
+        area.setStyle(
+                "-fx-border-color: -roam-border; -fx-border-radius: 4; -fx-background-radius: 4; -fx-text-fill: -roam-text-primary; -fx-control-inner-background: -roam-bg-primary;");
 
         area.textProperty().addListener((obs, old, newVal) -> {
             if (newVal != null && newVal.length() > maxLength) {
@@ -188,7 +190,7 @@ public class TaskDialog extends Dialog<Task> {
         combo.getItems().addAll(TaskStatus.values());
         combo.setValue(TaskStatus.TODO);
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         combo.setButtonCell(new TaskStatusListCell());
         combo.setCellFactory(lv -> new TaskStatusListCell());
@@ -201,7 +203,7 @@ public class TaskDialog extends Dialog<Task> {
         combo.getItems().addAll(Priority.values());
         combo.setValue(Priority.MEDIUM);
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         combo.setButtonCell(new PriorityListCell());
         combo.setCellFactory(lv -> new PriorityListCell());
@@ -214,7 +216,7 @@ public class TaskDialog extends Dialog<Task> {
         combo.getItems().addAll(ops);
         combo.setPromptText("Select operation");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         combo.setButtonCell(new OperationListCell());
         combo.setCellFactory(lv -> new OperationListCell());
@@ -227,7 +229,7 @@ public class TaskDialog extends Dialog<Task> {
         combo.getItems().addAll(regions);
         combo.setPromptText("Select Region");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         combo.setButtonCell(new RegionListCell());
         combo.setCellFactory(lv -> new RegionListCell());
         return combo;
@@ -238,7 +240,7 @@ public class TaskDialog extends Dialog<Task> {
         combo.getItems().addAll(events);
         combo.setPromptText("Link to Event");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         combo.setButtonCell(new CalendarEventListCell());
         combo.setCellFactory(lv -> new CalendarEventListCell());
         return combo;
@@ -249,7 +251,7 @@ public class TaskDialog extends Dialog<Task> {
         combo.getItems().addAll(notes);
         combo.setPromptText("Link to Wiki");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         combo.setButtonCell(new NoteListCell());
         combo.setCellFactory(lv -> new NoteListCell());
         return combo;
@@ -260,7 +262,7 @@ public class TaskDialog extends Dialog<Task> {
         combo.getItems().addAll("None", "Daily", "Weekly", "Monthly", "Yearly");
         combo.setValue("None");
         combo.setPrefHeight(40);
-        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        combo.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         return combo;
     }
 
@@ -268,14 +270,14 @@ public class TaskDialog extends Dialog<Task> {
         DatePicker picker = new DatePicker();
         picker.setPromptText("Select due date");
         picker.setPrefHeight(40);
-        picker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        picker.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
         return picker;
     }
 
     private Label createErrorLabel() {
         Label label = new Label("Title is required");
-        label.setFont(Font.font("Poppins Regular", 12));
-        label.setStyle("-fx-text-fill: #C62828;");
+        label.setFont(Font.font("Poppins", 12));
+        label.setStyle("-fx-text-fill: -roam-red;");
         label.setVisible(false);
         return label;
     }
@@ -318,13 +320,13 @@ public class TaskDialog extends Dialog<Task> {
     private VBox createRecurrenceSection() {
         VBox section = new VBox(10);
         Label label = new Label("Recurrence");
-        label.setFont(Font.font("Poppins Regular", 13));
-        label.setStyle("-fx-text-fill: #616161;");
+        label.setFont(Font.font("Poppins", 13));
+        label.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         HBox box = new HBox(10);
         recurrenceCombo.setPrefWidth(150);
         recurrenceEndDatePicker.setPrefWidth(200);
-        recurrenceEndDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        recurrenceEndDatePicker.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: 14px;");
 
         box.getChildren().addAll(recurrenceCombo, recurrenceEndDatePicker);
         section.getChildren().addAll(label, box);
@@ -335,8 +337,8 @@ public class TaskDialog extends Dialog<Task> {
         VBox group = new VBox(5);
 
         Label label = new Label(labelText);
-        label.setFont(Font.font("Poppins Regular", 13));
-        label.setStyle("-fx-text-fill: #616161;");
+        label.setFont(Font.font("Poppins", 13));
+        label.setStyle("-fx-text-fill: -roam-text-secondary;");
 
         group.getChildren().addAll(label, field);
         return group;
@@ -447,9 +449,9 @@ public class TaskDialog extends Dialog<Task> {
     private void applyCustomStyling() {
         DialogPane pane = getDialogPane();
         pane.lookupButton(ButtonType.CANCEL).setStyle(
-                "-fx-background-color: #F5F5F5; " +
-                        "-fx-text-fill: #000000; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                "-fx-background-color: -roam-gray-bg; " +
+                        "-fx-text-fill: -roam-text-primary; " +
+                        "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
                         "-fx-min-height: 40px; " +
@@ -457,9 +459,9 @@ public class TaskDialog extends Dialog<Task> {
                         "-fx-cursor: hand;");
 
         pane.lookupButton(pane.getButtonTypes().get(pane.getButtonTypes().size() - 1)).setStyle(
-                "-fx-background-color: #4285f4; " +
-                        "-fx-text-fill: #FFFFFF; " +
-                        "-fx-font-family: 'Poppins Regular'; " +
+                "-fx-background-color: -roam-blue; " +
+                        "-fx-text-fill: -roam-white; " +
+                        "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
                         "-fx-min-height: 40px; " +

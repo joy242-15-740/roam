@@ -3,7 +3,6 @@ package com.roam.layout;
 import com.roam.controller.*;
 import com.roam.view.*;
 import javafx.scene.Node;
-import javafx.scene.text.Font;
 
 import java.util.function.Consumer;
 
@@ -13,12 +12,7 @@ import java.util.function.Consumer;
  */
 public class ViewFactory {
 
-    private final Font regularFont;
-    private final Font boldFont;
-
-    public ViewFactory(Font regularFont, Font boldFont) {
-        this.regularFont = regularFont;
-        this.boldFont = boldFont;
+    public ViewFactory() {
     }
 
     /**
@@ -72,7 +66,7 @@ public class ViewFactory {
      */
     public Node createWikiView() {
         WikiController controller = new WikiController();
-        return new WikiView(controller, regularFont, boldFont);
+        return new WikiView(controller);
     }
 
     /**

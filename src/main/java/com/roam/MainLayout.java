@@ -6,7 +6,6 @@ import com.roam.layout.SidebarResizeHandler;
 import com.roam.layout.ViewFactory;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +17,6 @@ public class MainLayout extends BorderPane {
 
     private static final Logger logger = LoggerFactory.getLogger(MainLayout.class);
 
-    private final Font regularFont;
-    private final Font boldFont;
-
     // Content area
     private StackPane contentArea;
 
@@ -30,10 +26,7 @@ public class MainLayout extends BorderPane {
     private SidebarComponent sidebarComponent;
     private SidebarResizeHandler resizeHandler;
 
-    public MainLayout(Font regularFont, Font boldFont) {
-        this.regularFont = regularFont;
-        this.boldFont = boldFont;
-
+    public MainLayout() {
         logger.debug("Initializing MainLayout");
         initializeLayout();
     }
@@ -45,7 +38,7 @@ public class MainLayout extends BorderPane {
         contentArea.getStyleClass().add("content-area");
 
         // Create view factory
-        viewFactory = new ViewFactory(regularFont, boldFont);
+        viewFactory = new ViewFactory();
 
         // Create resize handler with temporary sidebar (will be updated after sidebar
         // creation)

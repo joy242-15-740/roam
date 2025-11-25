@@ -101,10 +101,10 @@ public class NotesEditor extends BorderPane {
         HBox.setHgrow(title, Priority.ALWAYS);
 
         Button newNoteBtn = new Button("+ New Wiki");
-        newNoteBtn.setFont(Font.font("Poppins Regular", 12));
+        newNoteBtn.setFont(Font.font("Poppins", 12));
         newNoteBtn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-padding: 6 12 6 12; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
@@ -165,10 +165,10 @@ public class NotesEditor extends BorderPane {
 
     private Button createSaveButton() {
         Button btn = new Button("💾 Save");
-        btn.setFont(Font.font("Poppins Regular", 14));
+        btn.setFont(Font.font("Poppins", 14));
         btn.setStyle(
                 "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: #FFFFFF; " +
+                        "-fx-text-fill: -roam-white; " +
                         "-fx-padding: 8 16 8 16; " +
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
@@ -179,7 +179,7 @@ public class NotesEditor extends BorderPane {
 
     private Label createStatusLabel() {
         Label label = new Label("");
-        label.setFont(Font.font("Poppins Regular", 12));
+        label.setFont(Font.font("Poppins", 12));
         label.setStyle("-fx-text-fill: -roam-text-hint;");
         return label;
     }
@@ -223,7 +223,7 @@ public class NotesEditor extends BorderPane {
                 "-fx-border-color: -roam-border; " +
                 "-fx-border-width: 1; " +
                 "-fx-padding: 8 16 8 16; " +
-                "-fx-font-family: 'Poppins Regular'; " +
+                "-fx-font-family: 'Poppins'; " +
                 "-fx-font-size: 14px; " +
                 "-fx-cursor: hand;";
 
@@ -335,7 +335,7 @@ public class NotesEditor extends BorderPane {
         icon.setStyle("-fx-font-size: 72px;");
 
         Label message = new Label("Select a Wiki or create a new one");
-        message.setFont(Font.font("Poppins Regular", 18));
+        message.setFont(Font.font("Poppins", 18));
         message.setStyle("-fx-text-fill: -roam-text-hint;");
 
         emptyState.getChildren().addAll(icon, message);
@@ -454,13 +454,13 @@ public class NotesEditor extends BorderPane {
                         ? Wiki.getContent().substring(0, Math.min(60, Wiki.getContent().length()))
                         : "No content";
                 Label content = new Label(preview);
-                content.setFont(Font.font("Poppins Regular", 12));
+                content.setFont(Font.font("Poppins", 12));
                 content.setStyle("-fx-text-fill: -roam-text-secondary;");
                 content.setWrapText(true);
                 content.setMaxWidth(Double.MAX_VALUE);
 
                 Label date = new Label("Updated: " + DATE_FORMATTER.format(Wiki.getUpdatedAt()));
-                date.setFont(Font.font("Poppins Regular", 11));
+                date.setFont(Font.font("Poppins", 11));
                 date.setStyle("-fx-text-fill: -roam-text-hint;");
 
                 cell.getChildren().addAll(title, content, date);

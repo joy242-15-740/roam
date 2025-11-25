@@ -24,6 +24,7 @@ dependencies {
     // Ikonli Icons (used by AtlantaFX)
     implementation 'org.kordamp.ikonli:ikonli-javafx:12.3.1'
     implementation 'org.kordamp.ikonli:ikonli-feather-pack:12.3.1'
+    implementation 'org.kordamp.ikonli:ikonli-material2-pack:12.3.1'
     
     // Hibernate & JPA
     implementation 'org.hibernate.orm:hibernate-core:6.4.1.Final'

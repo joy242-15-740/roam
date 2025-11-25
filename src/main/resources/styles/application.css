@@ -2,622 +2,319 @@
    ROAM APPLICATION - COMPREHENSIVE DESIGN SYSTEM
    ============================================ */
 
-/* Fonts */
-@font-face {
-    font-family: 'Poppins';
-    src: url('../fonts/Poppins-Regular.ttf');
-}
-@font-face {
-    font-family: 'Poppins Bold';
-    src: url('../fonts/Poppins-Bold.ttf');
-}
-@font-face {
-    font-family: 'Poppins SemiBold';
-    src: url('../fonts/Poppins-SemiBold.ttf');
-}
-@font-face {
-    font-family: 'Poppins Medium';
-    src: url('../fonts/Poppins-Medium.ttf');
-}
+/* 1. Utilities & Base */
+@import "utilities/variables.css";
+@import "utilities/typography.css";
 
-/* Root Variables & Global Styles */
+/* 2. Layout Structure */
+@import "layouts/structure.css";
+
+/* 3. Components */
+@import "components/buttons.css";
+@import "components/inputs.css";
+@import "components/cards.css";
+@import "components/tables.css";
+@import "components/badges.css";
+@import "components/empty.css";
+@import "components/lockscreen.css";
+@import "components/wiki.css";
+
+/* 4. Global/Root Property Assignments 
+   (Variables are defined in variables.css, here we apply them to the root node) 
+*/
 .root {
     -fx-font-family: 'Poppins';
     -fx-font-size: 14px;
-    -fx-base: #FFFFFF;
-    -fx-background-color: #FFFFFF;
-    -fx-text-fill: #000000;
     
-    /* Color Palette */
-    -roam-blue: #4285f4;
-    -roam-blue-hover: #3367d6;
-    -roam-blue-pressed: #2565d4;
-    -roam-blue-light: #E3F2FD;
-    -roam-gray-bg: #F5F5F5;
-    -roam-gray-light: #FAFAFA;
-    -roam-border: #E0E0E0;
-    -roam-text-primary: #212121;
-    -roam-text-secondary: #616161;
-    -roam-text-hint: #9E9E9E;
-    
-    /* Status Colors - WCAG Compliant */
-    -roam-red: #D32F2F;
-    -roam-red-bg: #FFEBEE;
-    -roam-orange: #F57C00;
-    -roam-orange-bg: #FFF3E0;
-    -roam-green: #388E3C;
-    -roam-green-bg: #E8F5E9;
-    -roam-blue-tag: #1976D2;
-    -roam-blue-tag-bg: #E3F2FD;
-    
-    /* Elevation Shadows - Removed invalid multi-shadow definitions */
-    
-    /* Metrics */
-    -roam-radius: 12px;
-    -roam-radius-small: 8px;
-    -roam-radius-tiny: 4px;
-    
-    -roam-bg-primary: #FFFFFF;
+    /* Apply background and text colors using our variables */
+    -fx-base: -roam-bg-primary;
+    -fx-background-color: -roam-bg-primary;
+    -fx-text-fill: -roam-text-primary;
 }
 
+/* Ensure dark mode root properties are applied if needed, 
+   though variables.css handles the variable switching. */
 .root.dark {
-    -fx-base: #121212;
-    -fx-background-color: #121212;
-    -fx-text-fill: #FFFFFF;
-
-    -roam-bg-primary: #121212;
-    -roam-gray-bg: #1E1E1E;
-    -roam-gray-light: #2D2D2D;
-    -roam-border: #424242;
-    
-    -roam-text-primary: #FFFFFF;
-    -roam-text-secondary: #B0B0B0;
-    -roam-text-hint: #757575;
-    
-    -roam-blue: #8ab4f8;
-    -roam-blue-hover: #aecbfa;
-    -roam-blue-pressed: #d2e3fc;
-    -roam-blue-light: #1e2a38;
-    
-    /* Status Colors */
-    -roam-red: #ef5350;
-    -roam-red-bg: rgba(239, 83, 80, 0.1);
-    -roam-orange: #ffa726;
-    -roam-orange-bg: rgba(255, 167, 38, 0.1);
-    -roam-green: #66bb6a;
-    -roam-green-bg: rgba(102, 187, 106, 0.1);
-    -roam-blue-tag: #42a5f5;
-    -roam-blue-tag-bg: rgba(66, 165, 245, 0.1);
+    -fx-base: -roam-bg-primary; /* Will resolve to dark color */
+    -fx-background-color: -roam-bg-primary;
+    -fx-text-fill: -roam-text-primary;
 }
 
-/* Main Text */
+/* Global Text Styling */
 .label, .text {
     -fx-text-fill: -roam-text-primary;
 }
 
 /* ============================================
-   COMPONENT STYLING
+   THEME-AWARE UTILITY CLASSES
    ============================================ */
 
-/* 1. Sidebar Container */
-.sidebar {
+/* Search Result Items */
+.search-result-item {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 12;
+}
+
+.search-result-item:hover {
     -fx-background-color: -roam-gray-bg;
-    -fx-padding: 20;
-    -fx-spacing: 15;
-    -fx-pref-width: 240;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 8, 0, 2, 0);
 }
 
-/* 2. Navigation Buttons */
-.nav-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: -roam-text-secondary;
-    -fx-alignment: CENTER_LEFT;
-    -fx-font-size: 14px;
-    -fx-font-family: 'Poppins';
-    -fx-padding: 12 20 12 16;
-    -fx-background-radius: -roam-radius-small;
-    -fx-cursor: hand;
-}
-
-.nav-button:hover {
-    -fx-background-color: -roam-bg-primary;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
-}
-
-.nav-button:selected {
-    -fx-background-color: -roam-blue;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-family: 'Poppins Bold';
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.4), 8, 0, 0, 2);
-    -fx-border-color: transparent;
-    -fx-border-width: 0 0 0 4;
-    -fx-border-insets: 0;
-}
-
-/* 3. Action Buttons (The "+" buttons) */
-.action-button {
-    -fx-background-color: -roam-blue;
-    -fx-text-fill: white;
-    -fx-font-family: 'Poppins Bold';
-    -fx-font-size: 14px;
-    -fx-padding: 10 20;
-    -fx-background-radius: -roam-radius-small;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 8, 0, 0, 2);
-}
-
-.action-button:hover {
-    -fx-background-color: -roam-blue-hover;
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.5), 12, 0, 0, 4);
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
-}
-
-.action-button:pressed {
-    -fx-background-color: -roam-blue-pressed;
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 6, 0, 0, 1);
-    -fx-translate-y: 1;
-}
-
-/* 4. Cards (Used in Kanban, Operations List) */
-.roam-card {
-    -fx-background-color: -roam-bg-primary;
-    -fx-background-radius: -roam-radius;
-    -fx-border-color: -roam-border;
-    -fx-border-radius: -roam-radius;
-    -fx-border-width: 1px;
-    -fx-padding: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
-    -fx-cursor: hand;
-}
-
-.roam-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 8);
-    -fx-translate-y: -2;
-}
-
-/* 5. Standard Buttons */
-.button {
-    -fx-background-color: -roam-blue;
-    -fx-text-fill: #FFFFFF;
+/* Type Badges */
+.type-badge {
     -fx-font-family: 'Poppins Medium';
-    -fx-font-size: 14px;
-    -fx-padding: 10 20 10 20;
-    -fx-background-radius: -roam-radius-small;
-    -fx-cursor: hand;
+    -fx-font-size: 10px;
+    -fx-padding: 2 8 2 8;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
 }
 
-.button:hover {
-    -fx-background-color: -roam-blue-hover;
-}
-
-.button:pressed {
-    -fx-background-color: -roam-blue-pressed;
-}
-
-/* Secondary Button */
-.button-secondary {
-    -fx-background-color: transparent;
-    -fx-text-fill: -roam-blue;
-    -fx-border-color: -roam-blue;
-    -fx-border-width: 1px;
-    -fx-border-radius: -roam-radius-small;
-}
-
-.button-secondary:hover {
-    -fx-background-color: rgba(66, 133, 244, 0.08);
-}
-
-/* Icon Button */
-.icon-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: -roam-text-secondary;
-    -fx-font-size: 18px;
-    -fx-padding: 8;
-    -fx-background-radius: 50%;
-    -fx-cursor: hand;
-}
-
-.icon-button:hover {
-    -fx-background-color: -roam-gray-light;
-}
-
-/* 6. Search Bar */
-.search-bar {
-    -fx-background-color: -roam-bg-primary;
-    -fx-background-radius: -roam-radius-small;
-    -fx-border-color: -roam-border;
-    -fx-border-radius: -roam-radius-small;
-    -fx-border-width: 1px;
-    -fx-padding: 8;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
-}
-
-.search-field {
-    -fx-background-color: transparent;
-    -fx-border-width: 0;
-    -fx-padding: 4 8;
-    -fx-font-family: 'Poppins';
-    -fx-font-size: 13px;
-    -fx-text-fill: -roam-text-primary;
-    -fx-prompt-text-fill: -roam-text-hint;
-}
-
-.search-field:focused {
-    -fx-background-color: transparent;
-    -fx-border-width: 0;
-}
-
-/* 7. Text Inputs */
-.text-field, .text-area {
-    -fx-background-color: -roam-gray-light;
-    -fx-background-radius: -roam-radius-small;
-    -fx-border-color: -roam-border;
-    -fx-border-radius: -roam-radius-small;
-    -fx-border-width: 1px;
-    -fx-padding: 10 15;
-    -fx-font-family: 'Poppins';
-    -fx-font-size: 14px;
-    -fx-text-fill: -roam-text-primary;
-}
-
-.text-field:focused, .text-area:focused {
-    -fx-border-color: -roam-blue;
-    -fx-border-width: 2px;
-    -fx-background-color: -roam-bg-primary;
-}
-
-/* 7. Stats Panel */
-.stats-panel {
-    -fx-background-color: -roam-gray-bg;
-    -fx-padding: 20;
-    -fx-spacing: 15;
-    -fx-background-radius: -roam-radius;
-}
-
-.stat-item {
-    -fx-background-color: -roam-bg-primary;
-    -fx-padding: 15;
-    -fx-background-radius: -roam-radius-small;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);
-}
-
-/* 8. Toggle Button Group */
-.toggle-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: -roam-text-secondary;
-    -fx-font-family: 'Poppins';
-    -fx-font-size: 13px;
-    -fx-padding: 8 16;
-    -fx-cursor: hand;
-}
-
-.toggle-button:selected {
+.type-badge-operation {
     -fx-background-color: -roam-blue;
-    -fx-text-fill: #FFFFFF;
 }
 
-.toggle-button:hover:selected {
-    -fx-background-color: -roam-blue-hover;
+.type-badge-task {
+    -fx-background-color: -roam-green;
 }
 
-.toggle-button:hover:selected {
-    -fx-background-color: -roam-blue-hover;
+.type-badge-wiki {
+    -fx-background-color: -roam-red;
 }
 
-/* ============================================
-   TABLE VIEW STYLING
-   ============================================ */
-
-/* TableView - Modern Card Style */
-.table-view {
-    -fx-background-color: -roam-bg-primary;
-    background-color: -roam-bg-primary;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-    padding: 0;
-    
-    /* Subtle outer border only */
-    -fx-border-color: -roam-border;
-    border-color: -roam-border;
-    -fx-border-width: 1;
-    border-width: 1px;
-    -fx-border-radius: -roam-radius;
-    border-radius: -roam-radius;
-    -fx-background-radius: -roam-radius;
-    
-    /* Material elevation */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
-    
-    /* Remove internal cell borders */
-    -fx-table-cell-border-color: transparent;
+.type-badge-journal {
+    -fx-background-color: -roam-orange;
 }
 
-/* Remove default corner and placeholder styling */
-.table-view .corner {
-    -fx-background-color: -roam-gray-bg;
-    background-color: -roam-gray-bg;
+.type-badge-event {
+    -fx-background-color: -roam-purple;
 }
 
-.table-view .placeholder {
-    -fx-background-color: transparent;
-    background-color: transparent;
-}
-
-/* Header background */
-.table-view .column-header-background {
-    -fx-background-color: -roam-gray-bg;
-    background-color: -roam-gray-bg;
-    -fx-background-insets: 0;
-    -fx-background-radius: -roam-radius -roam-radius 0 0;
-}
-
-.table-view .column-header-background .filler {
-    -fx-background-color: -roam-gray-bg;
-    background-color: -roam-gray-bg;
-}
-
-/* Header cells */
-.table-view .column-header {
-    -fx-background-color: -roam-gray-bg;
-    background-color: -roam-gray-bg;
-    -fx-border-color: transparent;
-    border-color: transparent;
-}
-
-.table-view .column-header .label {
-    -fx-font-family: 'Poppins Bold';
-    font-family: 'Poppins Bold';
-    -fx-text-fill: -roam-text-primary;
-    -fx-font-size: 13px;
-    font-size: 13px;
-    -fx-padding: 14 16 14 16;
-    padding: 14px 16px 14px 16px;
-}
-
-/* Table rows */
-.table-row-cell {
-    -fx-background-color: -roam-bg-primary;
-    background-color: -roam-bg-primary;
-    -fx-background-insets: 0;
-    -fx-border-color: transparent;
-    border-color: transparent;
-}
-
-.table-row-cell:odd {
-    -fx-background-color: -roam-gray-light;
-    background-color: -roam-gray-light;
-}
-
-.table-row-cell:hover {
-    -fx-background-color: #F0F4FF;
-    background-color: #F0F4FF;
-}
-
-.table-row-cell:selected {
-    -fx-background-color: #E3F2FD;
-    background-color: #E3F2FD;
-}
-
-.table-row-cell:selected:hover {
-    -fx-background-color: #BBDEFB;
-    background-color: #BBDEFB;
-}
-
-/* Table cells */
-.table-cell {
-    -fx-background-color: transparent;
-    background-color: transparent;
-    -fx-border-color: transparent;
-    border-color: transparent;
-    -fx-text-fill: -roam-text-primary;
-    -fx-padding: 16 16 16 16;
-    padding: 16px 16px 16px 16px;
-    -fx-alignment: CENTER_LEFT;
-}
-
-.table-cell:selected {
-    -fx-text-fill: -roam-text-primary;
-}
-
-/* Remove vertical/horizontal lines between cells */
-.table-view .column-header-background .nested-column-header .column-header {
-    -fx-border-color: transparent;
-    border-color: transparent;
-}
-
-/* ============================================
-   SCROLL PANE STYLING
-   ============================================ */
-
-.scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background-insets: 0;
-}
-
-.scroll-pane .viewport {
-    -fx-background-color: transparent;
-}
-
-.scroll-pane .corner {
-    -fx-background-color: transparent;
-}
-
-/* Scrollbar styling */
-.scroll-bar {
-    -fx-background-color: transparent;
-    -fx-padding: 2;
-}
-
-.scroll-bar .thumb {
-    -fx-background-color: -roam-border;
-    -fx-background-radius: 4px;
-}
-
-.scroll-bar .thumb:hover {
-    -fx-background-color: -roam-text-hint;
-}
-
-.scroll-bar .track {
-    -fx-background-color: transparent;
-}
-
-/* ============================================
-   SPLIT PANE STYLING
-   ============================================ */
-
-.split-pane {
-    -fx-background-color: transparent;
-}
-
-.split-pane .split-pane-divider {
-    -fx-background-color: -roam-border;
-    -fx-padding: 0 1 0 1;
-}
-
-/* ============================================
-   EMPTY STATE STYLING
-   ============================================ */
-
-.empty-state {
-    -fx-alignment: CENTER;
-    -fx-spacing: 20;
-}
-
-.empty-state .icon {
-    -fx-font-size: 72px;
-    -fx-text-fill: -roam-text-hint;
-}
-
-.empty-state .title {
-    -fx-font-family: 'Poppins Bold';
-    -fx-font-size: 24px;
-    -fx-text-fill: -roam-text-secondary;
-}
-
-.empty-state .description {
-    -fx-font-family: 'Poppins';
-    -fx-font-size: 16px;
-    -fx-text-fill: -roam-text-hint;
-}
-
-/* ============================================
-   STATUS & PRIORITY BADGES (WCAG Compliant)
-   ============================================ */
-
-/* Priority Badges */
-.priority-high {
-    -fx-background-color: -roam-red-bg;
-    -fx-text-fill: -roam-red;
-    -fx-font-family: 'Poppins Bold';
+/* Status Badges - Theme Aware */
+.status-badge {
+    -fx-font-family: 'Poppins SemiBold';
     -fx-font-size: 11px;
     -fx-padding: 4 10;
-    -fx-background-radius: 4px;
+    -fx-background-radius: 12;
 }
 
-.priority-medium {
+.status-badge-todo {
     -fx-background-color: -roam-orange-bg;
     -fx-text-fill: -roam-orange;
-    -fx-font-family: 'Poppins Bold';
-    -fx-font-size: 11px;
-    -fx-padding: 4 10;
-    -fx-background-radius: 4px;
 }
 
-.priority-low {
-    -fx-background-color: -roam-green-bg;
-    -fx-text-fill: -roam-green;
-    -fx-font-family: 'Poppins Bold';
-    -fx-font-size: 11px;
-    -fx-padding: 4 10;
-    -fx-background-radius: 4px;
-}
-
-/* Status Badges */
-.status-ongoing {
+.status-badge-in-progress {
     -fx-background-color: -roam-blue-tag-bg;
     -fx-text-fill: -roam-blue-tag;
-    -fx-font-family: 'Poppins SemiBold';
-    -fx-font-size: 11px;
-    -fx-padding: 4 10;
-    -fx-background-radius: 4px;
 }
 
-.status-in-progress {
-    -fx-background-color: -roam-orange-bg;
-    -fx-text-fill: -roam-orange;
-    -fx-font-family: 'Poppins SemiBold';
-    -fx-font-size: 11px;
-    -fx-padding: 4 10;
-    -fx-background-radius: 4px;
-}
-
-.status-end {
+.status-badge-done {
     -fx-background-color: -roam-green-bg;
     -fx-text-fill: -roam-green;
+}
+
+/* Priority Badges - Theme Aware */
+.priority-badge {
     -fx-font-family: 'Poppins SemiBold';
     -fx-font-size: 11px;
     -fx-padding: 4 10;
-    -fx-background-radius: 4px;
+    -fx-background-radius: 12;
 }
 
-/* ============================================
-   ICON BUTTON STYLING
-   ============================================ */
+.priority-badge-high {
+    -fx-background-color: -roam-red-bg;
+    -fx-text-fill: -roam-red;
+}
 
-.icon-button-small {
+.priority-badge-medium {
+    -fx-background-color: -roam-yellow-bg;
+    -fx-text-fill: -roam-yellow;
+}
+
+.priority-badge-low {
+    -fx-background-color: -roam-gray-bg;
+    -fx-text-fill: -roam-text-secondary;
+}
+
+/* Delete Button Styling */
+.delete-button {
+    -fx-background-color: -roam-red-bg;
+    -fx-text-fill: -roam-red;
+    -fx-cursor: hand;
+    -fx-background-radius: 4;
+    -fx-padding: 4 8;
+}
+
+.delete-button:hover {
+    -fx-background-color: -roam-red;
+    -fx-text-fill: white;
+}
+
+/* Dialog Styling */
+.dialog-pane {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.dialog-pane .content {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -roam-gray-bg;
+}
+
+/* ComboBox Styling */
+.combo-box {
+    -fx-background-color: -roam-bg-primary;
+    -fx-border-color: -roam-border;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: -roam-bg-primary;
+    -fx-text-fill: -roam-text-primary;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: -roam-bg-primary;
+    -fx-text-fill: -roam-text-primary;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: -roam-gray-bg;
+}
+
+/* ListView Styling */
+.list-view {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.list-cell {
+    -fx-background-color: -roam-bg-primary;
+    -fx-text-fill: -roam-text-primary;
+}
+
+.list-cell:hover {
+    -fx-background-color: -roam-gray-bg;
+}
+
+.list-cell:selected {
+    -fx-background-color: -roam-row-selected;
+    -fx-text-fill: -roam-text-primary;
+}
+
+/* TabPane Styling */
+.tab-pane {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: -roam-gray-bg;
+}
+
+.tab-pane .tab-header-background {
+    -fx-background-color: -roam-gray-bg;
+}
+
+.tab {
     -fx-background-color: transparent;
-    -fx-text-fill: -roam-text-hint;
-    -fx-font-size: 16px;
-    -fx-padding: 4;
-    -fx-background-radius: 4px;
-    -fx-cursor: hand;
 }
 
-.icon-button-small:hover {
-    -fx-background-color: -roam-gray-light;
+.tab:selected {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.tab .tab-label {
+    -fx-text-fill: -roam-text-secondary;
+}
+
+.tab:selected .tab-label {
     -fx-text-fill: -roam-text-primary;
 }
 
-.icon-button-small:pressed {
+/* Context Menu Styling */
+.context-menu {
+    -fx-background-color: -roam-bg-primary;
+    -fx-border-color: -roam-border;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover, .menu-item:focused {
     -fx-background-color: -roam-gray-bg;
 }
 
-/* ============================================
-   LOCK SCREEN STYLING
-   ============================================ */
+.menu-item .label {
+    -fx-text-fill: -roam-text-primary;
+}
 
-.keypad-button {
+/* Tooltip Styling */
+.tooltip {
     -fx-background-color: -roam-gray-bg;
     -fx-text-fill: -roam-text-primary;
-    -fx-font-family: 'Poppins Medium';
-    -fx-font-size: 20px;
-    -fx-min-width: 64px;
-    -fx-min-height: 64px;
-    -fx-max-width: 64px;
-    -fx-max-height: 64px;
-    -fx-background-radius: 50%;
+    -fx-border-color: -roam-border;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+}
+
+/* Alert/Dialog Styling */
+.alert {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.alert .content {
+    -fx-text-fill: -roam-text-primary;
+}
+
+/* CheckBox Styling */
+.check-box {
+    -fx-text-fill: -roam-text-primary;
+}
+
+.check-box .box {
+    -fx-background-color: -roam-bg-primary;
+    -fx-border-color: -roam-border;
+}
+
+.check-box:selected .box {
+    -fx-background-color: -roam-blue;
+    -fx-border-color: -roam-blue;
+}
+
+/* Template Success Badge */
+.template-success-badge {
+    -fx-background-color: -roam-green-bg;
+    -fx-text-fill: -roam-green;
+    -fx-background-radius: 4;
+    -fx-padding: 4 8;
+}
+
+/* Kanban Column Header */
+.kanban-column-header {
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 15;
+}
+
+/* Task Card */
+.task-card {
+    -fx-background-color: -roam-bg-primary;
+    -fx-border-color: -roam-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
     -fx-cursor: hand;
-    -fx-alignment: CENTER;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 4, 0, 0, 2);
+    -fx-padding: 15;
 }
 
-.keypad-button:hover {
-    -fx-background-color: -roam-gray-light;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 3);
-}
-
-.keypad-button:pressed {
-    -fx-background-color: -roam-border;
-    -fx-effect: inner-shadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
-}
-
-.pin-dot {
-    -fx-fill: -roam-border;
-    -fx-stroke: transparent;
-}
-
-.pin-dot-filled {
-    -fx-fill: -roam-blue;
+.task-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
 }

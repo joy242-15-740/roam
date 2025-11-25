@@ -130,18 +130,18 @@ public class EditablePriorityCell extends TableCell<Task, Priority> {
         switch (priority) {
             case HIGH:
                 label.setText("🔴 High");
-                badge.setStyle("-fx-background-color: #FFEBEE; -fx-background-radius: 12;");
-                label.setStyle("-fx-text-fill: #C62828;");
+                badge.setStyle("-fx-background-color: -roam-red-bg; -fx-background-radius: 12;");
+                label.setStyle("-fx-text-fill: -roam-red;");
                 break;
             case MEDIUM:
                 label.setText("🟡 Medium");
-                badge.setStyle("-fx-background-color: #FFF9C4; -fx-background-radius: 12;");
-                label.setStyle("-fx-text-fill: #F57F17;");
+                badge.setStyle("-fx-background-color: -roam-yellow-bg; -fx-background-radius: 12;");
+                label.setStyle("-fx-text-fill: -roam-yellow;");
                 break;
             case LOW:
                 label.setText("⚪ Low");
-                badge.setStyle("-fx-background-color: #F5F5F5; -fx-background-radius: 12;");
-                label.setStyle("-fx-text-fill: #616161;");
+                badge.setStyle("-fx-background-color: -roam-gray-bg; -fx-background-radius: 12;");
+                label.setStyle("-fx-text-fill: -roam-text-secondary;");
                 break;
         }
 

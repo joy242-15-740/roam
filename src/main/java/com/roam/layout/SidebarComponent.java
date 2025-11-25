@@ -1,45 +1,57 @@
 package com.roam.layout;
 
-import atlantafx.base.theme.Styles;
+import com.roam.service.SearchService;
+import com.roam.service.SecurityContext;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.material2.Material2MZ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Represents the sidebar component with navigation buttons and search
- * functionality.
- * Manages sidebar creation, button states, collapse/expand animations, and
- * search bar.
+ * Represents the sidebar component with navigation buttons.
+ * Manages sidebar creation and button states.
  */
 public class SidebarComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(SidebarComponent.class);
 
     // Sidebar dimensions
-    private static final double SIDEBAR_WIDTH_EXPANDED = 240;
-    private static final double SIDEBAR_WIDTH_COLLAPSED = 60;
+    private static final double SIDEBAR_WIDTH_EXPANDED = 250;
+    private static final double SIDEBAR_WIDTH_COLLAPSED = 80;
 
     private final VBox sidebar;
     private final Map<String, Button> navigationButtons;
-    private TextField searchField;
-    private final Label titleLabel;
-    private final HBox searchBar;
-    private final Region resizeHandle;
+
+    // UI Components
+    private HBox headerBox;
+    private VBox headerCol;
+    private Button lockButton;
+    private Button refreshButton;
+    private Button menuBtn;
+    private Button settingsBtn;
+    private StackPane searchGroup;
+    private TextField searchInput;
+    private Separator sep;
+    private Region spacer;
 
     private boolean collapsed = false;
 
@@ -53,42 +65,39 @@ public class SidebarComponent {
      * 
      * @param onNavigate   Callback when navigation button is clicked (receives view
      *                     type)
-     * @param onSearch     Callback when search is performed (receives search query)
-     * @param onToggle     Callback when sidebar toggle button is clicked
-     * @param resizeHandle The resize handle to show/hide based on collapsed state
+     * @param onSearch     Callback when search is performed
+     * @param onToggle     Ignored (Toggle removed)
+     * @param resizeHandle Ignored (Fixed width)
      */
     public SidebarComponent(Consumer<String> onNavigate, Consumer<String> onSearch,
             Runnable onToggle, Region resizeHandle) {
         this.onNavigate = onNavigate;
         this.onSearch = onSearch;
         this.onToggle = onToggle;
-        this.resizeHandle = resizeHandle;
         this.navigationButtons = new HashMap<>();
 
         // Create sidebar UI components
-        sidebar = new VBox(15);
+        sidebar = new VBox(10);
         sidebar.getStyleClass().add("sidebar");
         sidebar.setPrefWidth(SIDEBAR_WIDTH_EXPANDED);
         sidebar.setMinWidth(SIDEBAR_WIDTH_EXPANDED);
         sidebar.setMaxWidth(SIDEBAR_WIDTH_EXPANDED);
+        sidebar.setPadding(new Insets(20));
+        sidebar.setStyle("-fx-background-color: -color-bg-default;");
 
-        // Create header with title and toggle button
-        HBox header = createHeader();
-        // Extract title label from header for later reference
-        titleLabel = (Label) header.getChildren().get(0);
+        // Create header components
+        createHeaderComponents();
 
-        // Create search bar
-        searchBar = createSearchBar();
-        // searchField is initialized in createSearchBar
+        // Create search component
+        createSearchComponent();
 
         // Create navigation buttons
-        Button operationsBtn = createNavButton("Operations", Feather.CLIPBOARD, "operations", true);
-        Button calendarBtn = createNavButton("Calendar", Feather.CALENDAR, "calendar", false);
+        Button operationsBtn = createNavButton("Operations", Feather.ACTIVITY, "operations", true);
         Button tasksBtn = createNavButton("Tasks", Feather.CHECK_SQUARE, "tasks", false);
-        Button wikiBtn = createNavButton("Wiki", Feather.FILE_TEXT, "wiki", false);
+        Button calendarBtn = createNavButton("Calendar", Feather.CALENDAR, "calendar", false);
         Button journalBtn = createNavButton("Journal", Feather.BOOK, "journal", false);
-        Button statisticsBtn = createNavButton("Statistics", Feather.BAR_CHART_2, "statistics", false);
-        Button settingsBtn = createSettingsButton();
+        Button wikiBtn = createNavButton("Wiki", Feather.BOOK_OPEN, "wiki", false);
+        Button statisticsBtn = createNavButton("Statistics", Feather.GRID, "statistics", false);
 
         // Store references
         navigationButtons.put("operations", operationsBtn);
@@ -97,175 +106,193 @@ public class SidebarComponent {
         navigationButtons.put("wiki", wikiBtn);
         navigationButtons.put("journal", journalBtn);
         navigationButtons.put("statistics", statisticsBtn);
-        // Settings button is excluded from navigationButtons to maintain its custom
-        // style during expand/collapse
 
         // Spacer to push content to top
-        Region spacer = new Region();
+        spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        // Assemble sidebar
-        sidebar.getChildren().addAll(
-                header,
-                searchBar,
-                operationsBtn,
-                calendarBtn,
-                tasksBtn,
-                wikiBtn,
-                journalBtn,
-                statisticsBtn,
-                spacer,
-                settingsBtn);
+        // Settings button
+        settingsBtn = createSettingsButton();
+        navigationButtons.put("settings", settingsBtn);
+
+        // Separator
+        sep = new Separator();
+
+        // Initial state
+        updateSidebarState();
 
         logger.debug("Sidebar component created");
     }
 
-    /**
-     * Creates the sidebar header with app title and toggle button.
-     */
-    private HBox createHeader() {
-        HBox header = new HBox(10);
-        header.setAlignment(Pos.CENTER_LEFT);
-        VBox.setMargin(header, new Insets(0, 0, 20, 0));
+    private void createHeaderComponents() {
+        // Lock button
+        lockButton = new Button(null, new FontIcon(Feather.LOCK));
+        lockButton.getStyleClass().add("sidebar-button");
+        lockButton.setAlignment(Pos.CENTER);
+        lockButton.setOnAction(e -> showLockScreen());
 
-        // App title
-        Label title = new Label("Roam");
-        title.setFont(Font.font("Poppins Bold", 24));
-        title.setStyle("-fx-text-fill: #000000;");
-        HBox.setHgrow(title, Priority.ALWAYS);
+        // Refresh button
+        refreshButton = new Button(null, new FontIcon(Feather.ROTATE_CW));
+        refreshButton.getStyleClass().add("sidebar-button");
+        refreshButton.setAlignment(Pos.CENTER);
+        refreshButton.setOnAction(e -> rebuildIndex());
 
-        // Toggle button
-        Button toggleButton = new Button();
-        toggleButton.setGraphic(new FontIcon(Feather.MENU));
-        toggleButton.getStyleClass().add("icon-button");
-        toggleButton.setPrefSize(30, 30);
-        toggleButton.setOnAction(e -> {
-            toggle();
-            if (onToggle != null) {
-                onToggle.run();
-            }
-        });
+        // Menu button
+        menuBtn = new Button(null, new FontIcon(Feather.MENU));
+        menuBtn.getStyleClass().add("sidebar-button");
+        menuBtn.setAlignment(Pos.CENTER);
+        menuBtn.setOnAction(e -> toggle());
 
-        header.getChildren().addAll(title, toggleButton);
-        return header;
+        // Horizontal Header (Expanded)
+        headerBox = new HBox(10);
+        headerBox.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(headerBox, new Insets(0, 0, 20, 0));
+
+        Region headerSpacer = new Region();
+        HBox.setHgrow(headerSpacer, Priority.ALWAYS);
+
+        headerBox.getChildren().addAll(lockButton, refreshButton, headerSpacer, menuBtn);
+
+        // Vertical Header (Collapsed)
+        headerCol = new VBox(15);
+        headerCol.setAlignment(Pos.CENTER);
+        VBox.setMargin(headerCol, new Insets(0, 0, 20, 0));
+        // Buttons will be moved between containers in updateSidebarState
     }
 
-    /**
-     * Creates the search bar with text field and search button.
-     */
-    private HBox createSearchBar() {
-        HBox searchContainer = new HBox(8);
-        searchContainer.setAlignment(Pos.CENTER_LEFT);
-        searchContainer.setPadding(new Insets(0, 0, 10, 0));
-        searchContainer.getStyleClass().add("search-bar");
+    private void showLockScreen() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Application Locked");
+        dialog.setHeaderText("Enter PIN to unlock");
+        dialog.setContentText("PIN:");
 
-        // Search field
-        TextField field = new TextField();
-        field.setPromptText("Search...");
-        field.setPrefHeight(40);
-        field.setFont(Font.font("Poppins Regular", 14));
-        field.setStyle(
-                "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 20; " +
-                        "-fx-background-radius: 20; " +
-                        "-fx-padding: 10 20 10 20;");
+        Optional<String> result = dialog.showAndWait();
 
-        field.focusedProperty().addListener((obs, old, focused) -> {
-            if (focused) {
-                field.setStyle(
-                        "-fx-border-color: -roam-blue; " +
-                                "-fx-border-width: 2; " +
-                                "-fx-border-radius: 20; " +
-                                "-fx-background-radius: 20; " +
-                                "-fx-padding: 10 20 10 20;");
-            } else {
-                field.setStyle(
-                        "-fx-border-color: -roam-border; " +
-                                "-fx-border-width: 1; " +
-                                "-fx-border-radius: 20; " +
-                                "-fx-background-radius: 20; " +
-                                "-fx-padding: 10 20 10 20;");
+        while (result.isPresent()) {
+            try {
+                if (SecurityContext.getInstance().authenticate(result.get())) {
+                    return; // Success
+                } else {
+                    showError("Invalid PIN", "Incorrect PIN. Please try again.");
+                }
+            } catch (SecurityException e) {
+                showError("Security Warning", e.getMessage());
             }
-        });
+            result = dialog.showAndWait();
+        }
 
-        HBox.setHgrow(field, Priority.ALWAYS);
-
-        // Handle Enter key to perform search
-        field.setOnAction(e -> performSearch());
-
-        // Search button (optional, maybe remove if field is enough? User said "same
-        // styled task", TasksToolbar had no button)
-        // But SidebarComponent had a button. I'll keep the button but maybe style it or
-        // hide it?
-        // The user said "implement same styled task". TasksToolbar only had a text
-        // field.
-        // I will remove the button to match TasksToolbar style more closely, or keep it
-        // if needed.
-        // Sidebar usually needs a button or icon.
-        // I'll keep the button but maybe make it an icon button inside the field?
-        // For now, I'll just style the field as requested. I'll remove the button to
-        // match TasksToolbar.
-
-        searchContainer.getChildren().addAll(field);
-
-        // Update reference
-        searchField = field;
-
-        return searchContainer;
+        // If user cancels, re-show lock screen to enforce locking.
+        showLockScreen();
     }
 
-    /**
-     * Performs search with current query.
-     */
-    private void performSearch() {
-        String query = searchField.getText().trim();
-        if (!query.isEmpty() && onSearch != null) {
-            logger.debug("Search triggered: {}", query);
-            onSearch.accept(query);
+    private void showError(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
+    private void rebuildIndex() {
+        SearchService.getInstance().rebuildIndex();
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Index Rebuild");
+        alert.setHeaderText(null);
+        alert.setContentText("Search index rebuild started.");
+        alert.showAndWait();
+    }
+
+    private void toggle() {
+        collapsed = !collapsed;
+        updateSidebarState();
+        if (onToggle != null) {
+            onToggle.run();
         }
     }
 
-    /**
-     * Creates the settings button with custom style.
-     */
-    private Button createSettingsButton() {
-        Button btn = new Button();
-        btn.setGraphic(new FontIcon(Feather.SETTINGS));
-        btn.setPrefSize(40, 40);
-        btn.setFont(Font.font(18));
-        btn.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 6; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;");
+    private void updateSidebarState() {
+        sidebar.getChildren().clear();
+        headerBox.getChildren().clear();
+        headerCol.getChildren().clear();
 
-        btn.setOnMouseEntered(e -> btn.setStyle(
-                "-fx-background-color: -roam-gray-bg; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 6; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;"));
+        if (collapsed) {
+            sidebar.setPrefWidth(SIDEBAR_WIDTH_COLLAPSED);
+            sidebar.setMinWidth(SIDEBAR_WIDTH_COLLAPSED);
+            sidebar.setMaxWidth(SIDEBAR_WIDTH_COLLAPSED);
+            sidebar.setPadding(new Insets(20, 10, 20, 10));
 
-        btn.setOnMouseExited(e -> btn.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 6; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;"));
+            // Stack header buttons vertically
+            headerCol.getChildren().addAll(menuBtn, lockButton, refreshButton);
+            sidebar.getChildren().add(headerCol);
 
-        btn.setOnAction(e -> {
-            if (onNavigate != null) {
-                logger.debug("Navigation button clicked: settings");
-                onNavigate.accept("settings");
+            // Hide search in collapsed mode
+            searchGroup.setVisible(false);
+            searchGroup.setManaged(false);
+
+            // Update nav buttons
+            for (Button btn : navigationButtons.values()) {
+                btn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                btn.setAlignment(Pos.CENTER);
+            }
+            settingsBtn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+            settingsBtn.setAlignment(Pos.CENTER);
+
+        } else {
+            sidebar.setPrefWidth(SIDEBAR_WIDTH_EXPANDED);
+            sidebar.setMinWidth(SIDEBAR_WIDTH_EXPANDED);
+            sidebar.setMaxWidth(SIDEBAR_WIDTH_EXPANDED);
+            sidebar.setPadding(new Insets(20));
+
+            // Horizontal header
+            Region headerSpacer = new Region();
+            HBox.setHgrow(headerSpacer, Priority.ALWAYS);
+            headerBox.getChildren().addAll(lockButton, refreshButton, headerSpacer, menuBtn);
+            sidebar.getChildren().add(headerBox);
+
+            // Show search in expanded mode
+            searchGroup.setVisible(true);
+            searchGroup.setManaged(true);
+
+            // Update nav buttons
+            for (Button btn : navigationButtons.values()) {
+                btn.setContentDisplay(ContentDisplay.LEFT);
+                btn.setAlignment(Pos.CENTER_LEFT);
+            }
+            settingsBtn.setContentDisplay(ContentDisplay.LEFT);
+            settingsBtn.setAlignment(Pos.CENTER_LEFT);
+        }
+
+        // Add common elements
+        sidebar.getChildren().addAll(
+                searchGroup,
+                navigationButtons.get("operations"),
+                navigationButtons.get("tasks"),
+                navigationButtons.get("calendar"),
+                navigationButtons.get("journal"),
+                navigationButtons.get("wiki"),
+                navigationButtons.get("statistics"),
+                spacer,
+                sep,
+                settingsBtn);
+    }
+
+    private void createSearchComponent() {
+        searchGroup = new StackPane();
+        searchGroup.getStyleClass().add("sidebar-search-container");
+        searchGroup.setAlignment(Pos.CENTER_LEFT);
+
+        searchInput = new TextField();
+        searchInput.setPromptText("Search...");
+        searchInput.getStyleClass().add("sidebar-search-field");
+
+        // Handle search action
+        searchInput.setOnAction(e -> {
+            if (onSearch != null) {
+                onSearch.accept(searchInput.getText());
             }
         });
 
-        return btn;
+        searchGroup.getChildren().addAll(searchInput);
     }
 
     /**
@@ -273,21 +300,18 @@ public class SidebarComponent {
      */
     private Button createNavButton(String text, Feather iconType, String viewType, boolean active) {
         Button button = new Button(text);
-        button.setUserData(text); // Store label for expand/collapse
-        FontIcon icon = new FontIcon(iconType);
-        icon.setIconSize(18);
-        button.setGraphic(icon);
-        button.getStyleClass().add("nav-button");
-        button.setPrefWidth(200);
-        button.setPrefHeight(45);
+        button.setGraphic(new FontIcon(iconType));
+        button.getStyleClass().add("sidebar-button");
         button.setAlignment(Pos.CENTER_LEFT);
-        button.setGraphicTextGap(10);
+        button.setMaxWidth(Double.MAX_VALUE);
+        button.setGraphicTextGap(20);
 
         // Set button action
         button.setOnAction(e -> {
             if (onNavigate != null) {
                 logger.debug("Navigation button clicked: {}", viewType);
                 onNavigate.accept(viewType);
+                setActiveButton(viewType);
             }
         });
 
@@ -302,11 +326,11 @@ public class SidebarComponent {
      */
     private void updateButtonState(Button button, boolean active) {
         if (active) {
-            button.getStyleClass().removeAll("nav-button");
-            button.getStyleClass().add("nav-button-active");
+            if (!button.getStyleClass().contains("selected")) {
+                button.getStyleClass().add("selected");
+            }
         } else {
-            button.getStyleClass().removeAll("nav-button-active");
-            button.getStyleClass().add("nav-button");
+            button.getStyleClass().remove("selected");
         }
     }
 
@@ -329,94 +353,25 @@ public class SidebarComponent {
     }
 
     /**
-     * Toggles the sidebar between collapsed and expanded states.
+     * Creates the settings button.
      */
-    public void toggle() {
-        collapsed = !collapsed;
+    private Button createSettingsButton() {
+        Button btn = new Button("Settings");
+        btn.setGraphic(new FontIcon(Material2MZ.SETTINGS));
+        btn.getStyleClass().add("sidebar-button");
+        btn.setAlignment(Pos.CENTER_LEFT);
+        btn.setMaxWidth(Double.MAX_VALUE);
+        btn.setGraphicTextGap(20);
 
-        if (collapsed) {
-            collapse();
-        } else {
-            expand();
-        }
-
-        logger.debug("Sidebar toggled: collapsed={}", collapsed);
-    }
-
-    /**
-     * Collapses the sidebar to show only icons.
-     */
-    private void collapse() {
-        sidebar.setPrefWidth(SIDEBAR_WIDTH_COLLAPSED);
-        sidebar.setMinWidth(SIDEBAR_WIDTH_COLLAPSED);
-        sidebar.setMaxWidth(SIDEBAR_WIDTH_COLLAPSED);
-        sidebar.setPadding(new Insets(20, 5, 20, 5));
-
-        // Hide resize handle when collapsed
-        if (resizeHandle != null) {
-            resizeHandle.setVisible(false);
-            resizeHandle.setManaged(false);
-        }
-
-        // Hide text elements
-        titleLabel.setVisible(false);
-        titleLabel.setManaged(false);
-
-        // Hide search bar
-        searchBar.setVisible(false);
-        searchBar.setManaged(false);
-
-        // Update buttons to show only icons
-        for (Button btn : navigationButtons.values()) {
-            btn.setText("");
-            btn.setAlignment(Pos.CENTER);
-            btn.setPrefWidth(50);
-        }
-    }
-
-    /**
-     * Expands the sidebar to show full content.
-     */
-    private void expand() {
-        sidebar.setPrefWidth(SIDEBAR_WIDTH_EXPANDED);
-        sidebar.setMinWidth(SIDEBAR_WIDTH_EXPANDED);
-        sidebar.setMaxWidth(SIDEBAR_WIDTH_EXPANDED);
-        sidebar.setPadding(new Insets(20));
-
-        // Show resize handle when expanded
-        if (resizeHandle != null) {
-            resizeHandle.setVisible(true);
-            resizeHandle.setManaged(true);
-        }
-
-        // Show text elements
-        titleLabel.setVisible(true);
-        titleLabel.setManaged(true);
-
-        // Show search bar
-        searchBar.setVisible(true);
-        searchBar.setManaged(true);
-
-        // Restore full button text and alignment
-        for (Button btn : navigationButtons.values()) {
-            if (btn.getUserData() instanceof String) {
-                btn.setText((String) btn.getUserData());
+        btn.setOnAction(e -> {
+            if (onNavigate != null) {
+                logger.debug("Navigation button clicked: settings");
+                onNavigate.accept("settings");
+                setActiveButton("settings");
             }
-            btn.setAlignment(Pos.CENTER_LEFT);
-            btn.setPrefWidth(200);
-        }
-    }
+        });
 
-    /**
-     * Updates button widths (used during resize).
-     */
-    public void updateButtonWidths(double sidebarWidth) {
-        if (!collapsed) {
-            double buttonWidth = sidebarWidth - 40; // Account for padding
-            for (Button btn : navigationButtons.values()) {
-                btn.setPrefWidth(buttonWidth);
-            }
-        }
+        return btn;
     }
 
     /**
@@ -434,9 +389,9 @@ public class SidebarComponent {
     }
 
     /**
-     * Checks if sidebar is currently collapsed.
+     * Updates button widths (No-op for fixed sidebar).
      */
-    public boolean isCollapsed() {
-        return collapsed;
+    public void updateButtonWidths(double sidebarWidth) {
+        // No-op
     }
 }

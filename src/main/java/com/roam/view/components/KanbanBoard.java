@@ -89,7 +89,7 @@ public class KanbanBoard extends HBox {
         HBox.setHgrow(titleLabel, Priority.ALWAYS);
 
         // Count badge
-        countLabel.setFont(Font.font("Poppins Regular", 12));
+        countLabel.setFont(Font.font("Poppins", 12));
         countLabel.setStyle(
                 "-fx-background-color: " + headerBg + "; " +
                         "-fx-text-fill: " + textColor + "; " +
@@ -105,7 +105,7 @@ public class KanbanBoard extends HBox {
         Button addBtn = new Button("+ Add Task");
         addBtn.setMaxWidth(Double.MAX_VALUE);
         addBtn.setPrefHeight(40);
-        addBtn.setFont(Font.font("Poppins Regular", 13));
+        addBtn.setFont(Font.font("Poppins", 13));
         addBtn.setStyle(
                 "-fx-background-color: transparent; " +
                         "-fx-border-color: -roam-text-hint; " +

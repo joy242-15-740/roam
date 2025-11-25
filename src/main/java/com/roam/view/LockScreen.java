@@ -1,7 +1,7 @@
 package com.roam.view;
 
-import atlantafx.base.theme.Styles;
 import com.roam.service.SecurityContext;
+import com.roam.util.StyleBuilder;
 import javafx.animation.KeyFrame;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
@@ -22,9 +22,11 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.roam.util.UIConstants.*;
+
 /**
  * Lock screen for PIN authentication.
- * Updated to match the clean UI design with numeric keypad.
+ * Features a clean numeric keypad design with animated PIN dots.
  */
 public class LockScreen extends StackPane {
 
@@ -32,45 +34,49 @@ public class LockScreen extends StackPane {
     private final Label messageLabel;
     private final List<Circle> pinDots;
     private final StringBuilder currentPin;
-    private final int PIN_LENGTH = 8; // Fixed length for UI, though backend supports more
+    private final int PIN_LENGTH = 8;
 
     public LockScreen(Runnable onUnlock) {
         this.onUnlock = onUnlock;
         this.currentPin = new StringBuilder();
         this.pinDots = new ArrayList<>();
 
-        this.setStyle("-fx-background-color: -roam-bg-primary;");
+        setStyle("-fx-background-color: " + BG_PRIMARY + ";");
 
-        VBox content = new VBox(20);
+        VBox content = new VBox(SPACING_LG);
         content.setAlignment(Pos.CENTER);
         content.setMaxWidth(320);
-        content.setPadding(new Insets(30));
+        content.setPadding(new Insets(SPACING_SECTION));
 
-        // Icon
+        // Icon container with circular background
         VBox iconBox = new VBox();
         iconBox.setAlignment(Pos.CENTER);
-        iconBox.setStyle(
-                "-fx-background-color: -roam-blue-light; -fx-background-radius: 50%; -fx-min-width: 60; -fx-min-height: 60; -fx-max-width: 60; -fx-max-height: 60;");
+        iconBox.setStyle(StyleBuilder.create()
+                .backgroundColor(BLUE_LIGHT)
+                .backgroundRadiusCircle()
+                .minWidth(60).minHeight(60)
+                .maxWidth(60).maxHeight(60)
+                .build());
 
         FontIcon lockIcon = new FontIcon(Feather.LOCK);
-        lockIcon.setIconSize(24);
-        lockIcon.setIconColor(javafx.scene.paint.Color.web("#2563EB")); // Roam Blue
+        lockIcon.setIconSize(ICON_XL);
+        lockIcon.setStyle("-fx-icon-color: " + BLUE + ";");
         iconBox.getChildren().add(lockIcon);
 
         // Title
         Label title = new Label("App Locked");
-        title.setFont(Font.font("Poppins Bold", 20));
-        title.setStyle("-fx-text-fill: -roam-text-primary;");
+        title.setFont(Font.font(FONT_BOLD, FONT_SIZE_TITLE));
+        title.setStyle("-fx-text-fill: " + TEXT_PRIMARY + ";");
 
         // Subtitle
         Label subtitle = new Label("Enter your PIN to access Roam");
-        subtitle.setFont(Font.font("Poppins Regular", 12));
-        subtitle.setStyle("-fx-text-fill: -roam-text-secondary;");
+        subtitle.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD));
+        subtitle.setStyle("-fx-text-fill: " + TEXT_SECONDARY + ";");
 
         // PIN Dots
-        HBox dotsContainer = new HBox(8);
+        HBox dotsContainer = new HBox(SPACING_SM);
         dotsContainer.setAlignment(Pos.CENTER);
-        dotsContainer.setPadding(new Insets(15, 0, 15, 0));
+        dotsContainer.setPadding(new Insets(SPACING_STANDARD, 0, SPACING_STANDARD, 0));
 
         for (int i = 0; i < PIN_LENGTH; i++) {
             Circle dot = new Circle(4);
@@ -84,24 +90,24 @@ public class LockScreen extends StackPane {
 
         // Message Label
         messageLabel = new Label("");
-        messageLabel.setFont(Font.font("Poppins Regular", 13));
-        messageLabel.setStyle("-fx-text-fill: -roam-red;");
+        messageLabel.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD + 1));
+        messageLabel.setStyle("-fx-text-fill: " + RED + ";");
         messageLabel.setWrapText(true);
         messageLabel.setMaxWidth(300);
         messageLabel.setAlignment(Pos.CENTER);
 
         // Footer
         Label footer = new Label("Roam Security");
-        footer.setFont(Font.font("Poppins Regular", 12));
-        footer.setStyle("-fx-text-fill: -roam-text-hint;");
-        VBox.setMargin(footer, new Insets(30, 0, 0, 0));
+        footer.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD));
+        footer.setStyle("-fx-text-fill: " + TEXT_HINT + ";");
+        VBox.setMargin(footer, new Insets(SPACING_SECTION, 0, 0, 0));
 
         content.getChildren().addAll(iconBox, title, subtitle, dotsContainer, messageLabel, keypad, footer);
         getChildren().add(content);
 
         // Add listeners for responsive scaling
-        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent(content));
-        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent(content));
+        widthProperty().addListener((obs, oldVal, newVal) -> scaleContent(content));
+        heightProperty().addListener((obs, oldVal, newVal) -> scaleContent(content));
     }
 
     private void scaleContent(VBox content) {
@@ -128,8 +134,8 @@ public class LockScreen extends StackPane {
 
     private GridPane createKeypad() {
         GridPane grid = new GridPane();
-        grid.setHgap(15);
-        grid.setVgap(15);
+        grid.setHgap(SPACING_STANDARD);
+        grid.setVgap(SPACING_STANDARD);
         grid.setAlignment(Pos.CENTER);
 
         int number = 1;
@@ -147,7 +153,7 @@ public class LockScreen extends StackPane {
 
         Button backspaceBtn = new Button();
         FontIcon backIcon = new FontIcon(Feather.DELETE);
-        backIcon.setIconSize(20);
+        backIcon.setIconSize(ICON_LG);
         backspaceBtn.setGraphic(backIcon);
         backspaceBtn.getStyleClass().add("keypad-button");
         backspaceBtn.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
@@ -215,7 +221,7 @@ public class LockScreen extends StackPane {
         try {
             if (SecurityContext.getInstance().authenticate(pin)) {
                 // Success
-                messageLabel.setStyle("-fx-text-fill: -roam-green;");
+                messageLabel.setStyle("-fx-text-fill: " + GREEN + ";");
                 messageLabel.setText("✓ Unlocked");
 
                 // Small delay before unlocking for UX
@@ -254,7 +260,7 @@ public class LockScreen extends StackPane {
     }
 
     private void showError(String message) {
-        messageLabel.setStyle("-fx-text-fill: -roam-red;");
+        messageLabel.setStyle("-fx-text-fill: " + RED + ";");
         messageLabel.setText(message);
     }
 

@@ -33,7 +33,8 @@ public class TasksView extends StackPane {
         this.contentPane = new BorderPane();
         getChildren().add(contentPane);
 
-        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
+        // contentPane.setStyle("-fx-background-color: -roam-bg-primary;"); // Remove
+        // manual style
 
         // Create toolbar
         toolbar = new TasksToolbar(controller);

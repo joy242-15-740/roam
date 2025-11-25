@@ -7,7 +7,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
 
@@ -19,18 +18,14 @@ import java.util.List;
 public class WikiSidebar extends VBox {
 
     private final WikiController controller;
-    private final Font poppinsRegular;
-    private final Font poppinsBold;
 
     private VBox favoritesContent;
     private VBox recentContent;
     private VBox operationWikisContent;
     private VBox operationWikisSection;
 
-    public WikiSidebar(WikiController controller, Font poppinsRegular, Font poppinsBold) {
+    public WikiSidebar(WikiController controller) {
         this.controller = controller;
-        this.poppinsRegular = poppinsRegular;
-        this.poppinsBold = poppinsBold;
 
         configureSidebar();
         buildSections();
@@ -40,9 +35,7 @@ public class WikiSidebar extends VBox {
         setMinWidth(280);
         setPrefWidth(280);
         setMaxWidth(280);
-        setStyle("-fx-background-color: -roam-gray-bg; -fx-border-color: -roam-border; -fx-border-width: 0 1 0 0;");
-        setPadding(new Insets(15));
-        setSpacing(20);
+        getStyleClass().add("wiki-sidebar");
     }
 
     private void buildSections() {
@@ -75,7 +68,7 @@ public class WikiSidebar extends VBox {
         icon.setIconSize(14);
 
         Label title = new Label("Operation Wikis");
-        title.setFont(Font.font(poppinsBold.getFamily(), 15));
+        title.getStyleClass().add("wiki-sidebar-section-title");
 
         header.getChildren().addAll(icon, title);
 
@@ -98,7 +91,7 @@ public class WikiSidebar extends VBox {
         icon.setIconSize(14);
 
         Label title = new Label("Favorites");
-        title.setFont(Font.font(poppinsBold.getFamily(), 15));
+        title.getStyleClass().add("wiki-sidebar-section-title");
 
         header.getChildren().addAll(icon, title);
 
@@ -121,7 +114,7 @@ public class WikiSidebar extends VBox {
         icon.setIconSize(14);
 
         Label title = new Label("Recent");
-        title.setFont(Font.font(poppinsBold.getFamily(), 15));
+        title.getStyleClass().add("wiki-sidebar-section-title");
 
         header.getChildren().addAll(icon, title);
 
@@ -136,40 +129,27 @@ public class WikiSidebar extends VBox {
     private HBox createNoteItem(Wiki Wiki) {
         HBox item = new HBox();
         item.setPrefHeight(60);
-        item.setPadding(new Insets(8));
-        item.setStyle("-fx-background-color: transparent; -fx-background-radius: 6; -fx-cursor: hand;");
-
-        item.setOnMouseEntered(e -> item.setStyle(
-                "-fx-background-color: -roam-bg-primary; -fx-background-radius: 6; -fx-cursor: hand;"));
-        item.setOnMouseExited(e -> item.setStyle(
-                "-fx-background-color: transparent; -fx-background-radius: 6; -fx-cursor: hand;"));
+        item.getStyleClass().add("wiki-sidebar-item");
 
         VBox content = new VBox(4);
         content.setAlignment(Pos.TOP_LEFT);
 
         // Title
         Label titleLabel = new Label(Wiki.getTitle());
-        titleLabel.setFont(Font.font(poppinsRegular.getFamily(), 13));
+        titleLabel.getStyleClass().add("wiki-sidebar-item-title");
         titleLabel.setMaxWidth(250);
-        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
 
         // Meta info
         HBox meta = new HBox(8);
         meta.setAlignment(Pos.CENTER_LEFT);
 
         Label timeLabel = new Label(formatRelativeTime(Wiki.getUpdatedAt()));
-        timeLabel.setFont(Font.font(poppinsRegular.getFamily(), 11));
-        timeLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+        timeLabel.getStyleClass().add("wiki-sidebar-item-time");
 
         // Add region if exists (replaces tags)
         if (Wiki.getRegion() != null && !Wiki.getRegion().isEmpty()) {
             Label regionLabel = new Label(Wiki.getRegion());
-            regionLabel.setFont(Font.font(poppinsRegular.getFamily(), 10));
-            regionLabel.setPadding(new Insets(2, 6, 2, 6));
-            regionLabel.setStyle(
-                    "-fx-background-color: -roam-blue-light; " +
-                            "-fx-background-radius: 8; " +
-                            "-fx-text-fill: -roam-blue;");
+            regionLabel.getStyleClass().add("wiki-sidebar-item-region");
             meta.getChildren().add(regionLabel);
         }
 
@@ -217,8 +197,7 @@ public class WikiSidebar extends VBox {
 
         if (favorites.isEmpty()) {
             Label emptyLabel = new Label("No favorites yet");
-            emptyLabel.setFont(Font.font(poppinsRegular.getFamily(), 12));
-            emptyLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+            emptyLabel.getStyleClass().add("wiki-sidebar-empty-label");
             favoritesContent.getChildren().add(emptyLabel);
         } else {
             int limit = Math.min(favorites.size(), 5);
@@ -234,8 +213,7 @@ public class WikiSidebar extends VBox {
 
         if (recent.isEmpty()) {
             Label emptyLabel = new Label("No wikis yet");
-            emptyLabel.setFont(Font.font(poppinsRegular.getFamily(), 12));
-            emptyLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+            emptyLabel.getStyleClass().add("wiki-sidebar-empty-label");
             recentContent.getChildren().add(emptyLabel);
         } else {
             for (Wiki Wiki : recent) {
@@ -278,8 +256,7 @@ public class WikiSidebar extends VBox {
 
         if (wikis.isEmpty()) {
             Label emptyLabel = new Label("No wikis yet");
-            emptyLabel.setFont(Font.font(poppinsRegular.getFamily(), 12));
-            emptyLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+            emptyLabel.getStyleClass().add("wiki-sidebar-empty-label");
             operationWikisContent.getChildren().add(emptyLabel);
         } else {
             for (Wiki wiki : wikis) {

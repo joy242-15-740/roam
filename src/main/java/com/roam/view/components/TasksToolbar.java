@@ -1,5 +1,6 @@
 package com.roam.view.components;
 
+import atlantafx.base.theme.Styles;
 import com.roam.controller.TasksController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,7 +10,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 
 import java.util.function.Consumer;
 
@@ -26,7 +26,8 @@ public class TasksToolbar extends HBox {
         setPadding(new Insets(15, 20, 15, 20));
         setAlignment(Pos.CENTER_LEFT);
         setSpacing(15);
-        setStyle("-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 0 0 1 0;");
+        // Remove manual border/bg, let theme handle or use simple border
+        setStyle("-fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;");
 
         // Spacer
         Region spacer = new Region();
@@ -34,10 +35,10 @@ public class TasksToolbar extends HBox {
 
         // View toggle buttons
         viewToggleGroup = new ToggleGroup();
-        ToggleButton kanbanBtn = createViewToggleButton("Kanban", true, false);
-        ToggleButton listBtn = createViewToggleButton("List", false, false);
-        ToggleButton timelineBtn = createViewToggleButton("Timeline", false, false);
-        ToggleButton matrixBtn = createViewToggleButton("Matrix", false, true);
+        ToggleButton kanbanBtn = createViewToggleButton("Kanban", Styles.LEFT_PILL);
+        ToggleButton listBtn = createViewToggleButton("List", Styles.CENTER_PILL);
+        ToggleButton timelineBtn = createViewToggleButton("Timeline", Styles.CENTER_PILL);
+        ToggleButton matrixBtn = createViewToggleButton("Matrix", Styles.RIGHT_PILL);
 
         kanbanBtn.setToggleGroup(viewToggleGroup);
         listBtn.setToggleGroup(viewToggleGroup);
@@ -63,32 +64,15 @@ public class TasksToolbar extends HBox {
         });
 
         HBox viewToggle = new HBox(0, kanbanBtn, listBtn, timelineBtn, matrixBtn);
-        viewToggle.setStyle(
-                "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 8; " +
-                        "-fx-background-radius: 8;");
+        // No manual border needed if using PILL styles correctly, but might need
+        // alignment
+        viewToggle.setAlignment(Pos.CENTER);
 
         // New Task button
         Button newTaskBtn = new Button("+ New Task");
-        newTaskBtn.setFont(Font.font("Poppins Medium", 14));
         newTaskBtn.setPrefWidth(130);
         newTaskBtn.setPrefHeight(40);
-        newTaskBtn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand;");
-        newTaskBtn.setOnMouseEntered(e -> newTaskBtn.setStyle(
-                "-fx-background-color: -roam-blue-dark; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand;"));
-        newTaskBtn.setOnMouseExited(e -> newTaskBtn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: white; " +
-                        "-fx-background-radius: 8; " +
-                        "-fx-cursor: hand;"));
+        newTaskBtn.getStyleClass().addAll(Styles.BUTTON_OUTLINED, Styles.ACCENT);
         newTaskBtn.setOnAction(e -> {
             controller.createTask();
         });
@@ -96,60 +80,11 @@ public class TasksToolbar extends HBox {
         getChildren().addAll(spacer, viewToggle, newTaskBtn);
     }
 
-    private ToggleButton createViewToggleButton(String text, boolean first, boolean last) {
+    private ToggleButton createViewToggleButton(String text, String styleClass) {
         ToggleButton btn = new ToggleButton(text);
-        btn.setFont(Font.font("Poppins Regular", 13));
         btn.setPrefHeight(40);
         btn.setPrefWidth(90);
-
-        final String baseStyle;
-        final String selectedStyle;
-
-        if (first) {
-            baseStyle = "-fx-background-color: transparent; " +
-                    "-fx-text-fill: -roam-text-secondary; " +
-                    "-fx-cursor: hand; " +
-                    "-fx-border-width: 0; " +
-                    "-fx-background-radius: 8 0 0 8;";
-            selectedStyle = "-fx-background-color: -roam-blue; " +
-                    "-fx-text-fill: white; " +
-                    "-fx-cursor: hand; " +
-                    "-fx-border-width: 0; " +
-                    "-fx-background-radius: 8 0 0 8;";
-        } else if (last) {
-            baseStyle = "-fx-background-color: transparent; " +
-                    "-fx-text-fill: -roam-text-secondary; " +
-                    "-fx-cursor: hand; " +
-                    "-fx-border-width: 0; " +
-                    "-fx-background-radius: 0 8 8 0;";
-            selectedStyle = "-fx-background-color: -roam-blue; " +
-                    "-fx-text-fill: white; " +
-                    "-fx-cursor: hand; " +
-                    "-fx-border-width: 0; " +
-                    "-fx-background-radius: 0 8 8 0;";
-        } else {
-            baseStyle = "-fx-background-color: transparent; " +
-                    "-fx-text-fill: -roam-text-secondary; " +
-                    "-fx-cursor: hand; " +
-                    "-fx-border-width: 0; " +
-                    "-fx-background-radius: 0;";
-            selectedStyle = "-fx-background-color: -roam-blue; " +
-                    "-fx-text-fill: white; " +
-                    "-fx-cursor: hand; " +
-                    "-fx-border-width: 0; " +
-                    "-fx-background-radius: 0;";
-        }
-
-        btn.setStyle(baseStyle);
-
-        btn.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-            if (isSelected) {
-                btn.setStyle(selectedStyle);
-            } else {
-                btn.setStyle(baseStyle);
-            }
-        });
-
+        btn.getStyleClass().add(styleClass);
         return btn;
     }
 
