@@ -34,6 +34,8 @@ public class EventDialog extends Dialog<CalendarEvent> {
     private final ComboBox<Region> regionCombo;
     private final ComboBox<Task> taskCombo;
     private final ComboBox<Wiki> noteCombo;
+    private final ComboBox<String> recurrenceCombo;
+    private final DatePicker recurrenceEndDatePicker;
     private final Label errorLabel;
 
     private final CalendarEvent originalEvent;
@@ -74,6 +76,8 @@ public class EventDialog extends Dialog<CalendarEvent> {
         regionCombo = createRegionCombo(regions);
         taskCombo = createTaskCombo(tasks);
         noteCombo = createNoteCombo(notes);
+        recurrenceCombo = createRecurrenceCombo();
+        recurrenceEndDatePicker = new DatePicker();
         errorLabel = createErrorLabel();
 
         // Setup all-day checkbox
@@ -84,6 +88,14 @@ public class EventDialog extends Dialog<CalendarEvent> {
             startMinuteSpinner.setDisable(allDay);
             endHourSpinner.setDisable(allDay);
             endMinuteSpinner.setDisable(allDay);
+        });
+
+        // Setup recurrence combo
+        recurrenceEndDatePicker.setPromptText("End date (optional)");
+        recurrenceEndDatePicker.setDisable(true);
+        recurrenceCombo.setOnAction(e -> {
+            boolean isRecurring = !"None".equals(recurrenceCombo.getValue());
+            recurrenceEndDatePicker.setDisable(!isRecurring);
         });
 
         // Create button types
@@ -261,6 +273,15 @@ public class EventDialog extends Dialog<CalendarEvent> {
         return combo;
     }
 
+    private ComboBox<String> createRecurrenceCombo() {
+        ComboBox<String> combo = new ComboBox<>();
+        combo.getItems().addAll("None", "Daily", "Weekly", "Monthly", "Yearly");
+        combo.setValue("None");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        return combo;
+    }
+
     private Spinner<Integer> createTimeSpinner(int initial, int min, int max) {
         Spinner<Integer> spinner = new Spinner<>(min, max, initial);
         spinner.setEditable(true);
@@ -290,6 +311,7 @@ public class EventDialog extends Dialog<CalendarEvent> {
                 createFieldGroup("", allDayCheckBox),
                 createFieldGroup("Location", locationField),
                 createFieldGroup("Description", descriptionArea),
+                createRecurrenceSection(),
                 createFieldGroup("Operation", operationCombo),
                 createFieldGroup("Region", regionCombo),
                 createFieldGroup("Task", taskCombo),
@@ -328,6 +350,22 @@ public class EventDialog extends Dialog<CalendarEvent> {
         endBox.getChildren().addAll(endDatePicker, endHourSpinner, endTimeLabel, endMinuteSpinner);
 
         section.getChildren().addAll(startLabel, startBox, endLabel, endBox);
+        return section;
+    }
+
+    private VBox createRecurrenceSection() {
+        VBox section = new VBox(10);
+        Label label = new Label("Recurrence");
+        label.setFont(Font.font("Poppins Regular", 13));
+        label.setStyle("-fx-text-fill: -roam-text-secondary;");
+
+        HBox box = new HBox(10);
+        recurrenceCombo.setPrefWidth(150);
+        recurrenceEndDatePicker.setPrefWidth(200);
+        recurrenceEndDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+
+        box.getChildren().addAll(recurrenceCombo, recurrenceEndDatePicker);
+        section.getChildren().addAll(label, box);
         return section;
     }
 
@@ -401,6 +439,14 @@ public class EventDialog extends Dialog<CalendarEvent> {
                         .filter(n -> n.getId().equals(originalEvent.getWikiId()))
                         .findFirst()
                         .ifPresent(noteCombo::setValue);
+            }
+
+            if (originalEvent.getRecurrenceRule() != null) {
+                recurrenceCombo.setValue(originalEvent.getRecurrenceRule());
+                recurrenceEndDatePicker.setDisable(false);
+            }
+            if (originalEvent.getRecurrenceEndDate() != null) {
+                recurrenceEndDatePicker.setValue(originalEvent.getRecurrenceEndDate().toLocalDate());
             }
         }
     }
@@ -487,6 +533,18 @@ public class EventDialog extends Dialog<CalendarEvent> {
             e.setWikiId(noteCombo.getValue().getId());
         } else {
             e.setWikiId(null);
+        }
+
+        if (!"None".equals(recurrenceCombo.getValue())) {
+            e.setRecurrenceRule(recurrenceCombo.getValue());
+            if (recurrenceEndDatePicker.getValue() != null) {
+                e.setRecurrenceEndDate(recurrenceEndDatePicker.getValue().atTime(23, 59, 59));
+            } else {
+                e.setRecurrenceEndDate(null);
+            }
+        } else {
+            e.setRecurrenceRule(null);
+            e.setRecurrenceEndDate(null);
         }
 
         System.out

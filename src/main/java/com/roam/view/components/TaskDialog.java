@@ -9,6 +9,7 @@ import com.roam.model.Task;
 import com.roam.model.TaskStatus;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
@@ -26,6 +27,8 @@ public class TaskDialog extends Dialog<Task> {
     private final ComboBox<Region> regionCombo;
     private final ComboBox<CalendarEvent> eventCombo;
     private final ComboBox<Wiki> noteCombo;
+    private final ComboBox<String> recurrenceCombo;
+    private final DatePicker recurrenceEndDatePicker;
     private final DatePicker dueDatePicker;
     private final Label errorLabel;
 
@@ -59,8 +62,18 @@ public class TaskDialog extends Dialog<Task> {
         regionCombo = regions != null ? createRegionComboBox(regions) : null;
         eventCombo = events != null ? createEventComboBox(events) : null;
         noteCombo = notes != null ? createNoteComboBox(notes) : null;
+        recurrenceCombo = createRecurrenceCombo();
+        recurrenceEndDatePicker = new DatePicker();
         dueDatePicker = createDatePicker();
         errorLabel = createErrorLabel();
+
+        // Setup recurrence combo
+        recurrenceEndDatePicker.setPromptText("End date (optional)");
+        recurrenceEndDatePicker.setDisable(true);
+        recurrenceCombo.setOnAction(e -> {
+            boolean isRecurring = !"None".equals(recurrenceCombo.getValue());
+            recurrenceEndDatePicker.setDisable(!isRecurring);
+        });
 
         // Create button types
         ButtonType submitButton = new ButtonType(
@@ -242,6 +255,15 @@ public class TaskDialog extends Dialog<Task> {
         return combo;
     }
 
+    private ComboBox<String> createRecurrenceCombo() {
+        ComboBox<String> combo = new ComboBox<>();
+        combo.getItems().addAll("None", "Daily", "Weekly", "Monthly", "Yearly");
+        combo.setValue("None");
+        combo.setPrefHeight(40);
+        combo.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+        return combo;
+    }
+
     private DatePicker createDatePicker() {
         DatePicker picker = new DatePicker();
         picker.setPromptText("Select due date");
@@ -287,9 +309,26 @@ public class TaskDialog extends Dialog<Task> {
         layout.getChildren().addAll(
                 createFieldGroup("Status *", statusCombo),
                 createFieldGroup("Priority *", priorityCombo),
-                createFieldGroup("Due Date", dueDatePicker));
+                createFieldGroup("Due Date", dueDatePicker),
+                createRecurrenceSection());
 
         return layout;
+    }
+
+    private VBox createRecurrenceSection() {
+        VBox section = new VBox(10);
+        Label label = new Label("Recurrence");
+        label.setFont(Font.font("Poppins Regular", 13));
+        label.setStyle("-fx-text-fill: #616161;");
+
+        HBox box = new HBox(10);
+        recurrenceCombo.setPrefWidth(150);
+        recurrenceEndDatePicker.setPrefWidth(200);
+        recurrenceEndDatePicker.setStyle("-fx-font-family: 'Poppins Regular'; -fx-font-size: 14px;");
+
+        box.getChildren().addAll(recurrenceCombo, recurrenceEndDatePicker);
+        section.getChildren().addAll(label, box);
+        return section;
     }
 
     private VBox createFieldGroup(String labelText, Control field) {
@@ -336,6 +375,13 @@ public class TaskDialog extends Dialog<Task> {
             if (task.getDueDate() != null) {
                 dueDatePicker.setValue(task.getDueDate().toLocalDate());
             }
+            if (task.getRecurrenceRule() != null) {
+                recurrenceCombo.setValue(task.getRecurrenceRule());
+                recurrenceEndDatePicker.setDisable(false);
+            }
+            if (task.getRecurrenceEndDate() != null) {
+                recurrenceEndDatePicker.setValue(task.getRecurrenceEndDate().toLocalDate());
+            }
         }
     }
 
@@ -381,6 +427,18 @@ public class TaskDialog extends Dialog<Task> {
             t.setDueDate(LocalDateTime.of(dueDatePicker.getValue(), LocalTime.of(23, 59)));
         } else {
             t.setDueDate(null);
+        }
+
+        if (!"None".equals(recurrenceCombo.getValue())) {
+            t.setRecurrenceRule(recurrenceCombo.getValue());
+            if (recurrenceEndDatePicker.getValue() != null) {
+                t.setRecurrenceEndDate(recurrenceEndDatePicker.getValue().atTime(23, 59, 59));
+            } else {
+                t.setRecurrenceEndDate(null);
+            }
+        } else {
+            t.setRecurrenceRule(null);
+            t.setRecurrenceEndDate(null);
         }
 
         return t;

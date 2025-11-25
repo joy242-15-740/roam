@@ -52,6 +52,18 @@ public class Task {
     @Column(name = "wiki_id")
     private Long wikiId;
 
+    @Column(name = "recurrence_rule", columnDefinition = "TEXT")
+    private String recurrenceRule;
+
+    @Column(name = "recurrence_end_date")
+    private LocalDateTime recurrenceEndDate;
+
+    @Column(name = "parent_task_id")
+    private Long parentTaskId;
+
+    @Column(name = "is_recurring_instance", nullable = false)
+    private Boolean isRecurringInstance = false;
+
     // Constructors
     public Task() {
         this.status = TaskStatus.TODO;
@@ -190,6 +202,38 @@ public class Task {
         this.wikiId = wikiId;
     }
 
+    public String getRecurrenceRule() {
+        return recurrenceRule;
+    }
+
+    public void setRecurrenceRule(String recurrenceRule) {
+        this.recurrenceRule = recurrenceRule;
+    }
+
+    public LocalDateTime getRecurrenceEndDate() {
+        return recurrenceEndDate;
+    }
+
+    public void setRecurrenceEndDate(LocalDateTime recurrenceEndDate) {
+        this.recurrenceEndDate = recurrenceEndDate;
+    }
+
+    public Long getParentTaskId() {
+        return parentTaskId;
+    }
+
+    public void setParentTaskId(Long parentTaskId) {
+        this.parentTaskId = parentTaskId;
+    }
+
+    public Boolean getIsRecurringInstance() {
+        return isRecurringInstance;
+    }
+
+    public void setIsRecurringInstance(Boolean isRecurringInstance) {
+        this.isRecurringInstance = isRecurringInstance;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
@@ -202,6 +246,10 @@ public class Task {
                 ", region='" + region + '\'' +
                 ", calendarEventId=" + calendarEventId +
                 ", wikiId=" + wikiId +
+                ", recurrenceRule='" + recurrenceRule + '\'' +
+                ", recurrenceEndDate=" + recurrenceEndDate +
+                ", parentTaskId=" + parentTaskId +
+                ", isRecurringInstance=" + isRecurringInstance +
                 '}';
     }
 }

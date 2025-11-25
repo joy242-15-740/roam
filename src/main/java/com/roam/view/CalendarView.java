@@ -17,14 +17,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CalendarView extends StackPane {
+public class CalendarView extends BorderPane {
 
     public enum ViewType {
         AGENDA, MONTH, WEEK, DAY
     }
 
     private final CalendarController controller;
-    private final BorderPane contentPane;
 
     private Label dateLabel;
     private VBox filterPanel;
@@ -44,44 +43,16 @@ public class CalendarView extends StackPane {
         this.controller = controller;
         this.currentYearMonth = YearMonth.now();
         this.currentDate = LocalDate.now();
-        this.contentPane = new BorderPane();
-        getChildren().add(contentPane);
 
         initialize();
-
-        // Add listeners for responsive scaling
-        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
-        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
-    }
-
-    private void scaleContent() {
-        double width = getWidth();
-        double height = getHeight();
-
-        // Use layout bounds to get the actual size of the content
-        double contentWidth = contentPane.getLayoutBounds().getWidth();
-        double contentHeight = contentPane.getLayoutBounds().getHeight();
-
-        if (contentWidth == 0 || contentHeight == 0)
-            return;
-
-        // Calculate scale factors
-        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
-        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
-
-        // Use the smaller scale to maintain aspect ratio and fit within bounds
-        double scale = Math.min(scaleX, scaleY);
-
-        contentPane.setScaleX(scale);
-        contentPane.setScaleY(scale);
     }
 
     private void initialize() {
-        contentPane.setStyle("-fx-background-color: -roam-bg-primary;");
+        setStyle("-fx-background-color: -roam-bg-primary;");
 
         // Create toolbar
         HBox toolbar = createToolbar();
-        contentPane.setTop(toolbar);
+        setTop(toolbar);
 
         // Create filter panel
         filterPanel = createFilterPanel();
@@ -90,7 +61,7 @@ public class CalendarView extends StackPane {
         calendarContainer = new StackPane();
         calendarContainer.setPadding(new Insets(20));
 
-        contentPane.setCenter(calendarContainer);
+        setCenter(calendarContainer);
 
         // Create legend
         legendContainer = new FlowPane();
@@ -100,7 +71,7 @@ public class CalendarView extends StackPane {
         legendContainer.setAlignment(Pos.CENTER);
         legendContainer.setStyle(
                 "-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 1 0 0 0;");
-        contentPane.setBottom(legendContainer);
+        setBottom(legendContainer);
 
         // Load data
         controller.setOnDataChanged(this::refreshCalendar);
@@ -799,10 +770,10 @@ public class CalendarView extends StackPane {
     }
 
     private void toggleFilterPanel() {
-        if (contentPane.getRight() == null) {
-            contentPane.setRight(filterPanel);
+        if (getRight() == null) {
+            setRight(filterPanel);
         } else {
-            contentPane.setRight(null);
+            setRight(null);
         }
     }
 
