@@ -10,6 +10,7 @@ import com.roam.view.components.TasksTimelineView;
 import com.roam.view.components.TasksEisenhowerView;
 import com.roam.view.components.TasksToolbar;
 import javafx.geometry.Pos;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -110,7 +111,11 @@ public class TasksView extends StackPane {
 
         switch (viewName) {
             case "kanban" -> {
-                centerStack.getChildren().addAll(kanbanView, batchBar);
+                ScrollPane scrollPane = new ScrollPane(kanbanView);
+                scrollPane.setFitToHeight(true);
+                scrollPane.setFitToWidth(true);
+                scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+                centerStack.getChildren().addAll(scrollPane, batchBar);
             }
             case "list" -> {
                 centerStack.getChildren().addAll(listView, batchBar);
@@ -119,13 +124,20 @@ public class TasksView extends StackPane {
                 centerStack.getChildren().add(timelineView);
             }
             case "matrix" -> {
-                centerStack.getChildren().add(matrixView);
+                ScrollPane scrollPane = new ScrollPane(matrixView);
+                scrollPane.setFitToWidth(true);
+                scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+                centerStack.getChildren().add(scrollPane);
             }
         }
 
         StackPane.setAlignment(batchBar, Pos.BOTTOM_CENTER);
         contentPane.setCenter(centerStack);
         refreshView();
+    }
+
+    public void performSearch(String query) {
+        controller.searchTasks(query);
     }
 
     private void refreshView() {

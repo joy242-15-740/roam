@@ -36,7 +36,7 @@ public class SidebarComponent {
 
     private final VBox sidebar;
     private final Map<String, Button> navigationButtons;
-    private final TextField searchField;
+    private TextField searchField;
     private final Label titleLabel;
     private final HBox searchBar;
     private final Region resizeHandle;
@@ -79,7 +79,7 @@ public class SidebarComponent {
 
         // Create search bar
         searchBar = createSearchBar();
-        searchField = (TextField) searchBar.getChildren().get(1); // Get the text field reference
+        // searchField is initialized in createSearchBar
 
         // Create navigation buttons
         Button operationsBtn = createNavButton("Operations", Feather.CLIPBOARD, "operations", true);
@@ -159,27 +159,59 @@ public class SidebarComponent {
         searchContainer.setPadding(new Insets(0, 0, 10, 0));
         searchContainer.getStyleClass().add("search-bar");
 
-        // Search icon
-        FontIcon searchIcon = new FontIcon(Feather.SEARCH);
-        searchIcon.setIconSize(16);
-
         // Search field
         TextField field = new TextField();
         field.setPromptText("Search...");
-        field.getStyleClass().add("search-field");
-        field.setPrefHeight(35);
+        field.setPrefHeight(40);
+        field.setFont(Font.font("Poppins Regular", 14));
+        field.setStyle(
+                "-fx-border-color: -roam-border; " +
+                        "-fx-border-width: 1; " +
+                        "-fx-border-radius: 20; " +
+                        "-fx-background-radius: 20; " +
+                        "-fx-padding: 10 20 10 20;");
+
+        field.focusedProperty().addListener((obs, old, focused) -> {
+            if (focused) {
+                field.setStyle(
+                        "-fx-border-color: -roam-blue; " +
+                                "-fx-border-width: 2; " +
+                                "-fx-border-radius: 20; " +
+                                "-fx-background-radius: 20; " +
+                                "-fx-padding: 10 20 10 20;");
+            } else {
+                field.setStyle(
+                        "-fx-border-color: -roam-border; " +
+                                "-fx-border-width: 1; " +
+                                "-fx-border-radius: 20; " +
+                                "-fx-background-radius: 20; " +
+                                "-fx-padding: 10 20 10 20;");
+            }
+        });
+
         HBox.setHgrow(field, Priority.ALWAYS);
 
         // Handle Enter key to perform search
         field.setOnAction(e -> performSearch());
 
-        // Search button
-        Button searchBtn = new Button("Search");
-        searchBtn.getStyleClass().add("button-primary");
-        searchBtn.setPrefHeight(35);
-        searchBtn.setOnAction(e -> performSearch());
+        // Search button (optional, maybe remove if field is enough? User said "same
+        // styled task", TasksToolbar had no button)
+        // But SidebarComponent had a button. I'll keep the button but maybe style it or
+        // hide it?
+        // The user said "implement same styled task". TasksToolbar only had a text
+        // field.
+        // I will remove the button to match TasksToolbar style more closely, or keep it
+        // if needed.
+        // Sidebar usually needs a button or icon.
+        // I'll keep the button but maybe make it an icon button inside the field?
+        // For now, I'll just style the field as requested. I'll remove the button to
+        // match TasksToolbar.
 
-        searchContainer.getChildren().addAll(searchIcon, field, searchBtn);
+        searchContainer.getChildren().addAll(field);
+
+        // Update reference
+        searchField = field;
+
         return searchContainer;
     }
 

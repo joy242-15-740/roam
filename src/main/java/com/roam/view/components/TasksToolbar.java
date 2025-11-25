@@ -1,26 +1,21 @@
 package com.roam.view.components;
 
 import com.roam.controller.TasksController;
-import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
-import javafx.util.Duration;
 
 import java.util.function.Consumer;
 
 public class TasksToolbar extends HBox {
 
     private final TasksController controller;
-    private final TextField searchField;
-    private final PauseTransition searchDebounce;
     private final ToggleGroup viewToggleGroup;
     private Consumer<String> onViewChanged;
 
@@ -32,46 +27,6 @@ public class TasksToolbar extends HBox {
         setAlignment(Pos.CENTER_LEFT);
         setSpacing(15);
         setStyle("-fx-background-color: -roam-bg-primary; -fx-border-color: -roam-border; -fx-border-width: 0 0 1 0;");
-
-        // Search box
-        searchField = new TextField();
-        searchField.setPromptText("Search tasks...");
-        searchField.setPrefWidth(300);
-        searchField.setPrefHeight(40);
-        searchField.setFont(Font.font("Poppins Regular", 14));
-        searchField.setStyle(
-                "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 20; " +
-                        "-fx-background-radius: 20; " +
-                        "-fx-padding: 10 20 10 20;");
-
-        // Search debounce (300ms)
-        searchDebounce = new PauseTransition(Duration.millis(300));
-        searchDebounce.setOnFinished(e -> controller.searchTasks(searchField.getText()));
-
-        searchField.textProperty().addListener((obs, old, newVal) -> {
-            searchDebounce.stop();
-            searchDebounce.playFromStart();
-        });
-
-        searchField.focusedProperty().addListener((obs, old, focused) -> {
-            if (focused) {
-                searchField.setStyle(
-                        "-fx-border-color: -roam-blue; " +
-                                "-fx-border-width: 2; " +
-                                "-fx-border-radius: 20; " +
-                                "-fx-background-radius: 20; " +
-                                "-fx-padding: 10 20 10 20;");
-            } else {
-                searchField.setStyle(
-                        "-fx-border-color: -roam-border; " +
-                                "-fx-border-width: 1; " +
-                                "-fx-border-radius: 20; " +
-                                "-fx-background-radius: 20; " +
-                                "-fx-padding: 10 20 10 20;");
-            }
-        });
 
         // Spacer
         Region spacer = new Region();
@@ -138,7 +93,7 @@ public class TasksToolbar extends HBox {
             controller.createTask();
         });
 
-        getChildren().addAll(searchField, spacer, viewToggle, newTaskBtn);
+        getChildren().addAll(spacer, viewToggle, newTaskBtn);
     }
 
     private ToggleButton createViewToggleButton(String text, boolean first, boolean last) {

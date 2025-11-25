@@ -126,7 +126,20 @@ public class NavigationManager {
      * Performs a search and displays results in SearchView.
      */
     public void performSearch(String query) {
-        if (query == null || query.trim().isEmpty()) {
+        if (query == null) {
+            query = "";
+        }
+
+        // If we are in tasks view, delegate search to it
+        if ("tasks".equals(currentViewType) && !contentArea.getChildren().isEmpty()) {
+            Node currentView = contentArea.getChildren().get(0);
+            if (currentView instanceof com.roam.view.TasksView) {
+                ((com.roam.view.TasksView) currentView).performSearch(query);
+                return;
+            }
+        }
+
+        if (query.trim().isEmpty()) {
             logger.debug("Empty search query, ignoring");
             return;
         }

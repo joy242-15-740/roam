@@ -3,7 +3,6 @@ package com.roam.view.components;
 import com.roam.controller.WikiController;
 import com.roam.model.Wiki;
 import com.roam.model.Operation;
-import com.roam.util.ExportUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -58,14 +57,11 @@ public class WikiSidebar extends VBox {
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        VBox quickActions = createQuickActions();
-
         getChildren().addAll(
                 favoritesSection,
                 recentSection,
                 operationWikisSection,
-                spacer,
-                quickActions);
+                spacer);
     }
 
     private VBox createOperationWikisSection() {
@@ -135,39 +131,6 @@ public class WikiSidebar extends VBox {
 
         section.getChildren().addAll(header, recentContent);
         return section;
-    }
-
-    private VBox createQuickActions() {
-        VBox actions = new VBox(10);
-
-        Button exportBtn = new Button("Export");
-        exportBtn.setGraphic(new FontIcon(Feather.UPLOAD));
-        exportBtn.setPrefWidth(250);
-        exportBtn.setPrefHeight(40);
-        exportBtn.setAlignment(Pos.CENTER_LEFT);
-        exportBtn.setPadding(new Insets(10));
-        exportBtn.setFont(Font.font(poppinsRegular.getFamily(), 13));
-        exportBtn.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-border-color: -roam-border; " +
-                        "-fx-border-width: 1; " +
-                        "-fx-border-radius: 6; " +
-                        "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand;");
-        exportBtn.setOnAction(e -> {
-            if (controller.getCurrentNote() != null) {
-                ExportUtils.exportNoteToMarkdown(controller.getCurrentNote(), getScene().getWindow());
-            } else {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Export");
-                alert.setHeaderText("No Wiki selected");
-                alert.setContentText("Please select a Wiki to export.");
-                alert.showAndWait();
-            }
-        });
-
-        actions.getChildren().add(exportBtn);
-        return actions;
     }
 
     private HBox createNoteItem(Wiki Wiki) {
