@@ -84,7 +84,7 @@ public class CustomTitleBar extends HBox {
         // Create action buttons (Settings, Lock, Refresh)
         settingsBtn = createActionButton(Material2MZ.SETTINGS, "settings-btn", this::openSettings);
         lockBtn = createActionButton(Feather.LOCK, "lock-btn", this::showLockScreen);
-        refreshBtn = createActionButton(Feather.ROTATE_CW, "refresh-btn", this::relaunchApp);
+        refreshBtn = createActionButton(Feather.ROTATE_CW, "refresh-btn", this::resetToLockScreen);
 
         // Action buttons container
         HBox actionBox = new HBox(4);
@@ -210,6 +210,33 @@ public class CustomTitleBar extends HBox {
                     "Lock Screen",
                     "Lock screen is not enabled",
                     "Enable the lock screen in Settings to use this feature.");
+            alert.showAndWait();
+        }
+    }
+
+    /**
+     * Reset to lock screen - shows the lock screen regardless of current state.
+     * This is the refresh/reset button behavior.
+     */
+    private void resetToLockScreen() {
+        if (SecurityContext.getInstance().isLockEnabled()) {
+            // Set not authenticated to require PIN entry
+            SecurityContext.getInstance().setAuthenticated(false);
+
+            // If callback is set, use it to show lock screen
+            if (onShowLockScreen != null) {
+                onShowLockScreen.run();
+            } else {
+                // Fallback: relaunch app
+                relaunchApp();
+            }
+        } else {
+            // Lock is not enabled - offer to enable it or just show info
+            Alert alert = ThemeManager.getInstance().createAlert(
+                    Alert.AlertType.INFORMATION,
+                    "Reset",
+                    "Lock screen is not enabled",
+                    "Enable the lock screen in Settings first, then use this button to quickly lock your session.");
             alert.showAndWait();
         }
     }

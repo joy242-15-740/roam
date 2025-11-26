@@ -452,26 +452,33 @@
     -fx-text-fill: #ffffff;
 }
 
-/* ComboBox Styling */
+/* ComboBox Styling - Bento Rounded */
 .combo-box {
-    -fx-background-color: -roam-bg-primary;
+    -fx-background-color: -roam-gray-light;
     -fx-border-color: -roam-border;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-min-height: 40;
 }
 
 .combo-box .list-cell {
-    -fx-background-color: -roam-bg-primary;
+    -fx-background-color: transparent;
     -fx-text-fill: -roam-text-primary;
+    -fx-padding: 8 12;
 }
 
 .combo-box-popup .list-view {
     -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 0, 4);
 }
 
 .combo-box-popup .list-cell {
-    -fx-background-color: -roam-bg-primary;
+    -fx-background-color: transparent;
     -fx-text-fill: -roam-text-primary;
+    -fx-padding: 10 16;
+    -fx-background-radius: 8;
 }
 
 .combo-box-popup .list-cell:hover {
@@ -627,27 +634,292 @@
 .template-success-badge {
     -fx-background-color: -roam-green-bg;
     -fx-text-fill: -roam-green;
-    -fx-background-radius: 4;
-    -fx-padding: 4 8;
+    -fx-background-radius: 12;
+    -fx-padding: 6 12;
 }
 
 /* Kanban Column Header */
 .kanban-column-header {
-    -fx-background-radius: 8 8 0 0;
-    -fx-padding: 15;
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 16;
 }
 
-/* Task Card */
+/* Task Card - Bento Style */
 .task-card {
     -fx-background-color: -roam-bg-primary;
     -fx-border-color: -roam-border;
     -fx-border-width: 1;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
     -fx-cursor: hand;
-    -fx-padding: 15;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0, 0, 3);
 }
 
 .task-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 16, 0, 0, 5);
+    -fx-border-color: -roam-blue;
+}
+
+/* ============================================
+   SCROLL PANE - BENTO STYLE
+   ============================================ */
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+}
+
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: -roam-border;
+    -fx-background-radius: 6;
+    -fx-min-width: 8px;
+}
+
+.scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: -roam-text-hint;
+}
+
+.scroll-pane .scroll-bar:vertical .increment-button,
+.scroll-pane .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-padding: 4;
+}
+
+.scroll-pane .scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+}
+
+.scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: -roam-border;
+    -fx-background-radius: 6;
+    -fx-min-height: 8px;
+}
+
+/* ============================================
+   LIST VIEW - BENTO STYLE
+   ============================================ */
+
+.list-view {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 16;
+    -fx-padding: 8;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -roam-text-primary;
+    -fx-padding: 12 16;
+    -fx-background-radius: 12;
+}
+
+.list-cell:hover {
+    -fx-background-color: -roam-gray-bg;
+}
+
+.list-cell:selected {
+    -fx-background-color: -roam-row-selected;
+    -fx-text-fill: -roam-text-primary;
+}
+
+.list-cell:selected:hover {
+    -fx-background-color: -roam-row-selected-hover;
+}
+
+/* ============================================
+   TAB PANE - BENTO STYLE
+   ============================================ */
+
+.tab-pane {
+    -fx-background-color: transparent;
+}
+
+.tab-pane .tab-header-area {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 16;
+    -fx-padding: 6;
+}
+
+.tab-pane .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.tab {
+    -fx-background-color: transparent;
+    -fx-background-radius: 12;
+    -fx-padding: 10 20;
+}
+
+.tab:selected {
+    -fx-background-color: -roam-bg-primary;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+}
+
+.tab .tab-label {
+    -fx-text-fill: -roam-text-secondary;
+    -fx-font-family: 'Poppins';
+}
+
+.tab:selected .tab-label {
+    -fx-text-fill: -roam-text-primary;
+    -fx-font-family: 'Poppins SemiBold';
+}
+
+.tab-pane .tab-content-area {
+    -fx-background-color: transparent;
+    -fx-padding: 16 0 0 0;
+}
+
+/* ============================================
+   ACCORDION - BENTO STYLE  
+   ============================================ */
+
+.accordion {
+    -fx-background-color: transparent;
+}
+
+.titled-pane {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 16;
+}
+
+.titled-pane > .title {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 16;
+    -fx-padding: 16;
+}
+
+.titled-pane > .title:hover {
+    -fx-background-color: -roam-gray-light;
+}
+
+.titled-pane:expanded > .title {
+    -fx-background-radius: 16 16 0 0;
+}
+
+.titled-pane > .content {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 0 0 16 16;
+    -fx-padding: 16;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: -roam-text-secondary;
+}
+
+/* ============================================
+   CONTEXT MENU - BENTO STYLE
+   ============================================ */
+
+.context-menu {
+    -fx-background-color: -roam-bg-primary;
+    -fx-border-color: -roam-border;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 16, 0, 0, 6);
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-padding: 10 16;
+}
+
+.menu-item:hover, .menu-item:focused {
+    -fx-background-color: -roam-gray-bg;
+}
+
+.menu-item .label {
+    -fx-text-fill: -roam-text-primary;
+    -fx-font-family: 'Poppins';
+}
+
+.separator-menu-item {
+    -fx-padding: 4 0;
+}
+
+.separator-menu-item > .line {
+    -fx-background-color: -roam-border;
+    -fx-pref-height: 1;
+}
+
+/* ============================================
+   TOOLTIP - BENTO STYLE
+   ============================================ */
+
+.tooltip {
+    -fx-background-color: -roam-gray-bg;
+    -fx-text-fill: -roam-text-primary;
+    -fx-border-color: -roam-border;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 8 14;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 3);
+}
+
+/* ============================================
+   PROGRESS BAR & INDICATOR - BENTO STYLE
+   ============================================ */
+
+.progress-bar {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 8;
+    -fx-padding: 0;
+}
+
+.progress-bar .track {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 8;
+}
+
+.progress-bar .bar {
+    -fx-background-color: -roam-blue;
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
+}
+
+.progress-indicator {
+    -fx-progress-color: -roam-blue;
+}
+
+/* ============================================
+   SPLIT PANE - BENTO STYLE
+   ============================================ */
+
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.split-pane-divider {
+    -fx-background-color: -roam-border;
+    -fx-padding: 0 2;
+}
+
+.split-pane-divider:hover {
+    -fx-background-color: -roam-blue;
 }

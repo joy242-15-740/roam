@@ -1,31 +1,211 @@
-/* Cards (Used in Kanban, Operations List) */
+/* ============================================
+   BENTO GRID CARDS - MODERN ROUNDED DESIGN
+   ============================================ */
+
+/* Base Card Style */
 .roam-card {
     -fx-background-color: -roam-bg-primary;
-    -fx-background-radius: -roam-radius;
+    -fx-background-radius: 16px;
     -fx-border-color: -roam-border;
-    -fx-border-radius: -roam-radius;
+    -fx-border-radius: 16px;
     -fx-border-width: 1px;
-    -fx-padding: 15;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 16, 0, 0, 4);
     -fx-cursor: hand;
 }
 
 .roam-card:hover {
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 8);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 24, 0, 0, 8);
     -fx-translate-y: -2;
+    -fx-border-color: -roam-blue;
 }
 
-/* Stats Panel */
+/* Bento Grid Container */
+.bento-grid {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 20px;
+    -fx-padding: 16;
+    -fx-spacing: 16;
+}
+
+/* Bento Cell - Individual grid items */
+.bento-cell {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 16px;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 12, 0, 0, 3);
+}
+
+.bento-cell:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 18, 0, 0, 6);
+}
+
+/* Bento Cell Sizes */
+.bento-cell-small {
+    -fx-min-width: 120;
+    -fx-min-height: 100;
+}
+
+.bento-cell-medium {
+    -fx-min-width: 200;
+    -fx-min-height: 150;
+}
+
+.bento-cell-large {
+    -fx-min-width: 300;
+    -fx-min-height: 200;
+}
+
+.bento-cell-wide {
+    -fx-min-width: 400;
+    -fx-min-height: 100;
+}
+
+.bento-cell-tall {
+    -fx-min-width: 200;
+    -fx-min-height: 300;
+}
+
+/* Stats Panel - Bento Style */
 .stats-panel {
     -fx-background-color: -roam-gray-bg;
     -fx-padding: 20;
-    -fx-spacing: 15;
-    -fx-background-radius: -roam-radius;
+    -fx-spacing: 16;
+    -fx-background-radius: 20px;
 }
 
 .stat-item {
     -fx-background-color: -roam-bg-primary;
-    -fx-padding: 15;
-    -fx-background-radius: -roam-radius-small;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);
+    -fx-padding: 20;
+    -fx-background-radius: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 10, 0, 0, 3);
+}
+
+.stat-item:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 14, 0, 0, 5);
+}
+
+/* Content Panels with Bento Style */
+.content-panel {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 20px;
+    -fx-padding: 24;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 12, 0, 0, 4);
+}
+
+/* Section Cards */
+.section-card {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 16px;
+    -fx-padding: 20;
+    -fx-spacing: 12;
+}
+
+.section-card-header {
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 16px;
+    -fx-text-fill: -roam-text-primary;
+}
+
+/* Info Cards */
+.info-card {
+    -fx-background-color: -roam-blue-light;
+    -fx-background-radius: 14px;
+    -fx-padding: 16;
+    -fx-border-radius: 14px;
+}
+
+.warning-card {
+    -fx-background-color: -roam-yellow-bg;
+    -fx-background-radius: 14px;
+    -fx-padding: 16;
+    -fx-border-radius: 14px;
+}
+
+.success-card {
+    -fx-background-color: -roam-green-bg;
+    -fx-background-radius: 14px;
+    -fx-padding: 16;
+    -fx-border-radius: 14px;
+}
+
+.error-card {
+    -fx-background-color: -roam-red-bg;
+    -fx-background-radius: 14px;
+    -fx-padding: 16;
+    -fx-border-radius: 14px;
+}
+
+/* Feature Cards - Highlighted Bento Cells */
+.feature-card {
+    -fx-background-color: linear-gradient(to bottom right, -roam-blue-light, -roam-bg-primary);
+    -fx-background-radius: 20px;
+    -fx-padding: 24;
+    -fx-effect: dropshadow(gaussian, rgba(66,133,244,0.15), 16, 0, 0, 6);
+}
+
+.feature-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(66,133,244,0.25), 20, 0, 0, 8);
+}
+
+/* Metric Cards - For displaying numbers/stats */
+.metric-card {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 16px;
+    -fx-padding: 20;
+    -fx-alignment: CENTER;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 3);
+}
+
+.metric-value {
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 32px;
+    -fx-text-fill: -roam-text-primary;
+}
+
+.metric-label {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-text-fill: -roam-text-secondary;
+}
+
+/* List Cards - For displaying lists within bento */
+.list-card {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 16px;
+    -fx-padding: 16;
+}
+
+.list-card-item {
+    -fx-background-color: transparent;
+    -fx-padding: 12 16;
+    -fx-background-radius: 10px;
+}
+
+.list-card-item:hover {
+    -fx-background-color: -roam-gray-bg;
+}
+
+/* Glass Effect Card (for floating elements) */
+.glass-card {
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-radius: 20px;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 8);
+}
+
+.dark .glass-card {
+    -fx-background-color: rgba(30, 30, 30, 0.85);
+}
+
+/* Compact Card */
+.compact-card {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: 12px;
+    -fx-padding: 12 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 8, 0, 0, 2);
+}
+
+.compact-card:hover {
+    -fx-background-color: -roam-gray-bg;
 }

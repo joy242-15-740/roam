@@ -1,3 +1,7 @@
+/* ============================================
+   BUTTONS - BENTO STYLE WITH ROUNDED EDGES
+   ============================================ */
+
 /* Navigation Buttons */
 .nav-button {
     -fx-background-color: transparent;
@@ -6,7 +10,7 @@
     -fx-font-size: 14px;
     -fx-font-family: 'Poppins';
     -fx-padding: 12 20 12 16;
-    -fx-background-radius: 6px;
+    -fx-background-radius: 12px;
     -fx-cursor: hand;
 }
 
@@ -29,51 +33,47 @@
 .action-button {
     -fx-background-color: -roam-blue;
     -fx-text-fill: white;
-    -fx-font-family: 'Poppins Bold';
+    -fx-font-family: 'Poppins SemiBold';
     -fx-font-size: 14px;
-    -fx-padding: 10 20;
-    -fx-background-radius: 6px;
+    -fx-padding: 12 24;
+    -fx-background-radius: 14px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 8, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.35), 10, 0, 2, 4);
 }
 
 .action-button:hover {
     -fx-background-color: -roam-blue-hover;
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.5), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.5), 14, 0, 3, 6);
     -fx-scale-x: 1.02;
     -fx-scale-y: 1.02;
 }
 
 .action-button:pressed {
     -fx-background-color: -roam-blue-pressed;
-    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 6, 0, 0, 1);
+    -fx-effect: dropshadow(gaussian, rgba(66, 133, 244, 0.3), 6, 0, 1, 2);
     -fx-translate-y: 1;
 }
 
-/* Standard Buttons */
+/* Standard Buttons - Bento Rounded Style */
 .button {
     -fx-background-color: -roam-gray-bg;
     -fx-text-fill: -roam-text-primary;
     -fx-font-family: 'Poppins SemiBold';
     -fx-font-size: 14px;
-    -fx-padding: 12 24 12 24;
-    -fx-background-radius: 12px;
+    -fx-padding: 12 24;
+    -fx-background-radius: 14px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 2, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 2, 3);
 }
 
 .button:hover {
     -fx-background-color: -roam-gray-light;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 12, 0, 3, 6);
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0, 3, 5);
 }
 
 .button:pressed {
     -fx-background-color: -roam-border;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 1, 2);
-    -fx-scale-x: 0.98;
-    -fx-scale-y: 0.98;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 1, 2);
 }
 
 /* Primary Button - Blue accent */
@@ -97,13 +97,14 @@
 .button-danger, .button.danger {
     -fx-background-color: -roam-red-bg;
     -fx-text-fill: -roam-red;
-    -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.2), 8, 0, 2, 4);
+    -fx-background-radius: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.15), 8, 0, 2, 3);
 }
 
 .button-danger:hover, .button.danger:hover {
     -fx-background-color: -roam-red;
     -fx-text-fill: #FFFFFF;
-    -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.4), 12, 0, 3, 6);
+    -fx-effect: dropshadow(gaussian, rgba(211,47,47,0.35), 12, 0, 3, 5);
 }
 
 .button-danger:pressed, .button.danger:pressed {
@@ -111,17 +112,43 @@
     -fx-text-fill: #FFFFFF;
 }
 
-/* Secondary Button */
-.button-secondary {
+/* Success Button */
+.button-success, .button.success {
+    -fx-background-color: -roam-green;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(56,142,60,0.35), 10, 0, 2, 4);
+}
+
+.button-success:hover, .button.success:hover {
+    -fx-background-color: #2E7D32;
+    -fx-effect: dropshadow(gaussian, rgba(56,142,60,0.5), 14, 0, 3, 6);
+}
+
+/* Secondary Button - Outline Style */
+.button-secondary, .button.secondary {
     -fx-background-color: transparent;
     -fx-text-fill: -roam-blue;
     -fx-border-color: -roam-blue;
-    -fx-border-width: 1px;
-    -fx-border-radius: 8px;
+    -fx-border-width: 2px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
 }
 
-.button-secondary:hover {
-    -fx-background-color: rgba(66, 133, 244, 0.08);
+.button-secondary:hover, .button.secondary:hover {
+    -fx-background-color: -roam-blue-light;
+}
+
+/* Ghost Button - Minimal Style */
+.button-ghost, .button.ghost {
+    -fx-background-color: transparent;
+    -fx-text-fill: -roam-text-secondary;
+    -fx-background-radius: 12px;
+}
+
+.button-ghost:hover, .button.ghost:hover {
+    -fx-background-color: -roam-gray-bg;
+    -fx-text-fill: -roam-text-primary;
 }
 
 /* Icon Button */
@@ -129,23 +156,36 @@
     -fx-background-color: transparent;
     -fx-text-fill: -roam-text-secondary;
     -fx-font-size: 18px;
-    -fx-padding: 8;
-    -fx-background-radius: 50%;
+    -fx-padding: 10;
+    -fx-background-radius: 12px;
     -fx-cursor: hand;
 }
 
 .icon-button:hover {
-    -fx-background-color: -roam-gray-light;
+    -fx-background-color: -roam-gray-bg;
 }
 
-/* Toggle Button Group */
+.icon-button.round {
+    -fx-background-radius: 50%;
+}
+
+/* Toggle Button Group - Segmented Control Style */
 .toggle-button {
-    -fx-background-color: transparent;
+    -fx-background-color: -roam-gray-light;
     -fx-text-fill: -roam-text-secondary;
     -fx-font-family: 'Poppins';
     -fx-font-size: 13px;
-    -fx-padding: 8 16;
+    -fx-padding: 10 20;
+    -fx-background-radius: 0;
     -fx-cursor: hand;
+}
+
+.toggle-button:first-child {
+    -fx-background-radius: 12px 0 0 12px;
+}
+
+.toggle-button:last-child {
+    -fx-background-radius: 0 12px 12px 0;
 }
 
 .toggle-button:selected {
@@ -157,32 +197,94 @@
     -fx-background-color: -roam-blue-hover;
 }
 
+/* Segmented Button - Alternative Toggle Style */
+.segmented-button-bar {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 14px;
+    -fx-padding: 4;
+}
+
+.segmented-button-bar .toggle-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10px;
+    -fx-padding: 8 16;
+}
+
+.segmented-button-bar .toggle-button:selected {
+    -fx-background-color: -roam-bg-primary;
+    -fx-text-fill: -roam-text-primary;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6, 0, 0, 2);
+}
+
+/* Chip Buttons - Small Tags */
+.chip-button {
+    -fx-background-color: -roam-gray-bg;
+    -fx-text-fill: -roam-text-secondary;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 12px;
+    -fx-padding: 6 14;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+}
+
+.chip-button:hover {
+    -fx-background-color: -roam-gray-light;
+}
+
+.chip-button:selected, .chip-button.active {
+    -fx-background-color: -roam-blue-light;
+    -fx-text-fill: -roam-blue;
+}
+
+/* FAB - Floating Action Button */
+.fab {
+    -fx-background-color: -roam-blue;
+    -fx-text-fill: white;
+    -fx-background-radius: 50%;
+    -fx-min-width: 56px;
+    -fx-min-height: 56px;
+    -fx-max-width: 56px;
+    -fx-max-height: 56px;
+    -fx-effect: dropshadow(gaussian, rgba(66,133,244,0.4), 16, 0, 0, 6);
+    -fx-cursor: hand;
+}
+
+.fab:hover {
+    -fx-background-color: -roam-blue-hover;
+    -fx-effect: dropshadow(gaussian, rgba(66,133,244,0.5), 20, 0, 0, 8);
+}
+
+.fab.mini {
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-max-width: 40px;
+    -fx-max-height: 40px;
+}
+
 /* Custom Sidebar Button Styling */
 .sidebar-button {
     -fx-pref-height: 45px;
-    -fx-padding: 8px;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
+    -fx-padding: 10 14;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
     -fx-border-color: -roam-border;
-    -fx-border-width: 2.5px;
+    -fx-border-width: 1px;
     -fx-background-color: -roam-bg-primary;
     -fx-cursor: hand;
     -fx-font-family: 'Poppins';
     -fx-alignment: CENTER_LEFT;
     -fx-text-fill: -roam-text-primary;
-    /* Box shadow approximation: 0px 0px 20px -20px */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 0); 
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2); 
 }
 
 .sidebar-button:hover {
     -fx-background-color: -roam-gray-bg;
-    /* Box shadow approximation: 0px 0px 20px -18px */
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 12, 0, 0, 4);
 }
 
 .sidebar-button:pressed {
-    -fx-scale-x: 0.95;
-    -fx-scale-y: 0.95;
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
 }
 
 .sidebar-button.selected {
