@@ -1,7 +1,7 @@
-﻿# Roam - Personal Productivity & Project Management
-
-<div align="center">
-  <img src="src/main/resources/icons/app-icon.png" alt="Roam Logo" width="128" height="128">
+﻿<div align="center">
+   <img src="src/main/resources/icons/roam-icon.png" alt="Roam Logo" width="128" height="128">
+  <h1> Roam </h1>
+  <h4> Personal Productivity & Project Management </h4>
   
   [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/)
   [![JavaFX](https://img.shields.io/badge/JavaFX-21-blue.svg)](https://openjfx.io/)
@@ -72,7 +72,7 @@
 | **Language** | Java 21 |
 | **UI Framework** | JavaFX 21 |
 | **Theming** | AtlantaFX 2.0.1 |
-| **Database** | SQLite with Hibernate ORM 6.4.1 |
+| **Database** | H2 with Hibernate ORM 6.4.1 |
 | **Migrations** | Flyway |
 | **Search** | Apache Lucene |
 | **Icons** | Ikonli Feather |
@@ -153,7 +153,7 @@ src/main/java/com/roam/
 
 ## Database
 
-Roam uses SQLite for local data persistence. Database migrations are handled automatically by Flyway on application startup.
+Roam uses H2 Database for local data persistence. Database migrations are handled automatically by Flyway on application startup.
 
 ## Testing
 
@@ -179,5 +179,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <div align="center">
-  Made with love for productivity enthusiasts
+  Made by [text](https://www.facebook.com/people/Noor/61582164040390/)
 </div>

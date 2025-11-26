@@ -4,6 +4,7 @@ import com.roam.model.Operation;
 import com.roam.model.OperationStatus;
 import com.roam.model.Priority;
 import com.roam.model.Region;
+import com.roam.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -266,11 +267,17 @@ public class OperationDialog extends Dialog<Operation> {
     }
 
     private void applyCustomStyling() {
-        // Style buttons
+        // Apply theme-aware styling
+        ThemeManager.getInstance().styleDialog(this);
+
         DialogPane pane = getDialogPane();
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String bgColor = isDark ? "#2d2d2d" : "#f5f5f5";
+        String textColor = isDark ? "#ffffff" : "#212121";
+
         pane.lookupButton(ButtonType.CANCEL).setStyle(
-                "-fx-background-color: -roam-gray-bg; " +
-                        "-fx-text-fill: -roam-text-primary; " +
+                "-fx-background-color: " + bgColor + "; " +
+                        "-fx-text-fill: " + textColor + "; " +
                         "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
@@ -278,22 +285,9 @@ public class OperationDialog extends Dialog<Operation> {
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
 
-        ButtonType submitType = isEditMode ? new ButtonType("Update", ButtonBar.ButtonData.OK_DONE)
-                : new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
-
-        // Wiki: The button type lookup might need to be more robust if the order
-        // changes,
-        // but here we rely on the order we added them (submit, cancel).
-        // Actually, we added submit then cancel. So submit is index 0?
-        // Let's check how we added them:
-        // getDialogPane().getButtonTypes().addAll(submitButton, ButtonType.CANCEL);
-        // So submitButton is at index 0.
-        // Wait, the original code used pane.lookupButton(pane.getButtonTypes().get(0)).
-        // I should keep using that logic but update the style.
-
         pane.lookupButton(pane.getButtonTypes().get(0)).setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: -roam-white; " +
+                "-fx-background-color: #4285f4; " +
+                        "-fx-text-fill: #ffffff; " +
                         "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +

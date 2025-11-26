@@ -12,6 +12,7 @@ import com.roam.service.SettingsService;
 import com.roam.util.ExportUtils;
 import com.roam.util.ImportUtils;
 import com.roam.util.StyleBuilder;
+import com.roam.util.ThemeManager;
 import com.roam.util.ThreadPoolManager;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -253,14 +254,13 @@ public class SettingsView extends ScrollPane {
         settings.setTheme(theme);
         settingsService.saveSettings();
 
+        // Apply theme using ThemeManager (handles both AtlantaFX theme and dark class)
+        ThemeManager themeManager = ThemeManager.getInstance();
+        themeManager.applyTheme(theme);
+
+        // Also update current scene's root
         if (getScene() != null) {
-            if ("Dark".equalsIgnoreCase(theme)) {
-                if (!getScene().getRoot().getStyleClass().contains("dark")) {
-                    getScene().getRoot().getStyleClass().add("dark");
-                }
-            } else {
-                getScene().getRoot().getStyleClass().remove("dark");
-            }
+            themeManager.applyDarkClass(getScene().getRoot(), themeManager.isDarkTheme());
         }
     }
 

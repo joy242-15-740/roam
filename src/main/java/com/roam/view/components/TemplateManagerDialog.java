@@ -2,6 +2,7 @@ package com.roam.view.components;
 
 import com.roam.controller.WikiController;
 import com.roam.model.WikiTemplate;
+import com.roam.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -28,12 +29,18 @@ public class TemplateManagerDialog extends Dialog<Void> {
         setWidth(700);
         setHeight(500);
 
+        // Apply theme styling
+        ThemeManager.getInstance().styleDialog(this);
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String blueColor = "#4285f4";
+        String redColor = "#e53935";
+
         // Create main layout
         BorderPane mainLayout = new BorderPane();
         mainLayout.setPadding(new Insets(15));
 
         // Create toolbar
-        HBox toolbar = createToolbar();
+        HBox toolbar = createToolbar(isDark, blueColor, redColor);
         mainLayout.setTop(toolbar);
 
         // Create template list
@@ -56,13 +63,15 @@ public class TemplateManagerDialog extends Dialog<Void> {
         getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
     }
 
-    private HBox createToolbar() {
+    private HBox createToolbar(boolean isDark, String blueColor, String redColor) {
         HBox toolbar = new HBox(10);
         toolbar.setPadding(new Insets(0, 0, 15, 0));
 
+        String bgColor = isDark ? "#2d2d2d" : "#ffffff";
+
         Button newButton = new Button("+ New Template");
         newButton.setStyle(
-                "-fx-background-color: -roam-blue; " +
+                "-fx-background-color: " + blueColor + "; " +
                         "-fx-text-fill: white; " +
                         "-fx-background-radius: 6; " +
                         "-fx-padding: 8 16; " +
@@ -71,9 +80,9 @@ public class TemplateManagerDialog extends Dialog<Void> {
 
         editButton = new Button("Edit");
         editButton.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-text-fill: -roam-blue; " +
-                        "-fx-border-color: -roam-blue; " +
+                "-fx-background-color: " + bgColor + "; " +
+                        "-fx-text-fill: " + blueColor + "; " +
+                        "-fx-border-color: " + blueColor + "; " +
                         "-fx-border-width: 1; " +
                         "-fx-background-radius: 6; " +
                         "-fx-padding: 8 16; " +
@@ -83,9 +92,9 @@ public class TemplateManagerDialog extends Dialog<Void> {
 
         deleteButton = new Button("Delete");
         deleteButton.setStyle(
-                "-fx-background-color: -roam-bg-primary; " +
-                        "-fx-text-fill: -roam-red; " +
-                        "-fx-border-color: -roam-red; " +
+                "-fx-background-color: " + bgColor + "; " +
+                        "-fx-text-fill: " + redColor + "; " +
+                        "-fx-border-color: " + redColor + "; " +
                         "-fx-border-width: 1; " +
                         "-fx-background-radius: 6; " +
                         "-fx-padding: 8 16; " +
@@ -127,10 +136,11 @@ public class TemplateManagerDialog extends Dialog<Void> {
     private void deleteSelectedTemplate() {
         WikiTemplate selected = templateListView.getSelectionModel().getSelectedItem();
         if (selected != null && !selected.getIsDefault()) {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Delete Template");
-            confirm.setHeaderText("Delete \"" + selected.getName() + "\"?");
-            confirm.setContentText("This action cannot be undone.");
+            Alert confirm = ThemeManager.getInstance().createAlert(
+                    Alert.AlertType.CONFIRMATION,
+                    "Delete Template",
+                    "Delete \"" + selected.getName() + "\"?",
+                    "This action cannot be undone.");
             confirm.showAndWait().ifPresent(response -> {
                 if (response == ButtonType.OK) {
                     controller.deleteTemplate(selected);
@@ -152,6 +162,11 @@ public class TemplateManagerDialog extends Dialog<Void> {
                 setText(null);
                 setGraphic(null);
             } else {
+                boolean isDark = ThemeManager.getInstance().isDarkTheme();
+                String textSecondary = isDark ? "#b0b0b0" : "#757575";
+                String greenBg = isDark ? "#1b4332" : "#e8f5e9";
+                String greenColor = isDark ? "#69b378" : "#2e7d32";
+
                 HBox box = new HBox(15);
                 box.setPadding(new Insets(10));
 
@@ -164,7 +179,7 @@ public class TemplateManagerDialog extends Dialog<Void> {
                 name.setFont(Font.font("System Bold", 14));
                 Label desc = new Label(template.getDescription());
                 desc.setFont(Font.font(12));
-                desc.setStyle("-fx-text-fill: -roam-text-secondary;");
+                desc.setStyle("-fx-text-fill: " + textSecondary + ";");
                 textBox.getChildren().addAll(name, desc);
 
                 box.getChildren().addAll(icon, textBox);
@@ -173,8 +188,8 @@ public class TemplateManagerDialog extends Dialog<Void> {
                     Label defaultBadge = new Label("DEFAULT");
                     defaultBadge.setFont(Font.font(10));
                     defaultBadge.setStyle(
-                            "-fx-background-color: -roam-green-bg; " +
-                                    "-fx-text-fill: -roam-green; " +
+                            "-fx-background-color: " + greenBg + "; " +
+                                    "-fx-text-fill: " + greenColor + "; " +
                                     "-fx-padding: 2 8; " +
                                     "-fx-background-radius: 4;");
                     Region spacer = new Region();
@@ -196,6 +211,9 @@ public class TemplateManagerDialog extends Dialog<Void> {
         public TemplateEditDialog(WikiTemplate template) {
             setTitle(template == null ? "New Template" : "Edit Template");
             setHeaderText(template == null ? "Create a new Wiki template" : "Edit template");
+
+            // Apply theme styling
+            ThemeManager.getInstance().styleDialog(this);
 
             GridPane grid = new GridPane();
             grid.setHgap(10);

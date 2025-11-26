@@ -157,10 +157,208 @@
 
 .dialog-pane .content {
     -fx-background-color: -roam-bg-primary;
+    -fx-text-fill: -roam-text-primary;
 }
 
 .dialog-pane .header-panel {
     -fx-background-color: -roam-gray-bg;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: -roam-text-primary;
+}
+
+.dialog-pane > .content.label {
+    -fx-text-fill: -roam-text-primary;
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: -roam-text-primary;
+}
+
+/* Dark mode dialog text overrides - use dialog-pane.dark directly since dialogs have separate scene */
+.dialog-pane.dark {
+    -fx-background-color: #1e1e1e;
+}
+
+.dialog-pane.dark .content {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark .header-panel {
+    -fx-background-color: #2d2d2d;
+}
+
+.dialog-pane.dark .header-panel .label {
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark .label {
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark > .content.label {
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark > .button-bar > .container {
+    -fx-background-color: #1e1e1e;
+}
+
+.dialog-pane.dark .text-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #424242;
+    -fx-prompt-text-fill: #757575;
+}
+
+.dialog-pane.dark .text-area {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #424242;
+}
+
+.dialog-pane.dark .text-area .content {
+    -fx-background-color: #2d2d2d;
+}
+
+.dialog-pane.dark .combo-box {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.dialog-pane.dark .combo-box .list-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark .date-picker {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.dialog-pane.dark .date-picker .text-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark .spinner {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.dialog-pane.dark .spinner .text-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark .check-box {
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark .check-box .box {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.dialog-pane.dark .list-view {
+    -fx-background-color: #1e1e1e;
+}
+
+.dialog-pane.dark .list-cell {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #ffffff;
+}
+
+.dialog-pane.dark .list-cell:hover {
+    -fx-background-color: #2d2d2d;
+}
+
+.dialog-pane.dark .list-cell:selected {
+    -fx-background-color: #3d3d3d;
+}
+
+.dialog-pane.dark .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.dialog-pane.dark .scroll-pane > .viewport {
+    -fx-background-color: #1e1e1e;
+}
+
+.dialog-pane.dark .button {
+    -fx-text-fill: #ffffff;
+}
+
+/* Also handle parent .dark class for nested scenarios */
+.dark .dialog-pane {
+    -fx-background-color: #1e1e1e;
+}
+
+.dark .dialog-pane .content {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #ffffff;
+}
+
+.dark .dialog-pane .header-panel {
+    -fx-background-color: #2d2d2d;
+}
+
+.dark .dialog-pane .header-panel .label {
+    -fx-text-fill: #ffffff;
+}
+
+.dark .dialog-pane .label {
+    -fx-text-fill: #ffffff;
+}
+
+.dark .dialog-pane > .content.label {
+    -fx-text-fill: #ffffff;
+}
+
+.dark .dialog-pane > .button-bar > .container {
+    -fx-background-color: #1e1e1e;
+}
+
+.dark .dialog-pane .text-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #424242;
+}
+
+.dark .dialog-pane .text-area {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #424242;
+}
+
+.dark .dialog-pane .text-area .content {
+    -fx-background-color: #2d2d2d;
+}
+
+.dark .dialog-pane .combo-box {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.dark .dialog-pane .combo-box .list-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+}
+
+.dark .dialog-pane .date-picker {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #424242;
+}
+
+.dark .dialog-pane .date-picker .text-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
 }
 
 /* ComboBox Styling */
@@ -273,6 +471,50 @@
 
 .alert .content {
     -fx-text-fill: -roam-text-primary;
+}
+
+.alert .dialog-pane {
+    -fx-background-color: -roam-bg-primary;
+}
+
+.alert .dialog-pane .content {
+    -fx-text-fill: -roam-text-primary;
+}
+
+/* Dark mode alert styles */
+.dark .alert,
+.alert.dark {
+    -fx-background-color: #1e1e1e;
+}
+
+.dark .alert .content,
+.alert.dark .content {
+    -fx-text-fill: #ffffff;
+}
+
+.dark .alert .dialog-pane,
+.alert.dark .dialog-pane {
+    -fx-background-color: #1e1e1e;
+}
+
+.dark .alert .dialog-pane .content,
+.alert.dark .dialog-pane .content {
+    -fx-text-fill: #ffffff;
+}
+
+.dark .alert .dialog-pane .header-panel,
+.alert.dark .dialog-pane .header-panel {
+    -fx-background-color: #2d2d2d;
+}
+
+.dark .alert .dialog-pane .header-panel .label,
+.alert.dark .dialog-pane .header-panel .label {
+    -fx-text-fill: #ffffff;
+}
+
+.dark .alert .dialog-pane .label,
+.alert.dark .dialog-pane .label {
+    -fx-text-fill: #ffffff;
 }
 
 /* CheckBox Styling */

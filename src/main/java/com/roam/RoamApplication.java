@@ -54,21 +54,39 @@ public class RoamApplication extends Application {
             String pinHash = settingsService.getSettings().getPinHash();
             boolean hasPinSet = pinHash != null && !pinHash.isEmpty();
 
+            // Get ThemeManager instance
+            ThemeManager themeManager = ThemeManager.getInstance();
+            boolean isDarkTheme = themeManager.isDarkTheme();
+
             if (SecurityContext.getInstance().isLockEnabled() && hasPinSet) {
                 LockScreen lockScreen = new LockScreen(() -> {
                     Scene scene = new Scene(mainLayout, 1024, 600);
                     scene.getStylesheets().add(css);
+                    // Apply dark mode class if needed
+                    if (isDarkTheme) {
+                        scene.getRoot().getStyleClass().add("dark");
+                    }
+                    themeManager.setMainScene(scene);
                     primaryStage.setScene(scene);
                     primaryStage.centerOnScreen();
                 });
 
                 Scene lockScene = new Scene(lockScreen, 1024, 600);
                 lockScene.getStylesheets().add(css);
+                // Apply dark mode class to lock screen too
+                if (isDarkTheme) {
+                    lockScene.getRoot().getStyleClass().add("dark");
+                }
                 primaryStage.setScene(lockScene);
             } else {
                 // No lock screen - proceed directly to main app
                 Scene scene = new Scene(mainLayout, 1024, 600);
                 scene.getStylesheets().add(css);
+                // Apply dark mode class if needed
+                if (isDarkTheme) {
+                    scene.getRoot().getStyleClass().add("dark");
+                }
+                themeManager.setMainScene(scene);
                 primaryStage.setScene(scene);
                 SecurityContext.getInstance().setAuthenticated(true); // Auto-authenticate when no lock
             }

@@ -1,6 +1,7 @@
 package com.roam.view;
 
 import com.roam.service.SearchService;
+import com.roam.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -45,9 +46,16 @@ public class SearchResultsDialog {
         stage.initStyle(StageStyle.UTILITY);
         stage.setTitle("Search Results");
 
+        // Get theme state for styling
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String bgPrimary = isDark ? "#1e1e1e" : "#ffffff";
+        String textPrimary = isDark ? "#ffffff" : "#212121";
+        String textSecondary = isDark ? "#b0b0b0" : "#757575";
+        String grayBg = isDark ? "#2d2d2d" : "#f5f5f5";
+
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(20));
-        root.setStyle("-fx-background-color: -roam-bg-primary;");
+        root.setStyle("-fx-background-color: " + bgPrimary + ";");
 
         // Top: Title and filters
         VBox top = new VBox(15);
@@ -55,12 +63,12 @@ public class SearchResultsDialog {
         // Title
         Label titleLabel = new Label("Search Results for \"" + query + "\"");
         titleLabel.setFont(Font.font("Poppins Bold", 18));
-        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
+        titleLabel.setStyle("-fx-text-fill: " + textPrimary + ";");
 
         // Result count
         Label countLabel = new Label(results.size() + " results found");
         countLabel.setFont(Font.font("Poppins", 12));
-        countLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+        countLabel.setStyle("-fx-text-fill: " + textSecondary + ";");
 
         // Filters
         HBox filters = createFilters();
@@ -84,7 +92,14 @@ public class SearchResultsDialog {
         bottom.setPadding(new Insets(15, 0, 0, 0));
 
         Button closeBtn = new Button("Close");
-        closeBtn.getStyleClass().add("button");
+        closeBtn.setStyle(
+                "-fx-background-color: " + grayBg + "; " +
+                        "-fx-text-fill: " + textPrimary + "; " +
+                        "-fx-font-family: 'Poppins'; " +
+                        "-fx-font-size: 14px; " +
+                        "-fx-padding: 8 20; " +
+                        "-fx-background-radius: 6; " +
+                        "-fx-cursor: hand;");
         closeBtn.setOnAction(e -> stage.close());
 
         bottom.getChildren().add(closeBtn);
@@ -92,6 +107,11 @@ public class SearchResultsDialog {
         root.setTop(top);
         root.setCenter(scrollPane);
         root.setBottom(bottom);
+
+        // Apply dark class if needed
+        if (isDark) {
+            root.getStyleClass().add("dark");
+        }
 
         Scene scene = new Scene(root, 700, 600);
         scene.getStylesheets().add(getClass().getResource("/styles/application.css").toExternalForm());
@@ -159,10 +179,13 @@ public class SearchResultsDialog {
     private void displayResults(List<SearchService.SearchResult> filteredResults) {
         resultsContainer.getChildren().clear();
 
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String textSecondary = isDark ? "#b0b0b0" : "#757575";
+
         if (filteredResults.isEmpty()) {
             Label noResults = new Label("No results found");
             noResults.setFont(Font.font("Poppins", 14));
-            noResults.setStyle("-fx-text-fill: -roam-text-secondary;");
+            noResults.setStyle("-fx-text-fill: " + textSecondary + ";");
             resultsContainer.getChildren().add(noResults);
             return;
         }
@@ -207,27 +230,37 @@ public class SearchResultsDialog {
     }
 
     private Label createGroupHeader(String text) {
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String textPrimary = isDark ? "#ffffff" : "#212121";
+
         Label header = new Label(text);
         header.setFont(Font.font("Poppins Bold", 14));
-        header.setStyle("-fx-text-fill: -roam-text-primary;");
+        header.setStyle("-fx-text-fill: " + textPrimary + ";");
         header.setPadding(new Insets(10, 0, 5, 0));
         return header;
     }
 
     private VBox createResultItem(SearchService.SearchResult result) {
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String textPrimary = isDark ? "#ffffff" : "#212121";
+        String textSecondary = isDark ? "#b0b0b0" : "#757575";
+        String textHint = isDark ? "#808080" : "#9e9e9e";
+        String grayBg = isDark ? "#2d2d2d" : "#f5f5f5";
+        String grayLight = isDark ? "#3d3d3d" : "#e8e8e8";
+
         VBox item = new VBox(5);
         item.setPadding(new Insets(10));
-        item.setStyle("-fx-background-color: -roam-gray-bg; -fx-background-radius: 8; -fx-cursor: hand;");
+        item.setStyle("-fx-background-color: " + grayBg + "; -fx-background-radius: 8; -fx-cursor: hand;");
 
         // Title
         Label titleLabel = new Label(result.title != null ? result.title : "Untitled");
         titleLabel.setFont(Font.font("Poppins Bold", 13));
-        titleLabel.setStyle("-fx-text-fill: -roam-text-primary;");
+        titleLabel.setStyle("-fx-text-fill: " + textPrimary + ";");
 
         // Snippet
         Label snippetLabel = new Label(result.snippet);
         snippetLabel.setFont(Font.font("Poppins", 11));
-        snippetLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+        snippetLabel.setStyle("-fx-text-fill: " + textSecondary + ";");
         snippetLabel.setWrapText(true);
 
         // Metadata
@@ -242,21 +275,21 @@ public class SearchResultsDialog {
         if (result.priority != null) {
             Label priorityLabel = new Label("Priority: " + result.priority);
             priorityLabel.setFont(Font.font("Poppins", 10));
-            priorityLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+            priorityLabel.setStyle("-fx-text-fill: " + textHint + ";");
             metadata.getChildren().add(priorityLabel);
         }
 
         if (result.status != null) {
             Label statusLabel = new Label("Status: " + result.status);
             statusLabel.setFont(Font.font("Poppins", 10));
-            statusLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+            statusLabel.setStyle("-fx-text-fill: " + textHint + ";");
             metadata.getChildren().add(statusLabel);
         }
 
         if (result.region != null && !result.region.isEmpty()) {
             Label regionLabel = new Label("Region: " + result.region);
             regionLabel.setFont(Font.font("Poppins", 10));
-            regionLabel.setStyle("-fx-text-fill: -roam-text-hint;");
+            regionLabel.setStyle("-fx-text-fill: " + textHint + ";");
             metadata.getChildren().add(regionLabel);
         }
 
@@ -265,9 +298,10 @@ public class SearchResultsDialog {
         // Hover effect
         item.setOnMouseEntered(
                 e -> item.setStyle(
-                        "-fx-background-color: -roam-gray-light; -fx-background-radius: 8; -fx-cursor: hand;"));
+                        "-fx-background-color: " + grayLight + "; -fx-background-radius: 8; -fx-cursor: hand;"));
         item.setOnMouseExited(
-                e -> item.setStyle("-fx-background-color: -roam-gray-bg; -fx-background-radius: 8; -fx-cursor: hand;"));
+                e -> item
+                        .setStyle("-fx-background-color: " + grayBg + "; -fx-background-radius: 8; -fx-cursor: hand;"));
 
         // Click handler
         item.setOnMouseClicked(e -> {

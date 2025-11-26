@@ -1,5 +1,6 @@
 package com.roam.view.components;
 
+import com.roam.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -20,13 +21,19 @@ public class PreferencesDialog extends Dialog<Void> {
         setHeaderText("Configure your wiki settings");
         getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
+        // Apply theme styling
+        ThemeManager.getInstance().styleDialog(this);
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String blueColor = "#4285f4";
+        String textSecondary = isDark ? "#b0b0b0" : "#757575";
+
         VBox mainContent = new VBox(20);
         mainContent.setPadding(new Insets(20));
 
         // Editor Settings Section
         Label editorHeader = new Label("Editor Settings");
         editorHeader.setFont(Font.font("Poppins Bold", 16));
-        editorHeader.setStyle("-fx-text-fill: -roam-blue;");
+        editorHeader.setStyle("-fx-text-fill: " + blueColor + ";");
 
         GridPane editorGrid = new GridPane();
         editorGrid.setHgap(20);
@@ -57,7 +64,7 @@ public class PreferencesDialog extends Dialog<Void> {
         // Auto-save Settings Section
         Label autoSaveHeader = new Label("Auto-Save Settings");
         autoSaveHeader.setFont(Font.font("Poppins Bold", 16));
-        autoSaveHeader.setStyle("-fx-text-fill: -roam-blue;");
+        autoSaveHeader.setStyle("-fx-text-fill: " + blueColor + ";");
 
         VBox autoSaveBox = new VBox(10);
         autoSaveBox.setPadding(new Insets(10, 0, 0, 0));
@@ -79,7 +86,7 @@ public class PreferencesDialog extends Dialog<Void> {
 
         Label secondsLabel = new Label("seconds");
         secondsLabel.setFont(Font.font("Poppins", 13));
-        secondsLabel.setStyle("-fx-text-fill: -roam-text-secondary;");
+        secondsLabel.setStyle("-fx-text-fill: " + textSecondary + ";");
 
         autoSaveGrid.add(intervalLabel, 0, 0);
         autoSaveGrid.add(autoSaveIntervalCombo, 1, 0);
@@ -95,7 +102,7 @@ public class PreferencesDialog extends Dialog<Void> {
         // Display Settings Section
         Label displayHeader = new Label("Display Settings");
         displayHeader.setFont(Font.font("Poppins Bold", 16));
-        displayHeader.setStyle("-fx-text-fill: -roam-blue;");
+        displayHeader.setStyle("-fx-text-fill: " + blueColor + ";");
 
         VBox displayBox = new VBox(10);
         displayBox.setPadding(new Insets(10, 0, 0, 0));

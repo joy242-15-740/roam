@@ -6,6 +6,7 @@ import com.roam.model.Wiki;
 import com.roam.model.Operation;
 import com.roam.model.Region;
 import com.roam.model.Task;
+import com.roam.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -553,12 +554,20 @@ public class EventDialog extends Dialog<CalendarEvent> {
     }
 
     private void applyCustomStyling() {
+        // Apply theme-aware styling
+        ThemeManager.getInstance().styleDialog(this);
+
         DialogPane pane = getDialogPane();
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String bgColor = isDark ? "#2d2d2d" : "#f5f5f5";
+        String textColor = isDark ? "#ffffff" : "#212121";
+        String blueColor = "#4285f4";
+        String blueHoverColor = "#5294f5";
 
         Button cancelBtn = (Button) pane.lookupButton(ButtonType.CANCEL);
         cancelBtn.setStyle(
-                "-fx-background-color: -roam-gray-bg; " +
-                        "-fx-text-fill: -roam-text-primary; " +
+                "-fx-background-color: " + bgColor + "; " +
+                        "-fx-text-fill: " + textColor + "; " +
                         "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
@@ -568,38 +577,35 @@ public class EventDialog extends Dialog<CalendarEvent> {
 
         Button submitBtn = (Button) pane.lookupButton(pane.getButtonTypes().get(pane.getButtonTypes().size() - 1));
         submitBtn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: -roam-white; " +
+                "-fx-background-color: " + blueColor + "; " +
+                        "-fx-text-fill: #ffffff; " +
                         "-fx-font-family: 'Poppins Bold'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 120px; " +
                         "-fx-min-height: 40px; " +
                         "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand; " +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(66, 133, 244, 0.3), 4, 0, 0, 2);");
+                        "-fx-cursor: hand;");
 
         // Add hover effect
         submitBtn.setOnMouseEntered(e -> submitBtn.setStyle(
-                "-fx-background-color: -roam-blue-hover; " +
-                        "-fx-text-fill: -roam-white; " +
+                "-fx-background-color: " + blueHoverColor + "; " +
+                        "-fx-text-fill: #ffffff; " +
                         "-fx-font-family: 'Poppins Bold'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 120px; " +
                         "-fx-min-height: 40px; " +
                         "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand; " +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(66, 133, 244, 0.5), 6, 0, 0, 2);"));
+                        "-fx-cursor: hand;"));
 
         submitBtn.setOnMouseExited(e -> submitBtn.setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: -roam-white; " +
+                "-fx-background-color: " + blueColor + "; " +
+                        "-fx-text-fill: #ffffff; " +
                         "-fx-font-family: 'Poppins Bold'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 120px; " +
                         "-fx-min-height: 40px; " +
                         "-fx-background-radius: 6; " +
-                        "-fx-cursor: hand; " +
-                        "-fx-effect: dropshadow(three-pass-box, rgba(66, 133, 244, 0.3), 4, 0, 0, 2);"));
+                        "-fx-cursor: hand;"));
     }
 
     // Custom cell for calendar source combo

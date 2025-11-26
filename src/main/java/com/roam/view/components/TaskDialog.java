@@ -7,6 +7,7 @@ import com.roam.model.Priority;
 import com.roam.model.Region;
 import com.roam.model.Task;
 import com.roam.model.TaskStatus;
+import com.roam.util.ThemeManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -447,10 +448,19 @@ public class TaskDialog extends Dialog<Task> {
     }
 
     private void applyCustomStyling() {
+        // Apply theme-aware styling
+        ThemeManager.getInstance().styleDialog(this);
+
         DialogPane pane = getDialogPane();
+
+        // Get theme state
+        boolean isDark = ThemeManager.getInstance().isDarkTheme();
+        String bgColor = isDark ? "#2d2d2d" : "#f5f5f5";
+        String textColor = isDark ? "#ffffff" : "#212121";
+
         pane.lookupButton(ButtonType.CANCEL).setStyle(
-                "-fx-background-color: -roam-gray-bg; " +
-                        "-fx-text-fill: -roam-text-primary; " +
+                "-fx-background-color: " + bgColor + "; " +
+                        "-fx-text-fill: " + textColor + "; " +
                         "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
@@ -459,8 +469,8 @@ public class TaskDialog extends Dialog<Task> {
                         "-fx-cursor: hand;");
 
         pane.lookupButton(pane.getButtonTypes().get(pane.getButtonTypes().size() - 1)).setStyle(
-                "-fx-background-color: -roam-blue; " +
-                        "-fx-text-fill: -roam-white; " +
+                "-fx-background-color: #4285f4; " +
+                        "-fx-text-fill: #ffffff; " +
                         "-fx-font-family: 'Poppins'; " +
                         "-fx-font-size: 14px; " +
                         "-fx-min-width: 100px; " +
