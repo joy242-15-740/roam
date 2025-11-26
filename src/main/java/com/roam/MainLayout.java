@@ -1,11 +1,14 @@
 package com.roam;
 
+import com.roam.layout.CustomTitleBar;
 import com.roam.layout.NavigationManager;
 import com.roam.layout.SidebarComponent;
 import com.roam.layout.SidebarResizeHandler;
 import com.roam.layout.ViewFactory;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +28,21 @@ public class MainLayout extends BorderPane {
     private NavigationManager navigationManager;
     private SidebarComponent sidebarComponent;
     private SidebarResizeHandler resizeHandler;
+    private CustomTitleBar titleBar;
 
     public MainLayout() {
         logger.debug("Initializing MainLayout");
+        getStyleClass().add("main-layout");
         initializeLayout();
+    }
+
+    /**
+     * Initialize with a stage reference for custom title bar
+     */
+    public MainLayout(Stage stage) {
+        logger.debug("Initializing MainLayout with custom title bar");
+        getStyleClass().add("main-layout");
+        initializeLayoutWithTitleBar(stage);
     }
 
     private void initializeLayout() {
@@ -80,6 +94,65 @@ public class MainLayout extends BorderPane {
         logger.info("MainLayout initialized successfully");
     }
 
+    private void initializeLayoutWithTitleBar(Stage stage) {
+        // Create custom title bar
+        titleBar = new CustomTitleBar(stage);
+
+        // Create content area
+        contentArea = new StackPane();
+        contentArea.setPadding(new Insets(30));
+        contentArea.getStyleClass().add("content-area");
+
+        // Create view factory
+        viewFactory = new ViewFactory();
+
+        // Create resize handler with temporary sidebar
+        VBox tempSidebar = new VBox();
+        resizeHandler = new SidebarResizeHandler(tempSidebar, this::updateSidebarButtonWidths);
+
+        // Create sidebar component
+        sidebarComponent = new SidebarComponent(
+                this::handleNavigation,
+                this::handleSearch,
+                null,
+                resizeHandler.getResizeHandle());
+
+        // Update resize handler with actual sidebar
+        resizeHandler = new SidebarResizeHandler(
+                sidebarComponent.getSidebar(),
+                this::updateSidebarButtonWidths);
+
+        // Create navigation manager
+        navigationManager = new NavigationManager(
+                contentArea,
+                viewFactory,
+                sidebarComponent.getNavigationButtons(),
+                this::updateButtonStates);
+
+        // Wire up title bar navigation callback for Settings button
+        titleBar.setOnNavigate(this::handleNavigation);
+
+        // Create sidebar container with resize handle
+        HBox sidebarContainer = new HBox();
+        sidebarContainer.getChildren().addAll(
+                sidebarComponent.getSidebar(),
+                resizeHandler.getResizeHandle());
+
+        // Create main content area (sidebar + content)
+        BorderPane mainContent = new BorderPane();
+        mainContent.setLeft(sidebarContainer);
+        mainContent.setCenter(contentArea);
+
+        // Set layout regions
+        setTop(titleBar);
+        setCenter(mainContent);
+
+        // Show default view (wiki)
+        navigationManager.navigateToView("wiki");
+
+        logger.info("MainLayout with custom title bar initialized successfully");
+    }
+
     /**
      * Callback to handle navigation button clicks from SidebarComponent.
      */
@@ -110,5 +183,21 @@ public class MainLayout extends BorderPane {
     private void updateSidebarButtonWidths() {
         double sidebarWidth = sidebarComponent.getSidebar().getWidth();
         sidebarComponent.updateButtonWidths(sidebarWidth);
+    }
+
+    /**
+     * Get the custom title bar for theme updates
+     */
+    public CustomTitleBar getTitleBar() {
+        return titleBar;
+    }
+
+    /**
+     * Refresh theme on all components
+     */
+    public void refreshTheme() {
+        if (titleBar != null) {
+            titleBar.refreshTheme();
+        }
     }
 }

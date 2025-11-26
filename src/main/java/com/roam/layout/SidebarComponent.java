@@ -1,15 +1,10 @@
 package com.roam.layout;
 
-import com.roam.service.SearchService;
-import com.roam.service.SecurityContext;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -17,13 +12,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.material2.Material2MZ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -44,13 +37,9 @@ public class SidebarComponent {
     // UI Components
     private HBox headerBox;
     private VBox headerCol;
-    private Button lockButton;
-    private Button refreshButton;
     private Button menuBtn;
-    private Button settingsBtn;
     private StackPane searchGroup;
     private TextField searchInput;
-    private Separator sep;
     private Region spacer;
 
     private boolean collapsed = false;
@@ -111,13 +100,6 @@ public class SidebarComponent {
         spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        // Settings button
-        settingsBtn = createSettingsButton();
-        navigationButtons.put("settings", settingsBtn);
-
-        // Separator
-        sep = new Separator();
-
         // Initial state
         updateSidebarState();
 
@@ -125,18 +107,6 @@ public class SidebarComponent {
     }
 
     private void createHeaderComponents() {
-        // Lock button
-        lockButton = new Button(null, new FontIcon(Feather.LOCK));
-        lockButton.getStyleClass().add("sidebar-button");
-        lockButton.setAlignment(Pos.CENTER);
-        lockButton.setOnAction(e -> showLockScreen());
-
-        // Refresh button
-        refreshButton = new Button(null, new FontIcon(Feather.ROTATE_CW));
-        refreshButton.getStyleClass().add("sidebar-button");
-        refreshButton.setAlignment(Pos.CENTER);
-        refreshButton.setOnAction(e -> rebuildIndex());
-
         // Menu button
         menuBtn = new Button(null, new FontIcon(Feather.MENU));
         menuBtn.getStyleClass().add("sidebar-button");
@@ -151,55 +121,13 @@ public class SidebarComponent {
         Region headerSpacer = new Region();
         HBox.setHgrow(headerSpacer, Priority.ALWAYS);
 
-        headerBox.getChildren().addAll(lockButton, refreshButton, headerSpacer, menuBtn);
+        headerBox.getChildren().addAll(headerSpacer, menuBtn);
 
         // Vertical Header (Collapsed)
         headerCol = new VBox(15);
         headerCol.setAlignment(Pos.CENTER);
         VBox.setMargin(headerCol, new Insets(0, 0, 20, 0));
         // Buttons will be moved between containers in updateSidebarState
-    }
-
-    private void showLockScreen() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Application Locked");
-        dialog.setHeaderText("Enter PIN to unlock");
-        dialog.setContentText("PIN:");
-
-        Optional<String> result = dialog.showAndWait();
-
-        while (result.isPresent()) {
-            try {
-                if (SecurityContext.getInstance().authenticate(result.get())) {
-                    return; // Success
-                } else {
-                    showError("Invalid PIN", "Incorrect PIN. Please try again.");
-                }
-            } catch (SecurityException e) {
-                showError("Security Warning", e.getMessage());
-            }
-            result = dialog.showAndWait();
-        }
-
-        // If user cancels, re-show lock screen to enforce locking.
-        showLockScreen();
-    }
-
-    private void showError(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    private void rebuildIndex() {
-        SearchService.getInstance().rebuildIndex();
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Index Rebuild");
-        alert.setHeaderText(null);
-        alert.setContentText("Search index rebuild started.");
-        alert.showAndWait();
     }
 
     private void toggle() {
@@ -222,7 +150,7 @@ public class SidebarComponent {
             sidebar.setPadding(new Insets(20, 10, 20, 10));
 
             // Stack header buttons vertically
-            headerCol.getChildren().addAll(menuBtn, lockButton, refreshButton);
+            headerCol.getChildren().add(menuBtn);
             sidebar.getChildren().add(headerCol);
 
             // Hide search in collapsed mode
@@ -234,8 +162,6 @@ public class SidebarComponent {
                 btn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                 btn.setAlignment(Pos.CENTER);
             }
-            settingsBtn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-            settingsBtn.setAlignment(Pos.CENTER);
 
         } else {
             sidebar.setPrefWidth(SIDEBAR_WIDTH_EXPANDED);
@@ -246,7 +172,7 @@ public class SidebarComponent {
             // Horizontal header
             Region headerSpacer = new Region();
             HBox.setHgrow(headerSpacer, Priority.ALWAYS);
-            headerBox.getChildren().addAll(lockButton, refreshButton, headerSpacer, menuBtn);
+            headerBox.getChildren().addAll(headerSpacer, menuBtn);
             sidebar.getChildren().add(headerBox);
 
             // Show search in expanded mode
@@ -258,8 +184,6 @@ public class SidebarComponent {
                 btn.setContentDisplay(ContentDisplay.LEFT);
                 btn.setAlignment(Pos.CENTER_LEFT);
             }
-            settingsBtn.setContentDisplay(ContentDisplay.LEFT);
-            settingsBtn.setAlignment(Pos.CENTER_LEFT);
         }
 
         // Add common elements
@@ -271,9 +195,7 @@ public class SidebarComponent {
                 navigationButtons.get("journal"),
                 navigationButtons.get("wiki"),
                 navigationButtons.get("statistics"),
-                spacer,
-                sep,
-                settingsBtn);
+                spacer);
     }
 
     private void createSearchComponent() {
@@ -350,28 +272,6 @@ public class SidebarComponent {
         if (activeButton != null) {
             updateButtonState(activeButton, true);
         }
-    }
-
-    /**
-     * Creates the settings button.
-     */
-    private Button createSettingsButton() {
-        Button btn = new Button("Settings");
-        btn.setGraphic(new FontIcon(Material2MZ.SETTINGS));
-        btn.getStyleClass().add("sidebar-button");
-        btn.setAlignment(Pos.CENTER_LEFT);
-        btn.setMaxWidth(Double.MAX_VALUE);
-        btn.setGraphicTextGap(20);
-
-        btn.setOnAction(e -> {
-            if (onNavigate != null) {
-                logger.debug("Navigation button clicked: settings");
-                onNavigate.accept("settings");
-                setActiveButton("settings");
-            }
-        });
-
-        return btn;
     }
 
     /**

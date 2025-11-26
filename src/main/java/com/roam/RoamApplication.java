@@ -1,17 +1,20 @@
 package com.roam;
 
+import com.roam.layout.WindowResizeHelper;
 import com.roam.service.DatabaseService;
 import com.roam.service.SecurityContext;
 import com.roam.service.SettingsService;
 import com.roam.util.HibernateUtil;
 import com.roam.util.ThemeManager;
-import com.roam.view.LockScreen;
+import com.roam.view.LockScreenLayout;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +46,11 @@ public class RoamApplication extends Application {
             // Load custom fonts
             loadFonts();
 
-            // Create main layout
-            MainLayout mainLayout = new MainLayout();
+            // Use undecorated window with transparent background for rounded corners
+            primaryStage.initStyle(StageStyle.TRANSPARENT);
+
+            // Create main layout with custom title bar
+            MainLayout mainLayout = new MainLayout(primaryStage);
 
             // Load custom CSS (will complement AtlantaFX)
             String css = Objects.requireNonNull(
@@ -59,8 +65,9 @@ public class RoamApplication extends Application {
             boolean isDarkTheme = themeManager.isDarkTheme();
 
             if (SecurityContext.getInstance().isLockEnabled() && hasPinSet) {
-                LockScreen lockScreen = new LockScreen(() -> {
+                LockScreenLayout lockScreenLayout = new LockScreenLayout(primaryStage, () -> {
                     Scene scene = new Scene(mainLayout, 1024, 600);
+                    scene.setFill(Color.TRANSPARENT);
                     scene.getStylesheets().add(css);
                     // Apply dark mode class if needed
                     if (isDarkTheme) {
@@ -68,19 +75,26 @@ public class RoamApplication extends Application {
                     }
                     themeManager.setMainScene(scene);
                     primaryStage.setScene(scene);
-                    primaryStage.centerOnScreen();
+
+                    // Re-attach resize helper to new layout
+                    new WindowResizeHelper(primaryStage, mainLayout);
                 });
 
-                Scene lockScene = new Scene(lockScreen, 1024, 600);
+                Scene lockScene = new Scene(lockScreenLayout, 1024, 600);
+                lockScene.setFill(Color.TRANSPARENT);
                 lockScene.getStylesheets().add(css);
                 // Apply dark mode class to lock screen too
                 if (isDarkTheme) {
                     lockScene.getRoot().getStyleClass().add("dark");
                 }
                 primaryStage.setScene(lockScene);
+
+                // Enable window resizing for lock screen
+                new WindowResizeHelper(primaryStage, lockScreenLayout);
             } else {
                 // No lock screen - proceed directly to main app
                 Scene scene = new Scene(mainLayout, 1024, 600);
+                scene.setFill(Color.TRANSPARENT);
                 scene.getStylesheets().add(css);
                 // Apply dark mode class if needed
                 if (isDarkTheme) {
@@ -98,7 +112,10 @@ public class RoamApplication extends Application {
             primaryStage.setMinWidth(1024);
             primaryStage.setMinHeight(600);
 
-            // Set application icon
+            // Enable window resizing on edges (for undecorated window)
+            new WindowResizeHelper(primaryStage, mainLayout);
+
+            // Set application icon (for taskbar)
             try {
                 Image icon = new Image(
                         Objects.requireNonNull(
@@ -108,7 +125,8 @@ public class RoamApplication extends Application {
                 logger.warn("Failed to load application icon: {}", e.getMessage());
             }
 
-            // Show window
+            // Center and show window
+            primaryStage.centerOnScreen();
             primaryStage.show();
 
             logger.info("✓ Application started successfully");
