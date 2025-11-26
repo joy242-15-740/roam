@@ -344,19 +344,28 @@ public class TasksEisenhowerView extends GridPane {
             footer.setAlignment(Pos.CENTER_LEFT);
 
             if (task.getDueDate() != null) {
-                Label dueDateLabel = new Label("📅 " + formatDueDate(task.getDueDate()));
+                FontIcon calendarIcon = new FontIcon(Feather.CALENDAR);
+                calendarIcon.setIconSize(11);
+
+                Label dueDateLabel = new Label(formatDueDate(task.getDueDate()));
                 dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_SMALL);
 
                 LocalDateTime now = LocalDateTime.now();
                 if (task.getDueDate().isBefore(now)) {
                     dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.DANGER);
+                    calendarIcon.setStyle("-fx-icon-color: -color-danger-fg;");
                 } else if (task.getDueDate().isBefore(now.plusDays(1))) {
                     dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.WARNING);
+                    calendarIcon.setStyle("-fx-icon-color: -color-warning-fg;");
                 } else {
                     dueDateLabel.getStyleClass().add(atlantafx.base.theme.Styles.TEXT_MUTED);
+                    calendarIcon.setStyle("-fx-icon-color: -color-fg-muted;");
                 }
 
-                footer.getChildren().add(dueDateLabel);
+                HBox dueDateBox = new HBox(4);
+                dueDateBox.setAlignment(Pos.CENTER_LEFT);
+                dueDateBox.getChildren().addAll(calendarIcon, dueDateLabel);
+                footer.getChildren().add(dueDateBox);
             } else {
                 Label noDueDateLabel = new Label("No due date");
                 noDueDateLabel.getStyleClass().addAll(atlantafx.base.theme.Styles.TEXT_SMALL,

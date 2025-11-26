@@ -1,0 +1,31 @@
+/* Cards (Used in Kanban, Operations List) */
+.roam-card {
+    -fx-background-color: -roam-bg-primary;
+    -fx-background-radius: -roam-radius;
+    -fx-border-color: -roam-border;
+    -fx-border-radius: -roam-radius;
+    -fx-border-width: 1px;
+    -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
+    -fx-cursor: hand;
+}
+
+.roam-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 8);
+    -fx-translate-y: -2;
+}
+
+/* Stats Panel */
+.stats-panel {
+    -fx-background-color: -roam-gray-bg;
+    -fx-padding: 20;
+    -fx-spacing: 15;
+    -fx-background-radius: -roam-radius;
+}
+
+.stat-item {
+    -fx-background-color: -roam-bg-primary;
+    -fx-padding: 15;
+    -fx-background-radius: -roam-radius-small;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);
+}

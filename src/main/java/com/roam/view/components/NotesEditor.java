@@ -6,11 +6,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -259,8 +262,10 @@ public class NotesEditor extends BorderPane {
 
         HBox toggleContainer = new HBox(0, sourceBtn, previewBtn);
 
-        Button deleteBtn = new Button("🗑");
-        deleteBtn.setFont(Font.font(16));
+        FontIcon trashIcon = new FontIcon(Feather.TRASH_2);
+        trashIcon.setIconSize(16);
+        Button deleteBtn = new Button();
+        deleteBtn.setGraphic(trashIcon);
         deleteBtn.setStyle(
                 "-fx-background-color: transparent; " +
                         "-fx-text-fill: -roam-text-secondary; " +
@@ -331,8 +336,9 @@ public class NotesEditor extends BorderPane {
         VBox emptyState = new VBox(20);
         emptyState.setAlignment(Pos.CENTER);
 
-        Label icon = new Label("📝");
-        icon.setStyle("-fx-font-size: 72px;");
+        FontIcon icon = new FontIcon(Feather.FILE_TEXT);
+        icon.setIconSize(72);
+        icon.setIconColor(Color.web("#6b7280"));
 
         Label message = new Label("Select a Wiki or create a new one");
         message.setFont(Font.font("Poppins", 18));
@@ -369,8 +375,9 @@ public class NotesEditor extends BorderPane {
                 hasUnsavedChanges = false;
                 saveButton.setDisable(true);
 
-                statusLabel.setText("✓ Saved");
+                statusLabel.setText("Saved");
                 statusLabel.setStyle("-fx-text-fill: -roam-green;");
+                statusLabel.setGraphic(new FontIcon(Feather.CHECK));
 
                 // Refresh notes list
                 notesList.refresh();

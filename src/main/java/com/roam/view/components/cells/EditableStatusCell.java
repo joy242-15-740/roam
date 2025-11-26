@@ -9,6 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class EditableStatusCell extends TableCell<Task, TaskStatus> {
 
@@ -118,33 +120,39 @@ public class EditableStatusCell extends TableCell<Task, TaskStatus> {
     }
 
     private HBox createStatusBadge(TaskStatus status) {
-        HBox badge = new HBox();
+        HBox badge = new HBox(6);
         badge.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         badge.setPadding(new Insets(4, 12, 4, 12));
         badge.setMaxWidth(120);
+
+        FontIcon icon = new FontIcon();
+        icon.setIconSize(12);
 
         Label label = new Label();
         label.setFont(Font.font("Poppins Medium", 12));
 
         switch (status) {
             case TODO:
-                label.setText("⭕ To Do");
+                icon.setIconCode(Feather.CIRCLE);
+                label.setText("To Do");
                 badge.setStyle("-fx-background-color: -roam-orange-bg; -fx-background-radius: 12;");
                 label.setStyle("-fx-text-fill: -roam-orange;");
                 break;
             case IN_PROGRESS:
-                label.setText("⏳ In Progress");
+                icon.setIconCode(Feather.LOADER);
+                label.setText("In Progress");
                 badge.setStyle("-fx-background-color: -roam-blue-tag-bg; -fx-background-radius: 12;");
                 label.setStyle("-fx-text-fill: -roam-blue-tag;");
                 break;
             case DONE:
-                label.setText("✓ Done");
+                icon.setIconCode(Feather.CHECK_CIRCLE);
+                label.setText("Done");
                 badge.setStyle("-fx-background-color: -roam-green-bg; -fx-background-radius: 12;");
                 label.setStyle("-fx-text-fill: -roam-green;");
                 break;
         }
 
-        badge.getChildren().add(label);
+        badge.getChildren().addAll(icon, label);
         return badge;
     }
 }

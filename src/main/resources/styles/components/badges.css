@@ -1,0 +1,55 @@
+/* Priority Badges */
+.priority-high {
+    -fx-background-color: -roam-red-bg;
+    -fx-text-fill: -roam-red;
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.priority-medium {
+    -fx-background-color: -roam-orange-bg;
+    -fx-text-fill: -roam-orange;
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.priority-low {
+    -fx-background-color: -roam-green-bg;
+    -fx-text-fill: -roam-green;
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+/* Status Badges */
+.status-ongoing {
+    -fx-background-color: -roam-blue-tag-bg;
+    -fx-text-fill: -roam-blue-tag;
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.status-in-progress {
+    -fx-background-color: -roam-orange-bg;
+    -fx-text-fill: -roam-orange;
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}
+
+.status-end {
+    -fx-background-color: -roam-green-bg;
+    -fx-text-fill: -roam-green;
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 11px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 4px;
+}

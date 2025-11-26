@@ -16,6 +16,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -121,13 +123,22 @@ public class BatchOperationsBar extends HBox {
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
 
-        MenuItem todoItem = new MenuItem("⭕ To Do");
+        MenuItem todoItem = new MenuItem("To Do");
+        FontIcon todoIcon = new FontIcon(Feather.CIRCLE);
+        todoIcon.setIconSize(14);
+        todoItem.setGraphic(todoIcon);
         todoItem.setOnAction(e -> batchUpdateStatus(TaskStatus.TODO));
 
-        MenuItem inProgressItem = new MenuItem("⏳ In Progress");
+        MenuItem inProgressItem = new MenuItem("In Progress");
+        FontIcon progressIcon = new FontIcon(Feather.LOADER);
+        progressIcon.setIconSize(14);
+        inProgressItem.setGraphic(progressIcon);
         inProgressItem.setOnAction(e -> batchUpdateStatus(TaskStatus.IN_PROGRESS));
 
-        MenuItem doneItem = new MenuItem("✓ Done");
+        MenuItem doneItem = new MenuItem("Done");
+        FontIcon doneIcon = new FontIcon(Feather.CHECK_CIRCLE);
+        doneIcon.setIconSize(14);
+        doneItem.setGraphic(doneIcon);
         doneItem.setOnAction(e -> batchUpdateStatus(TaskStatus.DONE));
 
         statusBtn.getItems().addAll(todoItem, inProgressItem, doneItem);
@@ -154,13 +165,25 @@ public class BatchOperationsBar extends HBox {
                         "-fx-background-radius: 6; " +
                         "-fx-cursor: hand;");
 
-        MenuItem highItem = new MenuItem("🔴 High");
+        MenuItem highItem = new MenuItem("High");
+        FontIcon highIcon = new FontIcon(Feather.ALERT_CIRCLE);
+        highIcon.setIconSize(14);
+        highIcon.setIconColor(Color.web("#ef4444"));
+        highItem.setGraphic(highIcon);
         highItem.setOnAction(e -> batchUpdatePriority(Priority.HIGH));
 
-        MenuItem mediumItem = new MenuItem("🟡 Medium");
+        MenuItem mediumItem = new MenuItem("Medium");
+        FontIcon medIcon = new FontIcon(Feather.ALERT_CIRCLE);
+        medIcon.setIconSize(14);
+        medIcon.setIconColor(Color.web("#f59e0b"));
+        mediumItem.setGraphic(medIcon);
         mediumItem.setOnAction(e -> batchUpdatePriority(Priority.MEDIUM));
 
-        MenuItem lowItem = new MenuItem("⚪ Low");
+        MenuItem lowItem = new MenuItem("Low");
+        FontIcon lowIcon = new FontIcon(Feather.ALERT_CIRCLE);
+        lowIcon.setIconSize(14);
+        lowIcon.setIconColor(Color.web("#9ca3af"));
+        lowItem.setGraphic(lowIcon);
         lowItem.setOnAction(e -> batchUpdatePriority(Priority.LOW));
 
         priorityBtn.getItems().addAll(highItem, mediumItem, lowItem);
@@ -218,7 +241,10 @@ public class BatchOperationsBar extends HBox {
         label.setFont(Font.font("Poppins", 13));
         label.setStyle("-fx-text-fill: rgba(255, 255, 255, 0.9);");
 
-        Button dueDateBtn = new Button("📅 Set date...");
+        Button dueDateBtn = new Button("Set date...");
+        FontIcon calIcon = new FontIcon(Feather.CALENDAR);
+        calIcon.setIconSize(14);
+        dueDateBtn.setGraphic(calIcon);
         dueDateBtn.setFont(Font.font("Poppins", 13));
         dueDateBtn.setPrefWidth(120);
         dueDateBtn.setPrefHeight(36);
@@ -234,7 +260,10 @@ public class BatchOperationsBar extends HBox {
     }
 
     private Button createDeleteButton() {
-        Button deleteBtn = new Button("🗑 Delete");
+        Button deleteBtn = new Button("Delete");
+        FontIcon trashIcon = new FontIcon(Feather.TRASH_2);
+        trashIcon.setIconSize(14);
+        deleteBtn.setGraphic(trashIcon);
         deleteBtn.setFont(Font.font("Poppins Medium", 14));
         deleteBtn.setPrefWidth(110);
         deleteBtn.setPrefHeight(36);

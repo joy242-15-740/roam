@@ -7,10 +7,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -204,39 +207,49 @@ public class SearchResultsDialog {
 
         // Display each group
         if (!notes.isEmpty()) {
-            resultsContainer.getChildren().add(createGroupHeader("📝 Wiki (" + notes.size() + ")"));
+            resultsContainer.getChildren().add(createGroupHeader("Wiki (" + notes.size() + ")", Feather.FILE_TEXT));
             notes.forEach(r -> resultsContainer.getChildren().add(createResultItem(r)));
         }
 
         if (!tasks.isEmpty()) {
-            resultsContainer.getChildren().add(createGroupHeader("✓ Tasks (" + tasks.size() + ")"));
+            resultsContainer.getChildren().add(createGroupHeader("Tasks (" + tasks.size() + ")", Feather.CHECK_SQUARE));
             tasks.forEach(r -> resultsContainer.getChildren().add(createResultItem(r)));
         }
 
         if (!operations.isEmpty()) {
-            resultsContainer.getChildren().add(createGroupHeader("📋 Operations (" + operations.size() + ")"));
+            resultsContainer.getChildren()
+                    .add(createGroupHeader("Operations (" + operations.size() + ")", Feather.CLIPBOARD));
             operations.forEach(r -> resultsContainer.getChildren().add(createResultItem(r)));
         }
 
         if (!events.isEmpty()) {
-            resultsContainer.getChildren().add(createGroupHeader("📅 Events (" + events.size() + ")"));
+            resultsContainer.getChildren().add(createGroupHeader("Events (" + events.size() + ")", Feather.CALENDAR));
             events.forEach(r -> resultsContainer.getChildren().add(createResultItem(r)));
         }
 
         if (!journals.isEmpty()) {
-            resultsContainer.getChildren().add(createGroupHeader("📓 Journal (" + journals.size() + ")"));
+            resultsContainer.getChildren().add(createGroupHeader("Journal (" + journals.size() + ")", Feather.BOOK));
             journals.forEach(r -> resultsContainer.getChildren().add(createResultItem(r)));
         }
     }
 
-    private Label createGroupHeader(String text) {
+    private HBox createGroupHeader(String text, Feather icon) {
         boolean isDark = ThemeManager.getInstance().isDarkTheme();
         String textPrimary = isDark ? "#ffffff" : "#212121";
 
-        Label header = new Label(text);
-        header.setFont(Font.font("Poppins Bold", 14));
-        header.setStyle("-fx-text-fill: " + textPrimary + ";");
+        HBox header = new HBox(8);
+        header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(10, 0, 5, 0));
+
+        FontIcon fontIcon = new FontIcon(icon);
+        fontIcon.setIconSize(16);
+        fontIcon.setIconColor(Color.web(textPrimary));
+
+        Label label = new Label(text);
+        label.setFont(Font.font("Poppins Bold", 14));
+        label.setStyle("-fx-text-fill: " + textPrimary + ";");
+
+        header.getChildren().addAll(fontIcon, label);
         return header;
     }
 

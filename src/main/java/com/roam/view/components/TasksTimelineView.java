@@ -245,8 +245,9 @@ public class TasksTimelineView extends BorderPane {
         emptyState.setAlignment(Pos.CENTER);
         emptyState.setPadding(new Insets(100));
 
-        Label icon = new Label("✓");
-        icon.setStyle("-fx-font-size: 72px; -fx-text-fill: -roam-text-hint;");
+        FontIcon icon = new FontIcon(Feather.CHECK_CIRCLE);
+        icon.setIconSize(72);
+        icon.setIconColor(Color.web("#6b7280"));
 
         Label title = new Label("No tasks found");
         title.setFont(Font.font("Poppins Bold", 20));

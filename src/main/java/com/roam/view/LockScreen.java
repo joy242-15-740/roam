@@ -9,6 +9,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -27,6 +29,7 @@ import static com.roam.util.UIConstants.*;
 /**
  * Lock screen for PIN authentication.
  * Features a clean numeric keypad design with animated PIN dots.
+ * Supports keyboard input for numbers 0-9 and backspace.
  */
 public class LockScreen extends StackPane {
 
@@ -96,18 +99,81 @@ public class LockScreen extends StackPane {
         messageLabel.setMaxWidth(300);
         messageLabel.setAlignment(Pos.CENTER);
 
+        // Keyboard hint
+        Label keyboardHint = new Label("You can also use keyboard numbers");
+        keyboardHint.setFont(Font.font(FONT_REGULAR, FONT_SIZE_SM));
+        keyboardHint.setStyle("-fx-text-fill: " + TEXT_HINT + ";");
+
         // Footer
         Label footer = new Label("Roam Security");
         footer.setFont(Font.font(FONT_REGULAR, FONT_SIZE_MD));
         footer.setStyle("-fx-text-fill: " + TEXT_HINT + ";");
-        VBox.setMargin(footer, new Insets(SPACING_SECTION, 0, 0, 0));
+        VBox.setMargin(footer, new Insets(SPACING_STANDARD, 0, 0, 0));
 
-        content.getChildren().addAll(iconBox, title, subtitle, dotsContainer, messageLabel, keypad, footer);
+        content.getChildren().addAll(iconBox, title, subtitle, dotsContainer, messageLabel, keypad, keyboardHint,
+                footer);
         getChildren().add(content);
 
         // Add listeners for responsive scaling
         widthProperty().addListener((obs, oldVal, newVal) -> scaleContent(content));
         heightProperty().addListener((obs, oldVal, newVal) -> scaleContent(content));
+
+        // Enable keyboard input
+        setupKeyboardInput();
+
+        // Request focus to enable keyboard input
+        setFocusTraversable(true);
+    }
+
+    /**
+     * Setup keyboard event handlers for numeric input
+     */
+    private void setupKeyboardInput() {
+        // Handle key pressed events
+        addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            KeyCode code = event.getCode();
+
+            // Handle number keys (both main keyboard and numpad)
+            if (code.isDigitKey()) {
+                String digit = code.getName().replace("Numpad ", "");
+                // For regular digit keys, get the character
+                if (code.getName().startsWith("Digit")) {
+                    digit = code.getName().replace("Digit", "");
+                }
+                handleDigit(digit);
+                event.consume();
+            }
+            // Handle backspace
+            else if (code == KeyCode.BACK_SPACE || code == KeyCode.DELETE) {
+                handleBackspace();
+                event.consume();
+            }
+            // Handle enter to check PIN
+            else if (code == KeyCode.ENTER && currentPin.length() == PIN_LENGTH) {
+                checkPin();
+                event.consume();
+            }
+        });
+
+        // Also handle KEY_TYPED for reliable digit input
+        addEventHandler(KeyEvent.KEY_TYPED, event -> {
+            String character = event.getCharacter();
+            if (character.length() == 1 && Character.isDigit(character.charAt(0))) {
+                handleDigit(character);
+                event.consume();
+            }
+        });
+    }
+
+    /**
+     * Request focus when the lock screen becomes visible
+     */
+    @Override
+    protected void layoutChildren() {
+        super.layoutChildren();
+        if (!isFocused() && getScene() != null) {
+            requestFocus();
+        }
     }
 
     private void scaleContent(VBox content) {
@@ -222,7 +288,7 @@ public class LockScreen extends StackPane {
             if (SecurityContext.getInstance().authenticate(pin)) {
                 // Success
                 messageLabel.setStyle("-fx-text-fill: " + GREEN + ";");
-                messageLabel.setText("✓ Unlocked");
+                messageLabel.setText("Unlocked");
 
                 // Small delay before unlocking for UX
                 Timeline timeline = new Timeline(

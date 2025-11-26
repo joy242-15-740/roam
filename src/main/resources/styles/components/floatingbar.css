@@ -1,0 +1,106 @@
+/* Floating Navigation Bar Styling */
+
+.floating-nav-bar {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 16, 0, 0, 4);
+    -fx-border-color: rgba(0, 0, 0, 0.06);
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+}
+
+.floating-nav-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 22;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.floating-nav-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.06);
+}
+
+.floating-nav-button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+}
+
+.floating-nav-button.selected {
+    -fx-background-color: -roam-blue;
+}
+
+.floating-nav-button.selected:hover {
+    -fx-background-color: -roam-blue-hover;
+}
+
+.floating-nav-icon {
+    -fx-icon-color: -roam-text-secondary;
+}
+
+.floating-nav-button:hover .floating-nav-icon {
+    -fx-icon-color: -roam-text-primary;
+}
+
+.floating-nav-button.selected .floating-nav-icon {
+    -fx-icon-color: white;
+}
+
+.floating-nav-divider {
+    -fx-background-color: -roam-border;
+    -fx-background-radius: 1;
+}
+
+.floating-search-field {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 18;
+    -fx-border-color: transparent;
+    -fx-padding: 8 12;
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 13px;
+    -fx-text-fill: -roam-text-primary;
+    -fx-prompt-text-fill: -roam-text-hint;
+}
+
+.floating-search-field:focused {
+    -fx-background-color: -roam-bg-primary;
+    -fx-border-color: -roam-blue;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 18;
+}
+
+/* Dark Mode */
+.dark .floating-nav-bar {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: rgba(255, 255, 255, 0.06);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 16, 0, 0, 4);
+}
+
+.dark .floating-nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .floating-nav-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .floating-nav-icon {
+    -fx-icon-color: #b0b0b0;
+}
+
+.dark .floating-nav-button:hover .floating-nav-icon {
+    -fx-icon-color: #ffffff;
+}
+
+.dark .floating-nav-divider {
+    -fx-background-color: #424242;
+}
+
+.dark .floating-search-field {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #757575;
+}
+
+.dark .floating-search-field:focused {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: -roam-blue;
+}

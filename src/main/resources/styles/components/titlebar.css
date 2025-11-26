@@ -1,0 +1,139 @@
+/* Custom Title Bar Styling */
+
+.custom-title-bar {
+    -fx-background-color: -roam-gray-bg;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: transparent transparent -roam-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.title-bar-title {
+    -fx-text-fill: -roam-text-primary;
+    -fx-font-family: 'Poppins SemiBold';
+    -fx-font-size: 13px;
+}
+
+.title-bar-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.title-bar-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.08);
+}
+
+.title-bar-button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.12);
+}
+
+.title-bar-button.close-button:hover {
+    -fx-background-color: #e81123;
+}
+
+/* Add rounded corners to close button hover on top-right */
+.title-bar-button.close-button {
+    -fx-background-radius: 0 10 0 0;
+}
+
+.title-bar-button.close-button:hover .title-bar-icon {
+    -fx-icon-color: #ffffff;
+}
+
+.title-bar-icon {
+    -fx-icon-color: -roam-text-secondary;
+}
+
+.title-bar-button:hover .title-bar-icon {
+    -fx-icon-color: -roam-text-primary;
+}
+
+/* Action buttons (Settings, Lock, Refresh) */
+.title-bar-action-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 6;
+}
+
+.title-bar-action-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.08);
+}
+
+.title-bar-action-button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.12);
+}
+
+.title-bar-action-icon {
+    -fx-icon-color: -roam-text-secondary;
+    -fx-icon-size: 16;
+}
+
+.title-bar-action-button:hover .title-bar-action-icon {
+    -fx-icon-color: -roam-text-primary;
+}
+
+/* Separator between action buttons and window controls */
+.title-bar-separator {
+    -fx-background-color: -roam-border;
+    -fx-pref-width: 1;
+    -fx-max-width: 1;
+}
+
+/* Dark mode */
+.dark .custom-title-bar {
+    -fx-background-color: #1a1a1a;
+    -fx-border-color: transparent transparent #333333 transparent;
+}
+
+.dark .title-bar-title {
+    -fx-text-fill: #ffffff;
+}
+
+.dark .title-bar-icon {
+    -fx-icon-color: #b0b0b0;
+}
+
+.dark .title-bar-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .title-bar-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .title-bar-button:hover .title-bar-icon {
+    -fx-icon-color: #ffffff;
+}
+
+.dark .title-bar-button.close-button:hover {
+    -fx-background-color: #e81123;
+}
+
+.dark .title-bar-button.close-button:hover .title-bar-icon {
+    -fx-icon-color: #ffffff;
+}
+
+/* Dark mode action buttons */
+.dark .title-bar-action-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .title-bar-action-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .title-bar-action-icon {
+    -fx-icon-color: #b0b0b0;
+}
+
+.dark .title-bar-action-button:hover .title-bar-action-icon {
+    -fx-icon-color: #ffffff;
+}
+
+.dark .title-bar-separator {
+    -fx-background-color: #333333;
+}

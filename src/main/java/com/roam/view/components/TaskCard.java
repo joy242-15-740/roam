@@ -134,12 +134,20 @@ public class TaskCard extends VBox {
         HBox footer = new HBox(10);
         footer.setAlignment(Pos.CENTER_LEFT);
 
-        // Due date
+        // Due date with icon
         if (task.getDueDate() != null) {
-            Label dueDateLabel = new Label("📅 " + DATE_FORMATTER.format(task.getDueDate()));
+            FontIcon calendarIcon = new FontIcon(Feather.CALENDAR);
+            calendarIcon.setIconSize(12);
+            calendarIcon.setStyle("-fx-icon-color: -roam-text-hint;");
+
+            Label dueDateLabel = new Label(DATE_FORMATTER.format(task.getDueDate()));
             dueDateLabel.setFont(Font.font("Poppins", 11));
             dueDateLabel.setStyle("-fx-text-fill: -roam-text-hint;");
-            footer.getChildren().add(dueDateLabel);
+
+            HBox dueDateBox = new HBox(4);
+            dueDateBox.setAlignment(Pos.CENTER_LEFT);
+            dueDateBox.getChildren().addAll(calendarIcon, dueDateLabel);
+            footer.getChildren().add(dueDateBox);
         }
 
         getChildren().add(footer);

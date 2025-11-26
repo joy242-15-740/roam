@@ -226,9 +226,9 @@ public class TemplateManagerDialog extends Dialog<Void> {
             descField = new TextField(template != null ? template.getDescription() : "");
             descField.setPromptText("Description");
 
-            iconField = new TextField(template != null ? template.getIcon() : "📄");
-            iconField.setPromptText("Icon (emoji)");
-            iconField.setPrefWidth(60);
+            iconField = new TextField(template != null ? template.getIcon() : "file");
+            iconField.setPromptText("Icon name (e.g., file, folder, star)");
+            iconField.setPrefWidth(100);
 
             contentArea = new TextArea(template != null ? template.getContent() : "");
             contentArea.setPromptText("Template content...");
@@ -258,7 +258,7 @@ public class TemplateManagerDialog extends Dialog<Void> {
                     result.setName(nameField.getText().trim());
                     result.setDescription(descField.getText().trim());
                     result.setContent(contentArea.getText());
-                    result.setIcon(iconField.getText().isEmpty() ? "📄" : iconField.getText());
+                    result.setIcon(iconField.getText().isEmpty() ? "file" : iconField.getText());
                     return result;
                 }
                 return null;

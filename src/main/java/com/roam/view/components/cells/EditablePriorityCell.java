@@ -8,7 +8,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import org.kordamp.ikonli.feather.Feather;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 public class EditablePriorityCell extends TableCell<Task, Priority> {
 
@@ -119,33 +122,39 @@ public class EditablePriorityCell extends TableCell<Task, Priority> {
     }
 
     private HBox createPriorityBadge(Priority priority) {
-        HBox badge = new HBox();
+        HBox badge = new HBox(6);
         badge.setAlignment(javafx.geometry.Pos.CENTER);
         badge.setPadding(new Insets(4, 12, 4, 12));
         badge.setMaxWidth(100);
+
+        FontIcon icon = new FontIcon(Feather.ALERT_CIRCLE);
+        icon.setIconSize(12);
 
         Label label = new Label();
         label.setFont(Font.font("Poppins Medium", 12));
 
         switch (priority) {
             case HIGH:
-                label.setText("🔴 High");
+                icon.setIconColor(Color.web("#ef4444"));
+                label.setText("High");
                 badge.setStyle("-fx-background-color: -roam-red-bg; -fx-background-radius: 12;");
                 label.setStyle("-fx-text-fill: -roam-red;");
                 break;
             case MEDIUM:
-                label.setText("🟡 Medium");
+                icon.setIconColor(Color.web("#f59e0b"));
+                label.setText("Medium");
                 badge.setStyle("-fx-background-color: -roam-yellow-bg; -fx-background-radius: 12;");
                 label.setStyle("-fx-text-fill: -roam-yellow;");
                 break;
             case LOW:
-                label.setText("⚪ Low");
+                icon.setIconColor(Color.web("#9ca3af"));
+                label.setText("Low");
                 badge.setStyle("-fx-background-color: -roam-gray-bg; -fx-background-radius: 12;");
                 label.setStyle("-fx-text-fill: -roam-text-secondary;");
                 break;
         }
 
-        badge.getChildren().add(label);
+        badge.getChildren().addAll(icon, label);
         return badge;
     }
 }

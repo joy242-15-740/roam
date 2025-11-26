@@ -1,0 +1,116 @@
+/* TableView - Modern Card Style */
+.table-view {
+    -fx-background-color: -roam-bg-primary;
+    background-color: -roam-bg-primary;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    padding: 0;
+    
+    /* Subtle outer border only */
+    -fx-border-color: -roam-border;
+    border-color: -roam-border;
+    -fx-border-width: 1;
+    border-width: 1px;
+    -fx-border-radius: 8px;
+    border-radius: 8px;
+    -fx-background-radius: 8px;
+    
+    /* Material elevation */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
+    
+    /* Remove internal cell borders */
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Remove default corner and placeholder styling */
+.table-view .corner {
+    -fx-background-color: -roam-gray-bg;
+    background-color: -roam-gray-bg;
+}
+
+.table-view .placeholder {
+    -fx-background-color: transparent;
+    background-color: transparent;
+}
+
+/* Header background */
+.table-view .column-header-background {
+    -fx-background-color: -roam-gray-bg;
+    background-color: -roam-gray-bg;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8px 8px 0 0;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: -roam-gray-bg;
+    background-color: -roam-gray-bg;
+}
+
+/* Header cells */
+.table-view .column-header {
+    -fx-background-color: -roam-gray-bg;
+    background-color: -roam-gray-bg;
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-font-family: 'Poppins Bold';
+    font-family: 'Poppins Bold';
+    -fx-text-fill: -roam-text-primary;
+    -fx-font-size: 13px;
+    font-size: 13px;
+    -fx-padding: 14 16 14 16;
+    padding: 14px 16px 14px 16px;
+}
+
+/* Table rows */
+.table-row-cell {
+    -fx-background-color: -roam-bg-primary;
+    background-color: -roam-bg-primary;
+    -fx-background-insets: 0;
+    -fx-border-color: transparent;
+    border-color: transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: -roam-gray-light;
+    background-color: -roam-gray-light;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: -roam-row-hover;
+    background-color: -roam-row-hover;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: -roam-row-selected;
+    background-color: -roam-row-selected;
+}
+
+.table-row-cell:selected:hover {
+    -fx-background-color: -roam-row-selected-hover;
+    background-color: -roam-row-selected-hover;
+}
+
+/* Table cells */
+.table-cell {
+    -fx-background-color: transparent;
+    background-color: transparent;
+    -fx-border-color: transparent;
+    border-color: transparent;
+    -fx-text-fill: -roam-text-primary;
+    -fx-padding: 16 16 16 16;
+    padding: 16px 16px 16px 16px;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-cell:selected {
+    -fx-text-fill: -roam-text-primary;
+}
+
+/* Remove vertical/horizontal lines between cells */
+.table-view .column-header-background .nested-column-header .column-header {
+    -fx-border-color: transparent;
+    border-color: transparent;
+}

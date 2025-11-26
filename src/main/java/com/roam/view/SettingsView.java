@@ -118,9 +118,17 @@ public class SettingsView extends ScrollPane {
         rebuildIndexBtn.setStyle(createActionButtonStyle(ORANGE));
         rebuildIndexBtn.setOnAction(e -> handleRebuildIndex());
 
-        Label dataWarning = new Label("⚠️ Import will merge with existing data. Backup first!");
+        Label dataWarning = new Label("Import will merge with existing data. Backup first!");
         dataWarning.setFont(Font.font(FONT_REGULAR, FONT_SIZE_SM));
         dataWarning.setStyle("-fx-text-fill: " + ORANGE + ";");
+
+        // Add warning icon
+        FontIcon warningIcon = new FontIcon(Feather.ALERT_TRIANGLE);
+        warningIcon.setIconSize(14);
+        warningIcon.setStyle("-fx-icon-color: " + ORANGE + ";");
+        HBox warningBox = new HBox(6);
+        warningBox.setAlignment(Pos.CENTER_LEFT);
+        warningBox.getChildren().addAll(warningIcon, dataWarning);
 
         Label indexInfo = new Label("Rebuild search index to update search results with all content.");
         indexInfo.setFont(Font.font(FONT_REGULAR, FONT_SIZE_SM));
@@ -167,7 +175,7 @@ public class SettingsView extends ScrollPane {
         HBox specificImportsBox = new HBox(10, importWikisBtn, importEventsBtn, importOpsBtn, importJournalsBtn);
         specificImportsBox.setAlignment(Pos.CENTER_LEFT);
 
-        VBox dataBox = new VBox(10, dataHeader, buttonBox, dataWarning, rebuildIndexBtn, indexInfo, new Separator(),
+        VBox dataBox = new VBox(10, dataHeader, buttonBox, warningBox, rebuildIndexBtn, indexInfo, new Separator(),
                 exportHeader, specificExportsBox, new Separator(), importHeader, specificImportsBox);
         dataBox.setStyle(StyleBuilder.sectionStyle());
 

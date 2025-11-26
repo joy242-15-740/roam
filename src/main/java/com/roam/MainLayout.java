@@ -1,20 +1,19 @@
 package com.roam;
 
 import com.roam.layout.CustomTitleBar;
+import com.roam.layout.FloatingNavBar;
 import com.roam.layout.NavigationManager;
-import com.roam.layout.SidebarComponent;
-import com.roam.layout.SidebarResizeHandler;
 import com.roam.layout.ViewFactory;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Main application layout coordinating sidebar navigation and content display.
- * Delegates to specialized components for sidebar, navigation, and resizing.
+ * Main application layout with floating navigation bar.
+ * Content fills the window with a floating nav bar at the bottom center.
  */
 public class MainLayout extends BorderPane {
 
@@ -26,8 +25,7 @@ public class MainLayout extends BorderPane {
     // Components
     private ViewFactory viewFactory;
     private NavigationManager navigationManager;
-    private SidebarComponent sidebarComponent;
-    private SidebarResizeHandler resizeHandler;
+    private FloatingNavBar floatingNavBar;
     private CustomTitleBar titleBar;
 
     public MainLayout() {
@@ -48,45 +46,40 @@ public class MainLayout extends BorderPane {
     private void initializeLayout() {
         // Create content area
         contentArea = new StackPane();
-        contentArea.setPadding(new Insets(30));
+        contentArea.setPadding(new Insets(30, 30, 90, 30)); // Extra bottom padding for floating bar
         contentArea.getStyleClass().add("content-area");
 
         // Create view factory
         viewFactory = new ViewFactory();
 
-        // Create resize handler with temporary sidebar (will be updated after sidebar
-        // creation)
-        VBox tempSidebar = new VBox();
-        resizeHandler = new SidebarResizeHandler(tempSidebar, this::updateSidebarButtonWidths);
-
-        // Create sidebar component
-        sidebarComponent = new SidebarComponent(
+        // Create floating nav bar
+        floatingNavBar = new FloatingNavBar(
                 this::handleNavigation,
-                this::handleSearch,
-                null, // Toggle callback not needed as SidebarComponent handles it internally
-                resizeHandler.getResizeHandle());
-
-        // Update resize handler with actual sidebar
-        resizeHandler = new SidebarResizeHandler(
-                sidebarComponent.getSidebar(),
-                this::updateSidebarButtonWidths);
+                this::handleSearch);
 
         // Create navigation manager
         navigationManager = new NavigationManager(
                 contentArea,
                 viewFactory,
-                sidebarComponent.getNavigationButtons(),
+                floatingNavBar.getNavigationButtons(),
                 this::updateButtonStates);
 
-        // Create sidebar container with resize handle
-        HBox sidebarContainer = new HBox();
-        sidebarContainer.getChildren().addAll(
-                sidebarComponent.getSidebar(),
-                resizeHandler.getResizeHandle());
+        // Layer content and floating bar - use BorderPane for proper positioning
+        StackPane mainStack = new StackPane();
+        mainStack.getChildren().add(contentArea);
+
+        // Floating bar container at bottom
+        HBox floatingBarContainer = new HBox();
+        floatingBarContainer.setAlignment(Pos.BOTTOM_CENTER);
+        floatingBarContainer.setPadding(new Insets(0, 0, 20, 0));
+        floatingBarContainer.setPickOnBounds(false);
+        floatingBarContainer.getChildren().add(floatingNavBar);
+
+        mainStack.getChildren().add(floatingBarContainer);
+        StackPane.setAlignment(floatingBarContainer, Pos.BOTTOM_CENTER);
 
         // Set layout regions
-        setLeft(sidebarContainer);
-        setCenter(contentArea);
+        setCenter(mainStack);
 
         // Show default view (wiki)
         navigationManager.navigateToView("wiki");
@@ -100,52 +93,44 @@ public class MainLayout extends BorderPane {
 
         // Create content area
         contentArea = new StackPane();
-        contentArea.setPadding(new Insets(30));
+        contentArea.setPadding(new Insets(30, 30, 90, 30)); // Extra bottom padding for floating bar
         contentArea.getStyleClass().add("content-area");
 
         // Create view factory
         viewFactory = new ViewFactory();
 
-        // Create resize handler with temporary sidebar
-        VBox tempSidebar = new VBox();
-        resizeHandler = new SidebarResizeHandler(tempSidebar, this::updateSidebarButtonWidths);
-
-        // Create sidebar component
-        sidebarComponent = new SidebarComponent(
+        // Create floating nav bar
+        floatingNavBar = new FloatingNavBar(
                 this::handleNavigation,
-                this::handleSearch,
-                null,
-                resizeHandler.getResizeHandle());
-
-        // Update resize handler with actual sidebar
-        resizeHandler = new SidebarResizeHandler(
-                sidebarComponent.getSidebar(),
-                this::updateSidebarButtonWidths);
+                this::handleSearch);
 
         // Create navigation manager
         navigationManager = new NavigationManager(
                 contentArea,
                 viewFactory,
-                sidebarComponent.getNavigationButtons(),
+                floatingNavBar.getNavigationButtons(),
                 this::updateButtonStates);
 
         // Wire up title bar navigation callback for Settings button
         titleBar.setOnNavigate(this::handleNavigation);
 
-        // Create sidebar container with resize handle
-        HBox sidebarContainer = new HBox();
-        sidebarContainer.getChildren().addAll(
-                sidebarComponent.getSidebar(),
-                resizeHandler.getResizeHandle());
+        // Layer content and floating bar - use BorderPane for proper positioning
+        StackPane mainStack = new StackPane();
+        mainStack.getChildren().add(contentArea);
 
-        // Create main content area (sidebar + content)
-        BorderPane mainContent = new BorderPane();
-        mainContent.setLeft(sidebarContainer);
-        mainContent.setCenter(contentArea);
+        // Floating bar container at bottom
+        HBox floatingBarContainer = new HBox();
+        floatingBarContainer.setAlignment(Pos.BOTTOM_CENTER);
+        floatingBarContainer.setPadding(new Insets(0, 0, 20, 0));
+        floatingBarContainer.setPickOnBounds(false);
+        floatingBarContainer.getChildren().add(floatingNavBar);
+
+        mainStack.getChildren().add(floatingBarContainer);
+        StackPane.setAlignment(floatingBarContainer, Pos.BOTTOM_CENTER);
 
         // Set layout regions
         setTop(titleBar);
-        setCenter(mainContent);
+        setCenter(mainStack);
 
         // Show default view (wiki)
         navigationManager.navigateToView("wiki");
@@ -154,7 +139,7 @@ public class MainLayout extends BorderPane {
     }
 
     /**
-     * Callback to handle navigation button clicks from SidebarComponent.
+     * Callback to handle navigation button clicks.
      */
     private void handleNavigation(String viewType) {
         logger.debug("Handle navigation request: {}", viewType);
@@ -162,7 +147,7 @@ public class MainLayout extends BorderPane {
     }
 
     /**
-     * Callback to handle search requests from SidebarComponent.
+     * Callback to handle search requests.
      */
     private void handleSearch(String query) {
         logger.debug("Handle search request: {}", query);
@@ -174,15 +159,7 @@ public class MainLayout extends BorderPane {
      */
     private void updateButtonStates(String activeViewType) {
         logger.debug("Updating button states: active={}", activeViewType);
-        sidebarComponent.setActiveButton(activeViewType);
-    }
-
-    /**
-     * Callback to update sidebar button widths when sidebar is resized.
-     */
-    private void updateSidebarButtonWidths() {
-        double sidebarWidth = sidebarComponent.getSidebar().getWidth();
-        sidebarComponent.updateButtonWidths(sidebarWidth);
+        floatingNavBar.setActiveButton(activeViewType);
     }
 
     /**
@@ -193,11 +170,21 @@ public class MainLayout extends BorderPane {
     }
 
     /**
+     * Get the floating nav bar
+     */
+    public FloatingNavBar getFloatingNavBar() {
+        return floatingNavBar;
+    }
+
+    /**
      * Refresh theme on all components
      */
     public void refreshTheme() {
         if (titleBar != null) {
             titleBar.refreshTheme();
+        }
+        if (floatingNavBar != null) {
+            floatingNavBar.refreshTheme();
         }
     }
 }

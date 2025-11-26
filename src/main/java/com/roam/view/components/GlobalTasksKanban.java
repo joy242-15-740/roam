@@ -407,25 +407,42 @@ public class GlobalTasksKanban extends HBox {
             HBox footer = new HBox(10);
             footer.setAlignment(Pos.CENTER_LEFT);
 
-            // Due date
+            // Due date with icon
             if (task.getDueDate() != null) {
-                Label dueDateLabel = new Label("📅 " + formatDueDate(task.getDueDate()));
+                FontIcon calendarIcon = new FontIcon(Feather.CALENDAR);
+                calendarIcon.setIconSize(11);
+                calendarIcon.setStyle("-fx-icon-color: -roam-text-hint;");
+
+                Label dueDateLabel = new Label(formatDueDate(task.getDueDate()));
                 dueDateLabel.setFont(Font.font("Poppins", 11));
                 dueDateLabel.setStyle("-fx-text-fill: -roam-text-hint;");
-                footer.getChildren().add(dueDateLabel);
+
+                HBox dueDateBox = new HBox(4);
+                dueDateBox.setAlignment(Pos.CENTER_LEFT);
+                dueDateBox.getChildren().addAll(calendarIcon, dueDateLabel);
+                footer.getChildren().add(dueDateBox);
             }
 
             Region footerSpacer = new Region();
             HBox.setHgrow(footerSpacer, Priority.ALWAYS);
             footer.getChildren().add(footerSpacer);
 
-            // Assignee
+            // Assignee with icon
             if (task.getAssignee() != null && !task.getAssignee().isEmpty()) {
                 String initials = getInitials(task.getAssignee());
-                Label assigneeLabel = new Label("👤 " + initials);
+
+                FontIcon userIcon = new FontIcon(Feather.USER);
+                userIcon.setIconSize(11);
+                userIcon.setStyle("-fx-icon-color: -roam-text-hint;");
+
+                Label assigneeLabel = new Label(initials);
                 assigneeLabel.setFont(Font.font("Poppins", 11));
                 assigneeLabel.setStyle("-fx-text-fill: -roam-text-hint;");
-                footer.getChildren().add(assigneeLabel);
+
+                HBox assigneeBox = new HBox(4);
+                assigneeBox.setAlignment(Pos.CENTER_LEFT);
+                assigneeBox.getChildren().addAll(userIcon, assigneeLabel);
+                footer.getChildren().add(assigneeBox);
             }
 
             getChildren().add(footer);

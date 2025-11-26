@@ -1,0 +1,22 @@
+/* Empty State Styling */
+.empty-state {
+    -fx-alignment: CENTER;
+    -fx-spacing: 20;
+}
+
+.empty-state .icon {
+    -fx-font-size: 72px;
+    -fx-text-fill: -roam-text-hint;
+}
+
+.empty-state .title {
+    -fx-font-family: 'Poppins Bold';
+    -fx-font-size: 24px;
+    -fx-text-fill: -roam-text-secondary;
+}
+
+.empty-state .description {
+    -fx-font-family: 'Poppins';
+    -fx-font-size: 16px;
+    -fx-text-fill: -roam-text-hint;
+}
