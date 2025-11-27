@@ -15,7 +15,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import org.kordamp.ikonli.feather.Feather;
@@ -61,9 +63,14 @@ public class LockScreen extends StackPane {
                 .maxWidth(60).maxHeight(60)
                 .build());
 
-        FontIcon lockIcon = new FontIcon(Feather.LOCK);
-        lockIcon.setIconSize(ICON_XL);
-        lockIcon.setStyle("-fx-icon-color: " + BLUE + ";");
+        // Lock icon using SVG path
+        SVGPath lockIcon = new SVGPath();
+        // Lock icon SVG path (padlock shape)
+        lockIcon.setContent(
+                "M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z");
+        lockIcon.setFill(Color.web("#3B82F6"));
+        lockIcon.setScaleX(1.2);
+        lockIcon.setScaleY(1.2);
         iconBox.getChildren().add(lockIcon);
 
         // Title
@@ -129,7 +136,7 @@ public class LockScreen extends StackPane {
      * Setup keyboard event handlers for numeric input
      */
     private void setupKeyboardInput() {
-        // Handle key pressed events
+        // Handle key pressed events for digits, backspace, and enter
         addEventHandler(KeyEvent.KEY_PRESSED, event -> {
             KeyCode code = event.getCode();
 
@@ -154,15 +161,7 @@ public class LockScreen extends StackPane {
                 event.consume();
             }
         });
-
-        // Also handle KEY_TYPED for reliable digit input
-        addEventHandler(KeyEvent.KEY_TYPED, event -> {
-            String character = event.getCharacter();
-            if (character.length() == 1 && Character.isDigit(character.charAt(0))) {
-                handleDigit(character);
-                event.consume();
-            }
-        });
+        // Note: Removed KEY_TYPED handler to prevent double input
     }
 
     /**

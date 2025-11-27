@@ -5,7 +5,6 @@ import com.roam.view.components.BatchOperationsBar;
 import com.roam.view.components.GlobalTasksKanban;
 import com.roam.view.components.TasksFilterPanel;
 import com.roam.view.components.TasksListView;
-import com.roam.view.components.TasksStatsBar;
 import com.roam.view.components.TasksTimelineView;
 import com.roam.view.components.TasksEisenhowerView;
 import com.roam.view.components.TasksToolbar;
@@ -20,7 +19,6 @@ public class TasksView extends StackPane {
     private final TasksController controller;
     private final TasksToolbar toolbar;
     private final TasksFilterPanel filterPanel;
-    private final TasksStatsBar statsBar;
     private final GlobalTasksKanban kanbanView;
     private final TasksListView listView;
     private final TasksTimelineView timelineView;
@@ -33,18 +31,12 @@ public class TasksView extends StackPane {
         this.contentPane = new BorderPane();
         getChildren().add(contentPane);
 
-        // contentPane.setStyle("-fx-background-color: -roam-bg-primary;"); // Remove
-        // manual style
-
         // Create toolbar
         toolbar = new TasksToolbar(controller);
         toolbar.setOnViewChanged(this::switchView);
 
         // Create filter panel
         filterPanel = new TasksFilterPanel(controller);
-
-        // Create stats bar
-        statsBar = new TasksStatsBar(controller);
 
         // Create kanban view
         kanbanView = new GlobalTasksKanban(controller);
@@ -61,8 +53,8 @@ public class TasksView extends StackPane {
         // Create batch operations bar
         batchBar = new BatchOperationsBar(controller);
 
-        // Combine toolbar, filter panel, and stats bar
-        VBox topContainer = new VBox(toolbar, filterPanel, statsBar);
+        // Combine toolbar and filter panel (removed stats bar)
+        VBox topContainer = new VBox(toolbar, filterPanel);
 
         contentPane.setTop(topContainer);
 
@@ -79,32 +71,6 @@ public class TasksView extends StackPane {
 
         // Initial load
         refreshView();
-
-        // Add listeners for responsive scaling
-        this.widthProperty().addListener((obs, oldVal, newVal) -> scaleContent());
-        this.heightProperty().addListener((obs, oldVal, newVal) -> scaleContent());
-    }
-
-    private void scaleContent() {
-        double width = getWidth();
-        double height = getHeight();
-
-        // Use layout bounds to get the actual size of the content
-        double contentWidth = contentPane.getLayoutBounds().getWidth();
-        double contentHeight = contentPane.getLayoutBounds().getHeight();
-
-        if (contentWidth == 0 || contentHeight == 0)
-            return;
-
-        // Calculate scale factors
-        double scaleX = width < contentWidth ? width / contentWidth : 1.0;
-        double scaleY = height < contentHeight ? height / contentHeight : 1.0;
-
-        // Use the smaller scale to maintain aspect ratio and fit within bounds
-        double scale = Math.min(scaleX, scaleY);
-
-        contentPane.setScaleX(scale);
-        contentPane.setScaleY(scale);
     }
 
     private void switchView(String viewName) {
@@ -151,7 +117,6 @@ public class TasksView extends StackPane {
             case "matrix" -> matrixView.loadTasks(controller.loadTasks());
         }
 
-        statsBar.updateStats();
         filterPanel.refresh();
     }
 }

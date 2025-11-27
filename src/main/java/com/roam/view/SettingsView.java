@@ -84,6 +84,7 @@ public class SettingsView extends ScrollPane {
         lockToggle.setOnAction(e -> handleLockToggle(lockToggle));
 
         Button changePinBtn = new Button("Change PIN");
+        changePinBtn.setStyle(createActionButtonStyle(BLUE));
         changePinBtn.setOnAction(e -> handleChangePin());
         changePinBtn.disableProperty().bind(lockToggle.selectedProperty().not());
 
@@ -115,17 +116,17 @@ public class SettingsView extends ScrollPane {
         importBtn.setOnAction(e -> handleImport());
 
         Button rebuildIndexBtn = new Button("Rebuild Search Index");
-        rebuildIndexBtn.setStyle(createActionButtonStyle(ORANGE));
+        rebuildIndexBtn.setStyle(createActionButtonStyle(YELLOW));
         rebuildIndexBtn.setOnAction(e -> handleRebuildIndex());
 
         Label dataWarning = new Label("Import will merge with existing data. Backup first!");
         dataWarning.setFont(Font.font(FONT_REGULAR, FONT_SIZE_SM));
-        dataWarning.setStyle("-fx-text-fill: " + ORANGE + ";");
+        dataWarning.setStyle("-fx-text-fill: " + YELLOW + ";");
 
         // Add warning icon
         FontIcon warningIcon = new FontIcon(Feather.ALERT_TRIANGLE);
         warningIcon.setIconSize(14);
-        warningIcon.setStyle("-fx-icon-color: " + ORANGE + ";");
+        warningIcon.setStyle("-fx-icon-color: " + YELLOW + ";");
         HBox warningBox = new HBox(6);
         warningBox.setAlignment(Pos.CENTER_LEFT);
         warningBox.getChildren().addAll(warningIcon, dataWarning);
@@ -142,15 +143,19 @@ public class SettingsView extends ScrollPane {
         exportHeader.setFont(Font.font(FONT_MEDIUM, FONT_SIZE_STANDARD));
 
         Button exportWikisBtn = new Button("Export Wikis (MD)");
+        exportWikisBtn.setStyle(createActionButtonStyle(BLUE));
         exportWikisBtn.setOnAction(e -> handleExportWikis());
 
         Button exportEventsBtn = new Button("Export Events (ICS)");
+        exportEventsBtn.setStyle(createActionButtonStyle(BLUE));
         exportEventsBtn.setOnAction(e -> handleExportEvents());
 
         Button exportOpsBtn = new Button("Export Operations (JSON)");
+        exportOpsBtn.setStyle(createActionButtonStyle(BLUE));
         exportOpsBtn.setOnAction(e -> handleExportOperations());
 
         Button exportJournalsBtn = new Button("Export Journals (MD)");
+        exportJournalsBtn.setStyle(createActionButtonStyle(BLUE));
         exportJournalsBtn.setOnAction(e -> handleExportJournals());
 
         HBox specificExportsBox = new HBox(10, exportWikisBtn, exportEventsBtn, exportOpsBtn, exportJournalsBtn);
@@ -161,15 +166,19 @@ public class SettingsView extends ScrollPane {
         importHeader.setFont(Font.font(FONT_MEDIUM, FONT_SIZE_STANDARD));
 
         Button importWikisBtn = new Button("Import Wikis (MD)");
+        importWikisBtn.setStyle(createActionButtonStyle(GREEN));
         importWikisBtn.setOnAction(e -> handleImportWikis());
 
         Button importEventsBtn = new Button("Import Events (ICS)");
+        importEventsBtn.setStyle(createActionButtonStyle(GREEN));
         importEventsBtn.setOnAction(e -> handleImportEvents());
 
         Button importOpsBtn = new Button("Import Operations (JSON)");
+        importOpsBtn.setStyle(createActionButtonStyle(GREEN));
         importOpsBtn.setOnAction(e -> handleImportOperations());
 
         Button importJournalsBtn = new Button("Import Journals (MD)");
+        importJournalsBtn.setStyle(createActionButtonStyle(GREEN));
         importJournalsBtn.setOnAction(e -> handleImportJournals());
 
         HBox specificImportsBox = new HBox(10, importWikisBtn, importEventsBtn, importOpsBtn, importJournalsBtn);
@@ -564,12 +573,15 @@ public class SettingsView extends ScrollPane {
         });
 
         Button addBtn = new Button("Add");
+        addBtn.setStyle(createActionButtonStyle(BLUE));
         addBtn.setOnAction(e -> handleCreateWikiTemplate(listView));
 
         Button editBtn = new Button("Edit");
+        editBtn.setStyle(createActionButtonStyle(YELLOW));
         editBtn.setOnAction(e -> handleEditWikiTemplate(listView));
 
         Button deleteBtn = new Button("Delete");
+        deleteBtn.setStyle(createActionButtonStyle(RED));
         deleteBtn.setOnAction(e -> handleDeleteWikiTemplate(listView));
 
         HBox buttons = new HBox(10, addBtn, editBtn, deleteBtn);
@@ -597,12 +609,15 @@ public class SettingsView extends ScrollPane {
         });
 
         Button addBtn = new Button("Add");
+        addBtn.setStyle(createActionButtonStyle(BLUE));
         addBtn.setOnAction(e -> handleCreateJournalTemplate(listView));
 
         Button editBtn = new Button("Edit");
+        editBtn.setStyle(createActionButtonStyle(YELLOW));
         editBtn.setOnAction(e -> handleEditJournalTemplate(listView));
 
         Button deleteBtn = new Button("Delete");
+        deleteBtn.setStyle(createActionButtonStyle(RED));
         deleteBtn.setOnAction(e -> handleDeleteJournalTemplate(listView));
 
         HBox buttons = new HBox(10, addBtn, editBtn, deleteBtn);

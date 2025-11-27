@@ -1,12 +1,9 @@
 package com.roam.layout;
 
-import com.roam.service.SecurityContext;
 import com.roam.util.ThemeManager;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,7 +14,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.feather.Feather;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.material2.Material2MZ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +31,8 @@ public class CustomTitleBar extends HBox {
 
     private static final double TITLE_BAR_HEIGHT = 38;
     private static final double ICON_SIZE = 20;
-    private static final double BUTTON_SIZE = 46;
-    private static final double ACTION_BUTTON_SIZE = 32;
+    private static final double BUTTON_SIZE = 38;
+    private static final double ACTION_BUTTON_SIZE = 30;
 
     private final Stage stage;
     private final ImageView iconView;
@@ -44,16 +40,11 @@ public class CustomTitleBar extends HBox {
     private final Button maximizeBtn;
     private final Button closeBtn;
 
-    // Action buttons (moved from sidebar)
+    // Action button - Settings only
     private final Button settingsBtn;
-    private final Button lockBtn;
-    private final Button refreshBtn;
 
     // Callback for navigation
     private Consumer<String> onNavigate;
-
-    // Callback for showing lock screen
-    private Runnable onShowLockScreen;
 
     // For window dragging
     private double xOffset = 0;
@@ -81,16 +72,14 @@ public class CustomTitleBar extends HBox {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        // Create action buttons (Settings, Lock, Refresh)
-        settingsBtn = createActionButton(Material2MZ.SETTINGS, "settings-btn", this::openSettings);
-        lockBtn = createActionButton(Feather.LOCK, "lock-btn", this::showLockScreen);
-        refreshBtn = createActionButton(Feather.ROTATE_CW, "refresh-btn", this::resetToLockScreen);
+        // Create settings button with border style
+        settingsBtn = createActionButton(Feather.SETTINGS, "settings-btn", this::openSettings);
 
         // Action buttons container
-        HBox actionBox = new HBox(4);
+        HBox actionBox = new HBox(8);
         actionBox.setAlignment(Pos.CENTER);
-        actionBox.setPadding(new Insets(0, 16, 0, 0));
-        actionBox.getChildren().addAll(settingsBtn, lockBtn, refreshBtn);
+        actionBox.setPadding(new Insets(0, 12, 0, 0));
+        actionBox.getChildren().add(settingsBtn);
 
         // Separator
         Region separator = new Region();
@@ -100,14 +89,14 @@ public class CustomTitleBar extends HBox {
         separator.setPrefHeight(20);
         separator.getStyleClass().add("title-bar-separator");
 
-        // Window control buttons
+        // Window control buttons with icons
         minimizeBtn = createControlButton(Feather.MINUS, "minimize-btn", this::minimizeWindow);
-        maximizeBtn = createControlButton(Feather.SQUARE, "maximize-btn", this::toggleMaximize);
+        maximizeBtn = createControlButton(Feather.MAXIMIZE_2, "maximize-btn", this::toggleMaximize);
         closeBtn = createControlButton(Feather.X, "close-btn", this::closeWindow);
         closeBtn.getStyleClass().add("close-button");
 
         // Button container
-        HBox buttonBox = new HBox();
+        HBox buttonBox = new HBox(2);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.getChildren().addAll(minimizeBtn, maximizeBtn, closeBtn);
 
@@ -155,20 +144,6 @@ public class CustomTitleBar extends HBox {
     private Button createActionButton(Feather icon, String styleClass, Runnable action) {
         Button button = new Button();
         FontIcon fontIcon = new FontIcon(icon);
-        fontIcon.setIconSize(14);
-        fontIcon.getStyleClass().add("title-bar-action-icon");
-        button.setGraphic(fontIcon);
-        button.getStyleClass().addAll("title-bar-action-button", styleClass);
-        button.setPrefSize(ACTION_BUTTON_SIZE, ACTION_BUTTON_SIZE);
-        button.setMinSize(ACTION_BUTTON_SIZE, ACTION_BUTTON_SIZE);
-        button.setMaxSize(ACTION_BUTTON_SIZE, ACTION_BUTTON_SIZE);
-        button.setOnAction(e -> action.run());
-        return button;
-    }
-
-    private Button createActionButton(Material2MZ icon, String styleClass, Runnable action) {
-        Button button = new Button();
-        FontIcon fontIcon = new FontIcon(icon);
         fontIcon.setIconSize(16);
         fontIcon.getStyleClass().add("title-bar-action-icon");
         button.setGraphic(fontIcon);
@@ -183,101 +158,6 @@ public class CustomTitleBar extends HBox {
     private void openSettings() {
         if (onNavigate != null) {
             onNavigate.accept("settings");
-        }
-    }
-
-    /**
-     * Show the lock screen immediately.
-     * If lock is enabled, shows the lock screen.
-     * If lock is not enabled, shows a message.
-     */
-    private void showLockScreen() {
-        if (SecurityContext.getInstance().isLockEnabled()) {
-            // Set not authenticated to require PIN entry
-            SecurityContext.getInstance().setAuthenticated(false);
-
-            // If callback is set, use it to show lock screen
-            if (onShowLockScreen != null) {
-                onShowLockScreen.run();
-            } else {
-                // Fallback: relaunch app to show lock screen
-                relaunchApp();
-            }
-        } else {
-            // Lock is not enabled - show info message
-            Alert alert = ThemeManager.getInstance().createAlert(
-                    Alert.AlertType.INFORMATION,
-                    "Lock Screen",
-                    "Lock screen is not enabled",
-                    "Enable the lock screen in Settings to use this feature.");
-            alert.showAndWait();
-        }
-    }
-
-    /**
-     * Reset to lock screen - shows the lock screen regardless of current state.
-     * This is the refresh/reset button behavior.
-     */
-    private void resetToLockScreen() {
-        if (SecurityContext.getInstance().isLockEnabled()) {
-            // Set not authenticated to require PIN entry
-            SecurityContext.getInstance().setAuthenticated(false);
-
-            // If callback is set, use it to show lock screen
-            if (onShowLockScreen != null) {
-                onShowLockScreen.run();
-            } else {
-                // Fallback: relaunch app
-                relaunchApp();
-            }
-        } else {
-            // Lock is not enabled - offer to enable it or just show info
-            Alert alert = ThemeManager.getInstance().createAlert(
-                    Alert.AlertType.INFORMATION,
-                    "Reset",
-                    "Lock screen is not enabled",
-                    "Enable the lock screen in Settings first, then use this button to quickly lock your session.");
-            alert.showAndWait();
-        }
-    }
-
-    /**
-     * Relaunch the application.
-     * Restarts the JavaFX application to show lock screen.
-     */
-    private void relaunchApp() {
-        try {
-            // Get the current process info
-            String javaBin = System.getProperty("java.home") +
-                    java.io.File.separator + "bin" +
-                    java.io.File.separator + "java";
-
-            // Get the classpath
-            String classpath = System.getProperty("java.class.path");
-
-            // Get the main class
-            String mainClass = "com.roam.RoamApplication";
-
-            // Build the command
-            ProcessBuilder builder = new ProcessBuilder(
-                    javaBin, "-cp", classpath, mainClass);
-
-            builder.inheritIO();
-            builder.start();
-
-            // Exit current instance
-            Platform.exit();
-
-        } catch (Exception e) {
-            logger.error("Failed to relaunch application: {}", e.getMessage());
-
-            // Show error and suggest manual restart
-            Alert alert = ThemeManager.getInstance().createAlert(
-                    Alert.AlertType.ERROR,
-                    "Relaunch Failed",
-                    "Could not relaunch application",
-                    "Please close and reopen the application manually.");
-            alert.showAndWait();
         }
     }
 
@@ -362,9 +242,9 @@ public class CustomTitleBar extends HBox {
     private void updateMaximizeIcon() {
         FontIcon icon = (FontIcon) maximizeBtn.getGraphic();
         if (isMaximized) {
-            icon.setIconCode(Feather.COPY); // Use copy icon to represent restore
+            icon.setIconCode(Feather.MINIMIZE_2); // Use minimize icon to represent restore
         } else {
-            icon.setIconCode(Feather.SQUARE);
+            icon.setIconCode(Feather.MAXIMIZE_2);
         }
     }
 
@@ -384,13 +264,6 @@ public class CustomTitleBar extends HBox {
      */
     public void setOnNavigate(Consumer<String> onNavigate) {
         this.onNavigate = onNavigate;
-    }
-
-    /**
-     * Set the callback for showing lock screen
-     */
-    public void setOnShowLockScreen(Runnable onShowLockScreen) {
-        this.onShowLockScreen = onShowLockScreen;
     }
 
     /**
