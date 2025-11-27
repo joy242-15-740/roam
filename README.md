@@ -65,6 +65,13 @@
 - Consistent Material Design-inspired UI
 - Custom Poppins font family
 
+## Screenshots
+
+![Lock Screen](src\main\resources\screenshots\image.png)
+![Operation View](src\main\resources\screenshots\image2.png)
+![Stats View](src\main\resources\screenshots\image3.png)
+![Settings View](src\main\resources\screenshots\image4.png)
+
 ## Tech Stack
 
 | Component | Technology |
