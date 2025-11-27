@@ -67,10 +67,10 @@
 
 ## Screenshots
 
-![Lock Screen](src\main\resources\screenshots\image.png)
-![Operation View](src\main\resources\screenshots\image2.png)
-![Stats View](src\main\resources\screenshots\image3.png)
-![Settings View](src\main\resources\screenshots\image4.png)
+![Lock Screen](https://raw.githubusercontent.com/joy242-15-740/roam/refs/heads/main/src/main/resources/screenshots/image.png)
+![Operation View](https://raw.githubusercontent.com/joy242-15-740/roam/refs/heads/main/src/main/resources/screenshots/image2.png)
+![Stats View](https://raw.githubusercontent.com/joy242-15-740/roam/refs/heads/main/src/main/resources/screenshots/image3.png)
+![Settings View](https://raw.githubusercontent.com/joy242-15-740/roam/refs/heads/main/src/main/resources/screenshots/image4.png)
 
 ## Tech Stack
 
